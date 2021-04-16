@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    .link {
+        fill: none;
+        stroke: #555;
+        stroke-opacity: 0.4;
+        stroke-width: 1px;
+    }
+    text {
+        font-family: "Arial Black", Gadget, sans-serif;
+        fill: black;
+        font-weight: bold;
+        font-size: 14px
+    }
+
+    .grid .tick line{
+        stroke: grey;
+        stroke-dasharray: 5, 10;
+        opacity: 0.7;
+    }
+    .grid path{
+        stroke-width: 0;
+    }
+
+    .node circle {
+        fill: #999;
+    }
+    .node--internal circle {
+        fill: #555;
+    }
+    .node--internal text {
+        font-size: 16px;
+        text-shadow: 0 2px 0 #fff, 0 -2px 0 #fff, 2px 0 0 #fff, -2px 0 0 #fff;
+    }
+    .node--leaf text {
+        fill: white;
+    }
+
+    .shadow {
+        -webkit-filter: drop-shadow( -1.5px -1.5px 1.5px #000 );
+        filter: drop-shadow( -1.5px -1.5px 1.5px #000 );
+    }
+</style>
+<body>
+<svg width="960" height="1100"></svg>
+</body>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height"),
+        g = svg.append("g").attr("transform", "translate(20,0)"); // move right 20px.
+
+    var xScale =  d3.scaleLinear()
+        .domain([0,5])
+        .range([0, 400]);
+
+    // Setting up a way to handle the data
+    var tree = d3.cluster()                 // This D3 API method setup the Dendrogram datum position.
+        .size([height, width - 460])        // Total width - bar chart width = Dendrogram chart width
+        .separation(function separate(a, b) {
+            return a.parent === b.parent            // 2 levels tree grouping for category
+            || a.parent.parent === b.parent
+            || a.parent === b.parent.parent ? 0.4 : 0.8;
+        });
+
+    var stratify = d3.stratify()            // This D3 API method gives cvs file flat data array dimensions.
+        .parentId(function(d) { return d.id.substring(0, d.id.lastIndexOf(".")); });
+
+    d3.csv("skillsdata.csv", row, function(error, data) {
+        if (error) throw error;
+        var root = stratify(data);
+        tree(root);
+
+        // Draw every datum a line connecting to its parent.
+        var link = g.selectAll(".link")
+            .data(root.descendants().slice(1))
+            .enter().append("path")
+            .attr("class", "link")
+            .attr("d", elbow)
+
+        function elbow(d) {
+            return "M" + d.parent.y + "," + d.parent.x
+                + "H" + (d.parent.y + (d.y - d.parent.y) / 2)
+                + "V" + d.x
+                + "H" + d.y;
+        }
+
+        // Setup position for every datum; Applying different css classes to parents and leafs.
+        var node = g.selectAll(".node")
+            .data(root.descendants())
+            .enter().append("g")
+            .attr("class", function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
+            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+        // Draw every datum a small circle.
+        node.append("circle")
+            .attr("r", 4);
+
+        // Setup G for every leaf datum.
+        var leafNodeG = g.selectAll(".node--leaf")
+            .append("g")
+            .attr("class", "node--leaf-g")
+            .attr("transform", "translate(" + 8 + "," + -13 + ")");
+
+        leafNodeG.append("rect")
+            .attr("class","shadow")
+            .style("fill", function (d) {return d.data.color;})
+            .attr("width", 2)
+            .attr("height", 30)
+            .attr("rx", 2)
+            .attr("ry", 2)
+            .transition()
+            .duration(800)
+            .attr("width", function (d) {return xScale(d.data.value);});
+
+        leafNodeG.append("text")
+            .attr("dy", 19.5)
+            .attr("x", 8)
+            .style("text-anchor", "start")
+            .text(function (d) {
+                return d.data.id.substring(d.data.id.lastIndexOf(".") + 1);
+            });
+
+        // Write down text for every parent datum
+        var internalNode = g.selectAll(".node--internal");
+        internalNode.append("text")
+            .attr("y", -10)
+            .style("text-anchor", "middle")
+            .text(function (d) {
+                return d.data.id.substring(d.data.id.lastIndexOf(".") + 1);
+            });
+    });
+
+    function row(d) {
+        return {
+            id: d.id,
+            value: +d.value,
+            color: d.color
+        };
+    }
+</script>

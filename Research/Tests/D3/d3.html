@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    .node {
+        cursor: pointer;
+    }
+
+    .node circle {
+        fill: white;
+        stroke: black;
+        stroke-width: 0.5px;
+    }
+
+    .node {
+        font: 15px sans-serif;
+    }
+
+    .link {
+        fill: none;
+        stroke: black;
+        stroke-width: 1.5px;
+    }
+
+</style>
+
+<body>
+<div id="elementSelector">
+    <div id="plot"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script>
+
+    var clusters = buildJson()
+    function buildJson() {
+            let max = 3
+            let max_nodes = 50
+
+            let curr_node = null
+            let toReturn = null
+            let nodes = []
+
+            for (let i = 0; i < max_nodes; ++i) {
+                if (curr_node == null) {
+                    let node = {
+                        name: i.toString(),
+                        children: []
+                    }
+                    toReturn = node
+                    curr_node = node
+                    nodes.push(node)
+                    continue
+                }
+                if (i === max) {
+                    curr_node = nodes[0]
+                    nodes.shift()
+                    max = max * 2
+                    i -= 1
+                } else {
+                    let node = {
+                        name: i.toString(),
+                        children: []
+                    }
+                    nodes.push(node)
+                    curr_node.children.push(node)
+                }
+            }
+            return toReturn
+        }
+
+    var width = 500, height = 1000;
+
+
+
+    update()
+
+    /**
+     * For draw.
+     */
+
+    var diagonal = d3.svg.diagonal()
+        .projection(function (d) {
+            return [d.y, d.x];
+        });
+
+    function elbow(d) {
+        return "M" + d.source.y + "," + d.source.x
+            + "H" + (d.source.y + (d.target.y-d.source.y)/2)
+            + "V" + d.target.x
+            + "H" + d.target.y;
+    }
+
+
+    /**
+     * Expand and Colapse
+     */
+    function click(d) {
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        } else {
+            d.children = d._children;
+            d._children = null;
+        }
+        console.log(d)
+        update()
+    }
+
+    function update(){
+
+        var cluster = d3.layout.cluster()
+            .size([height, width - 100]);
+
+        d3.select("svg").remove();
+
+        var svg = d3.select("#plot").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(40,0)");
+
+
+        var nodes = cluster.nodes(clusters),
+            links = cluster.links(nodes);
+
+        /**
+         * Link.
+         */
+        var link = svg.selectAll("path.link")
+            .data(links)
+            .enter().append("path")
+            .attr("class", "link")
+            .attr("d", elbow);
+            //.attr("d", diagonal);
+
+        /**
+         * Node.
+         */
+        var node = svg.selectAll(".node")
+            .data(nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+            .on("click", click);
+
+        /**
+         * Circle.
+         */
+        node.append("circle")
+            .attr("r", 4.5);
+
+
+        /**
+         * For Labels.
+         */
+        node.append("text")
+            .attr("dx", function(d) { return d.children ? -8 : 8; })
+            .attr("dy", 3)
+            .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+            .text(function(d) { return d.name; });
+    }
+</script>
+</body>

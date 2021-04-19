@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VivaGraphJS Tests</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vivagraphjs@0.12.0/dist/vivagraph.min.js"></script>
+    <script>
+        function onLoad() {
+            var graph = constructGraph()
+
+            var graphics = Viva.Graph.View.svgGraphics();
+
+            var layout = Viva.Graph.Layout.constant(graph)
+
+            graphics
+                .node(createCustomNode)
+                .placeNode(placeCustomNode)
+                .link(createCustomLink)
+                .placeLink(placeCustomLink)
+
+            var renderer = Viva.Graph.View.renderer(graph, {
+                graphics: graphics,
+                layout: layout
+            });
+
+            renderer.run();
+        }
+
+        function constructGraph() {
+            let graph = Viva.Graph.graph();
+
+            let max = 3
+            let max_nodes = 5000
+
+            let nodes = []
+            let nodes_int = []
+            let aux_nodes = []
+            let aux_nodes_int = []
+
+            let curr_node = null
+            let curr_node_int = 0
+
+            for (let i = 0; i < max_nodes; ++i) {
+                if (curr_node == null) {
+                    if (aux_nodes.length > 0) {
+                        curr_node = aux_nodes[0]
+                        curr_node_int = aux_nodes_int[0]
+                        aux_nodes.shift()
+                        aux_nodes_int.shift()
+                    }
+                }
+                if (i === max) {
+                    nodes = []
+                    nodes_int = []
+                    max = max * 2
+                    curr_node = null
+                    i = i - 1
+                } else {
+                    let x, y
+                    if (i === 0) {
+                        x = 0
+                        y = 0
+                    } else {
+                        x = 25 + (i * 50)
+                        y = 50 - (i * 50)
+                    }
+                    let aux = graph.addNode(i.toString(), {
+                        position: {
+                            x: x,
+                            y: y,
+                        },
+                        weight: 0.5,
+                        typeColor: 'blue'
+                    })
+                    nodes.push(aux)
+                    nodes_int.push(i)
+                    aux_nodes.push(aux)
+                    aux_nodes_int.push(i)
+                    if (curr_node != null) {
+                        graph.addLink(curr_node_int, i.toString(), {from: curr_node, to: aux, id: i});
+                    }
+                }
+            }
+            return graph
+        }
+
+        function createCustomNode(node) {
+            var ui = Viva.Graph.svg('g')
+
+            var circle = Viva.Graph.svg('rect')
+                .attr('fill', "#00a2e8")
+                .attr('width', 10)
+                .attr('height', 10)
+                .attr('id', node.id);
+
+            var label = Viva.Graph.svg('text')
+                .text(node.id)
+                .attr('x', -15)
+                .attr('y', -5)
+
+            ui.append(circle);
+            ui.append(label);
+
+            return ui;
+        }
+
+        function placeCustomNode(nodeUI) {
+            var position = nodeUI.node.data.position, weight = nodeUI.node.data.weight;
+            nodeUI.attr('transform', 'translate(' + (position.x + (weight * 100)) + ',' + (position.y) + ')')
+        }
+
+        function createCustomLink(link) {
+            var ui = Viva.Graph.svg('g')
+            var label = Viva.Graph.svg('text')
+                .text(link.data.id)
+                .attr('x', link.data.from.data.position.x + (link.data.to.data.position.x - link.data.from.data.position.x) / 2)
+                .attr('y', link.data.to.data.position.y)
+
+            var path = Viva.Graph.svg('path')
+                .attr('fill', 'transparent')
+                .attr('stroke', '#999')
+
+            ui.append(path)
+            ui.append(label)
+
+            return ui;
+        }
+
+        function placeCustomLink(linkUI) {
+            var fromPos = linkUI.link.data.from.data
+            var toPos = linkUI.link.data.to.data
+            var path = `M${fromPos.position.x + (fromPos.weight * 100)},${fromPos.position.y}` +
+                `V${toPos.position.y}` +
+                `H${toPos.position.x + (toPos.weight * 100)}`;
+            linkUI.firstChild.attr("d", path);
+        }
+
+    </script>
+    <style media="screen">
+        body, html, svg {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body onload="onLoad()"></body>
+</html>

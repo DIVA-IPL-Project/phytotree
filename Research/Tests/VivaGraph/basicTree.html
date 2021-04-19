@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VivaGraphJS Tests</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vivagraphjs@0.12.0/dist/vivagraph.min.js"></script>
+    <script>
+        function onLoad() {
+            var graph = constructGraph()
+
+            var layout = Viva.Graph.Layout.constant(graph)
+
+            var renderer = Viva.Graph.View.renderer(graph, {
+                layout: layout,
+            })
+
+            renderer.run();
+        }
+
+        function constructGraph() {
+            let graph = Viva.Graph.graph();
+
+            let max = 3
+            let max_nodes = 5000 //change the number of nodes
+
+            let nodes = []
+            let nodes_int = []
+            let aux_nodes = []
+            let aux_nodes_int = []
+
+            let curr_node = null
+            let curr_node_int = 0
+
+            for (let i = 0; i < max_nodes; ++i) {
+                if (curr_node == null) {
+                    if (aux_nodes.length > 0) {
+                        curr_node = aux_nodes[0]
+                        curr_node_int = aux_nodes_int[0]
+                        aux_nodes.shift()
+                        aux_nodes_int.shift()
+                    }
+                }
+                if (i === max) {
+                    nodes = []
+                    nodes_int = []
+                    max = max * 2
+                    curr_node = null
+                } else {
+                    let x, y
+                    if (i === 0) {
+                        x = 0
+                        y = 0
+                    } else {
+                        x = 25 + (i * 50)
+                        y = 50 - (i * 50)
+                    }
+                    let aux = graph.addNode(i.toString(), {
+                        position: {
+                            x: x,
+                            y: y,
+                        },
+                        weight: 0.5,
+                        typeColor: 'blue'
+                    })
+                    nodes.push(aux)
+                    nodes_int.push(i)
+                    aux_nodes.push(aux)
+                    aux_nodes_int.push(i)
+                    if (curr_node != null) {
+                        graph.addLink(curr_node_int, i.toString(), {from: curr_node, to: aux});
+                    }
+                }
+            }
+            return graph
+        }
+
+    </script>
+    <style media="screen">
+        body, html, svg {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body onload="onLoad()"></body>
+</html>

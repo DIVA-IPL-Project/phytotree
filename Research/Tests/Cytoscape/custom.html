@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Cytoscape</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.2/cytoscape.min.js"></script>
+</head>
+<style>
+  #cy {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+</style>
+<body>
+<div id="cy"></div>
+<script>
+  let g = constructGraph(5000, 5)
+
+  var cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: {
+      nodes: g.nodes,
+      edges: g.edges
+    },
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'label': 'data(id)',
+          'background-color': 'blue',
+          'shape': 'ellipse',
+          'height': '15px',
+          'width': '15px',
+        }
+      },
+      {
+        selector: 'edge',
+        style: {
+          'label': 'data(id)',
+          'width': 0.5,
+          'line-color': '#000',
+        }
+      }
+    ],
+  });
+
+  function constructGraph(max_nodes, n_of_children_per_node) {
+    let edge_id = 0;
+
+    let root = {id: 'n0'}
+    let root_position = {x: 0, y: 0}
+
+    let graph = {
+      nodes: [],
+      edges: []
+    }
+    graph.nodes.push({group: 'nodes', data: root, position: root_position})
+
+    let queue = [], parent = root;
+    let node, edge, x, y;
+
+    for (let i = 1; i < max_nodes; i += n_of_children_per_node) {
+      for (let j = 0; j < n_of_children_per_node && i + j < max_nodes; j++) {
+
+        x = Math.floor(Math.random() * max_nodes);
+        y = Math.floor(Math.random() * max_nodes);
+
+        let node_id = {id: `n${i + j}`}
+        let node_position = {x: x, y: y}
+
+        node = {group: 'nodes', data: node_id, position: node_position}
+        graph.nodes.push(node)
+
+        queue.push(node_id);
+
+        edge = {id: `e${edge_id++}`, source: parent.id, target: node_id.id}
+        edge = {group: 'edges', data: edge}
+        graph.edges.push(edge);
+      }
+      parent = queue.shift();
+    }
+    return graph;
+  }
+
+  cy.nodes().ungrabify()
+  cy.nodes().lock()
+  cy.nodes().unpanify()
+</script>
+</body>
+</html>

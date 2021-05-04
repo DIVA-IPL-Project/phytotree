@@ -1,16 +1,8 @@
-
-
-//******************** INTERFACE METHODS ****************************
-
 /**
  * Builds a dendrogram with the JSON data received.
  * @param data the JSON data.
  */
 function buildTree(data) {
-    // d3.json("dendrogram03.json").then(json => {
-    //     tree = d3.hierarchy(json, d => d.children);
-    //     d3.cluster().size([height, width])(tree);
-
     let dendrogram = d3
         .cluster()
         .size([height, width]);
@@ -19,9 +11,11 @@ function buildTree(data) {
 
     tree = dendrogram(root);
 
-    d3.select('#container')
-        .select('svg').remove()
-    // the svg body
+    d3
+        .select('#container')
+        .select('svg')
+        .remove()
+
     let svg = d3
         .select("#container")
         .append("svg")
@@ -33,7 +27,6 @@ function buildTree(data) {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .attr("id", "graph");
 
-    // links
     let link = gElement
         .selectAll(".link")
         .data(tree.descendants().slice(1))
@@ -42,18 +35,17 @@ function buildTree(data) {
 
     link
         .append("path")
+        .on("mouseover", mouseOveredDend(true))
+        .on("mouseout", mouseOveredDend(false))
         .attr("class", "link")
         .attr("d", d => {
             return "M" + d.parent.y + "," + d.parent.x
-               // + "H" + (d.parent.y + (d.y - d.parent.y) / 2)
                 + "V" + d.x
                 + "H" + d.y;
         });
 
     addLinkStyle(gElement)
-    //addLinkLabels(link)
 
-    // nodes
     let node = gElement
         .selectAll(".node")
         .data(tree.descendants())
@@ -64,15 +56,12 @@ function buildTree(data) {
 
     node
         .append("circle")
-        .attr("r", 2.5)
-        .on("mouseover", mouseovered(true))
-        .on("mouseout", mouseovered(false));;
+        .attr("r", 2.5);
 
-    //addInternalLabels(gElement)
-    //addLeafLabels(gElement)
     addNodeStyle(node)
 
-    xAxis(svg)
+    addLeafLabels(gElement)
+
     addZoom(svg, gElement)
 }
 
@@ -86,8 +75,8 @@ function getTree() {
 }
 
 /**
- *
- * @param elem
+ * Adds custom style to the nodes.
+ * @param elem the html element to add the labels.
  */
 function addNodeStyle(elem) {
     elem
@@ -98,8 +87,8 @@ function addNodeStyle(elem) {
 }
 
 /**
- *
- * @param elem
+ * Adds custom style to the links.
+ * @param elem the html element to add the style.
  */
 function addLinkStyle(elem) {
     elem
@@ -113,8 +102,8 @@ function addLinkStyle(elem) {
 //********************* Auxiliary functions ************************
 
 /**
- *
- * @param elem
+ * Adds labels to the parent nodes.
+ * @param elem the html element to append the labels.
  */
 function addInternalLabels(elem) {
     elem
@@ -123,13 +112,13 @@ function addInternalLabels(elem) {
         .attr("dy", 20)
         .attr("x", -13)
         .style("text-anchor", "end")
-        .style("font", "14px sans-serif")
+        .style("font", "12px sans-serif")
         .text(d => d.data.name);
 }
 
 /**
- *
- * @param elem
+ * Adds labels to the leaf nodes.
+ * @param elem the html element to append the labels.
  */
 function addLeafLabels(elem) {
     elem
@@ -139,26 +128,29 @@ function addLeafLabels(elem) {
         .attr("x", 13)
         .style("text-anchor", "start")
         .style("font", "12px sans-serif")
-        .text(d => d.data.name);
+        .text(d => d.data.name)
+        .on("mouseover", mouseOveredDend(true))
+        .on("mouseout", mouseOveredDend(false));
 }
 
 /**
- *
- * @param elem
+ * Adds labels to the links.
+ * @param elem the html element to append the labels.
  */
 function addLinkLabels(elem) {
     elem
         .append("text")
         .attr("x", d => (d.parent.y + d.y) / 2)
-        .attr("y", d => (d.parent.x + d.x) / 2)
-        .attr("text-anchor", "end")
-        .text(d => d.data.size)
+        .attr("y", d => d.x - 5)
+        .attr("text-anchor", "middle")
+        .text(d => d.data.length);
 }
 
 /**
- *
+ * Adds a horizontal axis with the scale.
  */
-function xAxis(svg) {
+//TODO scale
+function axis(svg) {
     let elem = svg
         .append("g")
 
@@ -170,18 +162,16 @@ function xAxis(svg) {
         .attr("y2", 710)
         .style("stroke", "#000");
 
-    d3
-        .selectAll('.node')
-        .each(function (d) {
-            if (d.data.size > maxLinkSize) {
-                maxLinkSize = d.data.size
-            }
-        })
+    // d3
+    //     .selectAll('.node')
+    //     .each(function (d) {
+    //         if (d.data.size > maxLinkSize) {
+    //             maxLinkSize = d.data.size
+    //         }
+    //     })
 
     elem.append("text")
-        .text(maxLinkSize.toString())
+        .text("")
         .attr("x", 180)
         .attr("y", "46em")
 }
-
-

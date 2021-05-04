@@ -38,7 +38,7 @@ async function load() {
         let g = d3.select('#container')
             .select('svg')
             .select('#graph')
-        addLeafLabels(g)
+        addInternalLabels(g)
     })
 
     let nwkBtn = document.getElementById('nwkBtn')
@@ -57,7 +57,7 @@ function sendNwkData() {
 
     fetch('/api/data', {method: 'post', body: body, headers: headers})
         .then(async res => {
-            if (res.status == 500) alertMsg('error')
+            if (res.status === 500) alertMsg('error')
             data = await res.json()
             console.log(data)
         })
@@ -79,6 +79,12 @@ function mouseovered(active) {
         d3.select(d.linkExtensionNode).classed("link-extension--active", active).raise();
         do d3.select(d.linkNode).classed("link--active", active).raise();
         while (d = d.parent);
+    };
+}
+
+function mouseOveredDend(active) {
+    return function (event, d) {
+        d3.select(this).classed("link--active", active).raise();
     };
 }
 

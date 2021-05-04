@@ -13,16 +13,6 @@ app.use(bodyParser.json())
 app.use('/api', routesApi)
 app.use(routesWeb)
 
-// app.get('/home', function (req, res, next) {
-//     res.sendFile(__dirname + '/home.html');
-// });
-//
-// app.get('/api/data', function (req, res, next) {
-//     // res.sendFile(__dirname + '/home.html');
-//     // const html = fs.readFileSync( __dirname + '/home.html' );
-//     res.json({html: html.toString(), data: root});
-// });
-
 app.listen(PORT, function(err){
     if (err) console.log(err);
     console.log("Server listening on PORT", PORT);

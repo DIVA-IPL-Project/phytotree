@@ -9,7 +9,7 @@
 }
 
 .link--active {
-    stroke: #000 !important;
+    stroke: blue !important;
     stroke-width: 1.5px;
 }
 

@@ -1,22 +1,12 @@
-let numberOfNodes
-let tree
-let maxLinkSize = 0
-let margin = {
-    top: 20,
-    right: 90,
-    bottom: 30,
-    left: 90
-}
-let width = 1400 - margin.left - margin.right;
-let height = 800 - margin.top - margin.bottom;
+
 
 //******************** INTERFACE METHODS ****************************
 
 /**
  * Builds a dendrogram with the JSON data received.
- * @param json the JSON data.
+ * @param data the JSON data.
  */
-function buildTree(json) {
+function buildTree(data) {
     // d3.json("dendrogram03.json").then(json => {
     //     tree = d3.hierarchy(json, d => d.children);
     //     d3.cluster().size([height, width])(tree);
@@ -25,13 +15,15 @@ function buildTree(json) {
         .cluster()
         .size([height, width]);
 
-    let root = d3.hierarchy(json, d => d.children);
+    let root = d3.hierarchy(data, d => d.children);
 
     tree = dendrogram(root);
 
+    d3.select('#container')
+        .select('svg').remove()
     // the svg body
     let svg = d3
-        .select("body")
+        .select("#container")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -59,7 +51,7 @@ function buildTree(json) {
         });
 
     addLinkStyle(gElement)
-    addLinkLabels(link)
+    //addLinkLabels(link)
 
     // nodes
     let node = gElement
@@ -72,10 +64,12 @@ function buildTree(json) {
 
     node
         .append("circle")
-        .attr("r", 2.5);
+        .attr("r", 2.5)
+        .on("mouseover", mouseovered(true))
+        .on("mouseout", mouseovered(false));;
 
-    addInternalLabels(gElement)
-    addLeafLabels(gElement)
+    //addInternalLabels(gElement)
+    //addLeafLabels(gElement)
     addNodeStyle(node)
 
     xAxis(svg)
@@ -190,12 +184,4 @@ function xAxis(svg) {
         .attr("y", "46em")
 }
 
-function addZoom(svg, elem) {
-    svg
-        .call(d3.zoom()
-            .scaleExtent([0.5, 5])
-            .on("zoom", function (event) {
-                elem.attr("transform", event.transform)
-            }))
-}
 

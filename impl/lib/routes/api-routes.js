@@ -1,4 +1,4 @@
-const nwkParser = require('../utils/newickParser')
+const nwkParser = require('../service/parsing/newickParser')
 const Router = require('express').Router
 const router = Router()
 

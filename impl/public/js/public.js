@@ -1,13 +1,45 @@
 window.onload = load
 
+let numberOfNodes
+let tree
+let maxLinkSize = 0
+let margin = {
+    top: 20,
+    right: 90,
+    bottom: 30,
+    left: 90
+}
+let width = 1400 - margin.left - margin.right;
+let height = 800 - margin.top - margin.bottom;
+
+
+// let height = 1920;
+// let width = 1920;
+const dx = 10;
+const dy = width / 6;
+
 let data;
 
 async function load() {
     let rad = document.querySelector('.radial-btn')
-    rad.addEventListener('click', radial)
+    rad.addEventListener('click', evt => {
+        console.log(data)
+        radial(data)
+    })
 
     let den = document.querySelector('.dendro-btn')
-    den.addEventListener('click', dendro)
+    den.addEventListener('click', evt => {
+        console.log(data)
+        buildTree(data)
+    })
+
+    let b = document.querySelector('.b')
+    b.addEventListener('click', evt => {
+        let g = d3.select('#container')
+            .select('svg')
+            .select('#graph')
+        addLeafLabels(g)
+    })
 
     let nwkBtn = document.getElementById('nwkBtn')
     nwkBtn.addEventListener('click', sendNwkData)
@@ -30,6 +62,24 @@ function sendNwkData() {
             console.log(data)
         })
         .catch(err => alertMsg(err))
+}
+
+function addZoom(svg, elem) {
+    svg
+        .call(d3.zoom()
+            .scaleExtent([0.5, 5])
+            .on("zoom", function (event) {
+                elem.attr("transform", event.transform)
+            }))
+}
+
+function mouseovered(active) {
+    return function (event, d) {
+        d3.select(this).classed("label--active", active);
+        d3.select(d.linkExtensionNode).classed("link-extension--active", active).raise();
+        do d3.select(d.linkNode).classed("link--active", active).raise();
+        while (d = d.parent);
+    };
 }
 
 function alertMsg(message, kind) {

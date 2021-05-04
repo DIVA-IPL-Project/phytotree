@@ -1,10 +1,6 @@
-let height = 1920;
-let width = 1920;
-const dx = 10;
-const dy = width / 6;
-const margin = ({top: 10, right: 120, bottom: 10, left: 40})
-const tree = d3.tree().nodeSize([dx, dy])
-const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x)
+//const margin = ({top: 10, right: 120, bottom: 10, left: 40})
+//const tree = d3.tree().nodeSize([dx, dy])
+//const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x)
 
 function buildRadialTree(jsonData) {
     let diameter = height * 0.75;
@@ -59,8 +55,8 @@ function buildRadialTree(jsonData) {
 //         .text(d => d.data.name);
 // }
 
-function radial() {
-    const width = 1920
+function radial(data) {
+    const width = 900
     const outerRadius = width / 2
     const innerRadius = outerRadius - 170
     const cluster = d3.cluster()
@@ -141,12 +137,6 @@ function radial() {
         setRadius(root, root.data.length = 0, innerRadius / maxLength(root));
         //setColor(root);
 
-        const zoom = d3.zoom()
-            .on('zoom', (event) => {
-                svg.attr('transform', event.transform);
-            })
-            .scaleExtent([1, 2]);
-
         d3.select('#container')
             .select('svg').remove()
         const svg = d3.select('#container')
@@ -154,27 +144,26 @@ function radial() {
             .attr("viewBox", [-outerRadius, -outerRadius, width, width])
             .attr("font-family", "sans-serif")
             .attr("font-size", 10)
-        //.call(zoom)
 
-
+        addZoom(svg, svg)
 
         // svg.append("g")
         //     .call(legend);
-        svg.append("style").text(`
-            .link--active {
-              stroke: #000 !important;
-              stroke-width: 1.5px;
-            }
-
-            .link-extension--active {
-              stroke-opacity: .6;
-            }
-
-            .label--active {
-              font-weight: bold;
-            }
-            `
-        );
+        // svg.append("style").text(`
+        //     .link--active {
+        //       stroke: #000 !important;
+        //       stroke-width: 1.5px;
+        //     }
+        //
+        //     .link-extension--active {
+        //       stroke-opacity: .6;
+        //     }
+        //
+        //     .label--active {
+        //       font-weight: bold;
+        //     }
+        //     `
+        // );
 
         const linkExtension = svg.append("g")
             .attr("fill", "none")
@@ -217,21 +206,12 @@ function radial() {
             link.transition(t).attr("d", checked ? linkVariable : linkConstant);
         }
 
-        function mouseovered(active) {
-            return function (event, d) {
-                d3.select(this).classed("label--active", active);
-                d3.select(d.linkExtensionNode).classed("link-extension--active", active).raise();
-                do d3.select(d.linkNode).classed("link--active", active).raise();
-                while (d = d.parent);
-            };
-        }
-
         let node = svg.node()
         node.update = update
         return node;
     }
 
-    const update = chart().update(getRandomIntInclusive(0,1))
+    const update = chart().update(true)
 }
 
 function collapseNode(node) {
@@ -244,13 +224,4 @@ function addStyle() {
 
 function getTree() {
 
-}
-
-/*
-AUX
- */
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

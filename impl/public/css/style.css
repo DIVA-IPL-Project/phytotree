@@ -1,0 +1,22 @@
+.link {
+    fill: none;
+    stroke: #808080;
+    stroke-width: 2px;
+}
+
+.btn {
+    color: grey;
+}
+
+.link--active {
+    stroke: #000 !important;
+    stroke-width: 1.5px;
+}
+
+.link-extension--active {
+    stroke-opacity: .6;
+}
+
+.label--active {
+    font-weight: bold;
+}

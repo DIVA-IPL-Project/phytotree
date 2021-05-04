@@ -1,2 +1,2 @@
-# Radial-Dendogram-Visualization
+# Radial-Dendrogram-Visualization
 Radial and Dendogram Visualization for Phylogenetic Trees

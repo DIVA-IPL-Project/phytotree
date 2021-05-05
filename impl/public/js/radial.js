@@ -13,47 +13,49 @@ function buildRadialTree(jsonData) {
     return tree(data);
 }
 
-// function radial() {
-//     const tree = buildRadialTree(data)
-//
-//     d3.select('#container')
-//         .select('svg').remove()
-//     let svg = d3.select('#container')
-//         .append('svg')
-//         .attr('width', width)
-//         .attr('height', height);
-//
-//     let nodes = tree.descendants();
-//     let links = tree.links();
-//
-//     let graphGroup = svg.append('g')
-//         .attr('transform', "translate(" + (width / 2) + "," + (height / 2) + ")");
-//
-//     graphGroup.selectAll(".link")
-//         .data(links)
-//         .join("path")
-//         .attr("class", "link")
-//         .attr("d", d3.linkRadial().angle(d => d.x).radius(d => d.y));
-//
-//     let node = graphGroup
-//         .selectAll(".node")
-//         .data(nodes)
-//         .join("g")
-//         .attr("class", "node")
-//         .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`);
-//
-//     node.append("circle").attr("r", 4);
-//
-//     node.append("text")
-//         .attr("font-family", "sans-serif")
-//         .attr("font-size", 12)
-//         .attr("stroke", "blue")
-//         .attr("dx", d => d.x < Math.PI ? 8 : -8)
-//         .attr("dy", ".31em")
-//         .attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
-//         .attr("transform", d => d.x < Math.PI ? null : "rotate(180)")
-//         .text(d => d.data.name);
-// }
+function radialTree(data) {
+    const tree = buildRadialTree(data)
+
+    d3.select('#container')
+        .select('svg').remove()
+    let svg = d3.select('#container')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+    let nodes = tree.descendants();
+    let links = tree.links();
+
+    let graphGroup = svg.append('g')
+        .attr('transform', "translate(" + (width / 2) + "," + (height / 2) + ")");
+
+    addZoom(svg, graphGroup)
+
+    graphGroup.selectAll(".link")
+        .data(links)
+        .join("path")
+        .attr("class", "link")
+        .attr("d", d3.linkRadial().angle(d => d.x).radius(d => d.y));
+
+    let node = graphGroup
+        .selectAll(".node")
+        .data(nodes)
+        .join("g")
+        .attr("class", "node")
+        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`);
+
+    node.append("circle").attr("r", 4);
+
+    node.append("text")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 12)
+        .attr("stroke", "blue")
+        .attr("dx", d => d.x < Math.PI ? 8 : -8)
+        .attr("dy", ".31em")
+        .attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
+        .attr("transform", d => d.x < Math.PI ? null : "rotate(180)")
+        .text(d => d.data.name);
+}
 
 function radial(data) {
     const width = 900

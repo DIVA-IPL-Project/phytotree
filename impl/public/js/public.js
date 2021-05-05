@@ -26,6 +26,11 @@ async function load() {
         radial(data)
     })
 
+    let radialB = document.querySelector('.radialTree-btn')
+    radialB.addEventListener('click', evt => {
+        radialTree(data)
+    })
+
     let den = document.querySelector('.dendro-btn')
     den.addEventListener('click', evt => {
         buildTree(data)

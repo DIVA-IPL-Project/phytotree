@@ -187,7 +187,6 @@ router.get('/data', (req, res, next) => res.json(root))
 router.post('/data', (req, res, next) => {
     let newick = req.body;
     let json = nwkParser(newick.data)
-    console.log(json)
     res.json(json)
 })
 

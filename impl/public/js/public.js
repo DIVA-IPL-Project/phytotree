@@ -23,13 +23,11 @@ let data;
 async function load() {
     let rad = document.querySelector('.radial-btn')
     rad.addEventListener('click', evt => {
-        console.log(data)
         radial(data)
     })
 
     let den = document.querySelector('.dendro-btn')
     den.addEventListener('click', evt => {
-        console.log(data)
         buildTree(data)
     })
 
@@ -85,6 +83,8 @@ function mouseovered(active) {
 function mouseOveredDend(active) {
     return function (event, d) {
         d3.select(this).classed("link--active", active).raise();
+        do d3.select(d.linkNode).classed("link--active", active).raise();
+        while (d = d.parent);
     };
 }
 

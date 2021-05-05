@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>D3.js Radial Tree Example</title>
+    <title>Dendrogram and Radial Visualization</title>
     <link rel="stylesheet" href="./public/css/style.css">
     <script src="./public/js/d3.v6.min.js"></script>
     <script src="./public/js/public.js"></script>
@@ -13,13 +13,15 @@
 
 </div>
 <div>
-    <div>
+    <div class="menu-div">
         <textarea id="nwk" rows="4" cols="50" name="newick"></textarea>
         <button id="nwkBtn">Send data</button>
     </div>
-    <button class="radial-btn btn">Radial</button>
-    <button class="dendro-btn btn">Dendrogram</button>
-    <button class="b btn">Parent labels</button>
+    <div class="menu-div">
+        <button class="radial-btn btn">Radial</button>
+        <button class="dendro-btn btn">Dendrogram</button>
+        <button class="b btn">Parent labels</button>
+    </div>
 </div>
 <div id="container"></div>
 </body>

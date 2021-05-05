@@ -143,9 +143,13 @@ function radial(data) {
             .append("svg")
             .attr("viewBox", [-outerRadius, -outerRadius, width, width])
             .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
+            .attr("font-size", 10);
+        const group = svg
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("id", "graph");
 
-        addZoom(svg, svg)
+        addZoom(svg, group)
 
         // svg.append("g")
         //     .call(legend);
@@ -165,7 +169,7 @@ function radial(data) {
         //     `
         // );
 
-        const linkExtension = svg.append("g")
+        const linkExtension = group.append("g")
             .attr("fill", "none")
             .attr("stroke", "#000")
             .attr("stroke-opacity", 0.25)
@@ -177,7 +181,7 @@ function radial(data) {
             })
             .attr("d", linkExtensionConstant);
 
-        const link = svg.append("g")
+        const link = group.append("g")
             .attr("fill", "none")
             .attr("stroke", "#000")
             .selectAll("path")
@@ -189,7 +193,7 @@ function radial(data) {
             .attr("d", linkConstant)
             .attr("stroke", d => d.target.color);
 
-        svg.append("g")
+        group.append("g")
             .selectAll("text")
             .data(root.leaves())
             .join("text")
@@ -206,7 +210,7 @@ function radial(data) {
             link.transition(t).attr("d", checked ? linkVariable : linkConstant);
         }
 
-        let node = svg.node()
+        let node = group.node()
         node.update = update
         return node;
     }

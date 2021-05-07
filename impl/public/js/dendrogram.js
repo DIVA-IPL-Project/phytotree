@@ -2,31 +2,28 @@
  * Builds a dendrogram with the JSON data received.
  * @param data the JSON data.
  */
+
+
+let tree
+
 function buildTree(data) {
-    let dendrogram = d3
-        .cluster()
-        .size([height, width]);
-
+    let dendrogram = clusterTree().size([height, width]);
     let root = d3.hierarchy(data, d => d.children);
-
     tree = dendrogram(root);
+    root.eachBefore(d => {
+        if (d.parent) d.y = d.parent.y + scale * d.data.length
+    })
 
-    d3
-        .select('#container')
-        .select('svg')
-        .remove()
-
+    d3.select('#container').select('svg').remove()
     let svg = d3
         .select("#container")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-
     let gElement = svg
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("transform", "translate(" + [margin.left,margin.top] + ")")
         .attr("id", "graph");
-
     let link = gElement
         .selectAll(".link")
         .data(tree.descendants().slice(1))
@@ -39,7 +36,7 @@ function buildTree(data) {
         .on("mouseout", mouseOveredDend(false))
         .attr("class", "link")
         .attr("d", d => {
-            return "M" + d.parent.y + "," + d.parent.x
+            return "M" + [d.parent.y,d.parent.x]
                 + "V" + d.x
                 + "H" + d.y;
         });
@@ -52,7 +49,7 @@ function buildTree(data) {
         .enter()
         .append("g")
         .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
-        .attr("transform", d => "translate(" + d.y + "," + d.x + ")");
+        .attr("transform", d => "translate(" + [d.y,d.x] + ")");
 
     node
         .append("circle")

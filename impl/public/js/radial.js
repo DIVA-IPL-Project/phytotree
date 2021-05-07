@@ -5,56 +5,85 @@
 function buildRadialTree(jsonData) {
     let diameter = height * 0.75;
     let radius = diameter / 2;
-    let tree = d3.tree()
+    let cluster = clusterTree()
         .size([2 * Math.PI, radius])
         .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
-
     let data = d3.hierarchy(jsonData);
-    return tree(data);
+    let toReturn = cluster(data)
+    data.eachBefore(d => {
+        if (d.parent) d.y = d.parent.y + scale * d.data.length
+    })
+    return toReturn;
 }
 
 function radialTree(data) {
     const tree = buildRadialTree(data)
 
+    const width = 1920
+    const outerRadius = width / 2
+    const innerRadius = outerRadius - 170
     d3.select('#container')
         .select('svg').remove()
-    let svg = d3.select('#container')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height);
+    const svg = d3.select('#container')
+        .append("svg")
+        .attr("viewBox", [-700, -700, 1400, 1400])
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10);
 
-    let nodes = tree.descendants();
-    let links = tree.links();
+    // d3.select('#container')
+    //     .select('svg').remove()
+    // let svg = d3.select('#container')
+    //     .append('svg')
+    //     .attr('width', width + margin.left + margin.right)
+    //     .attr('height', height + margin.top + margin.bottom);
 
     let graphGroup = svg.append('g')
-        .attr('transform', "translate(" + (width / 2) + "," + (height / 2) + ")");
+        //.attr('transform', "translate(" + (width / 2) + "," + (height / 2) + ")")
+        //.attr('transform', "translate(" + [margin.left, margin.top] + ")");
 
-    addZoom(svg, graphGroup)
+    let link = graphGroup
+        .selectAll(".link")
+        .data(tree.descendants().slice(1))
+        .enter()
+        .append("g")
 
-    graphGroup.selectAll(".link")
-        .data(links)
-        .join("path")
+    link
+        .append("line")
+        .on("mouseover", mouseOveredDend(true))
+        .on("mouseout", mouseOveredDend(false))
         .attr("class", "link")
-        .attr("d", d3.linkRadial().angle(d => d.x).radius(d => d.y));
+        .attr("x1", d => radialPoint(d.parent.x,d.parent.y*d.parent.data.length)[0])
+        .attr("y1", d => radialPoint(d.parent.x,d.parent.y*d.parent.data.length)[1])
+        .attr("x2", d => radialPoint(d.x,d.y*d.data.length)[0])
+        .attr("y2", d => radialPoint(d.x,d.y*d.data.length)[1]);
 
     let node = graphGroup
         .selectAll(".node")
-        .data(nodes)
-        .join("g")
-        .attr("class", "node")
-        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`);
+        .data(tree.descendants())
+        .enter()
+        .append("g")
+        .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
 
-    node.append("circle").attr("r", 4);
+        //.attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`);
+        .attr("transform", d => {
+            let dx = d.x,
+                dy = d.y,
+                length = d.data.length
+            let point = radialPoint(dx,  dy * length)
+            return `translate(${point[0]}, ${point[1]})`
+        });
 
-    node.append("text")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", 12)
-        .attr("stroke", "blue")
-        .attr("dx", d => d.x < Math.PI ? 8 : -8)
-        .attr("dy", ".31em")
-        .attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
-        .attr("transform", d => d.x < Math.PI ? null : "rotate(180)")
-        .text(d => d.data.name);
+    //node.append("circle").attr("r", 4);
+
+    //node.append("text")
+    //    .attr("class", "text-label")
+    //    .attr("dx", d => d.x < Math.PI ? 8 : -8)
+    //    .attr("dy", ".31em")
+    //    .attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
+    //    //.attr("transform", d => d.x < Math.PI ? null : "rotate(180)")
+    //    .text(d => d.data.name);
+
+    addZoom(svg, graphGroup)
 }
 
 function radial(data) {
@@ -153,24 +182,6 @@ function radial(data) {
 
         addZoom(svg, group)
 
-        // svg.append("g")
-        //     .call(legend);
-        // svg.append("style").text(`
-        //     .link--active {
-        //       stroke: #000 !important;
-        //       stroke-width: 1.5px;
-        //     }
-        //
-        //     .link-extension--active {
-        //       stroke-opacity: .6;
-        //     }
-        //
-        //     .label--active {
-        //       font-weight: bold;
-        //     }
-        //     `
-        // );
-
         const linkExtension = group.append("g")
             .attr("fill", "none")
             .attr("stroke", "#000")
@@ -230,4 +241,14 @@ function addStyle() {
 
 function getTree() {
 
+}
+
+/*
+aux functions
+ */
+function radialPoint(x, y) {
+    // rotate(${d.x * 180 / Math.PI - 90})
+    // translate(${d.y},0)
+    //return [x * 180 / Math.PI - 90, y];
+    return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
 }

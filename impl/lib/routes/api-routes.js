@@ -145,39 +145,42 @@ const router = Router()
 //         }
 //     ]
 // };
-
+/*
+((A12:1,A13:2,A14:4,A15:6,A16:8)A1:10, (A21:6, (A221:2,A222:1,A223:6,A224:10)A22:4,A23:4,A24:8,A25:10)A2:5)root:0;
+ */
 let root = {
     name: 'root',
+    length: 0,
     children: [
         {
             name: "A1",
-            length: 1,
+            length: 10,
             children: [
                 {length: 1, name: "A12"},
-                {length: 1, name: "A13"},
-                {length: 1, name: "A14"},
-                {length: 1, name: "A15"},
-                {length: 1, name: "A16"}
+                {length: 2, name: "A13"},
+                {length: 4, name: "A14"},
+                {length: 6, name: "A15"},
+                {length: 8, name: "A16"}
             ]
         },
         {
             name: "A2",
-            length: 1,
+            length: 5,
             children: [
-                {length: 1, name: "A21"},
+                {length: 6, name: "A21"},
                 {
                     name: "A22",
-                    length: 1,
+                    length: 4,
                     children: [
-                        {length: 1, name: "A221"},
+                        {length: 2, name: "A221"},
                         {length: 1, name: "A222"},
-                        {length: 1, name: "A223"},
-                        {length: 1, name: "A224"}
+                        {length: 6, name: "A223"},
+                        {length: 10, name: "A224"}
                     ]
                 },
-                {length: 1, name: "A23"},
-                {length: 1, name: "A24"},
-                {length: 1, name: "A25"}]
+                {length: 4, name: "A23"},
+                {length: 8, name: "A24"},
+                {length: 10, name: "A25"}]
         }
     ]
 };

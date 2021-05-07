@@ -1,7 +1,7 @@
 window.onload = load
 
+let scale = 100
 let numberOfNodes
-let tree
 let maxLinkSize = 0
 let margin = {
     top: 20,
@@ -47,6 +47,16 @@ async function load() {
     let nwkBtn = document.getElementById('nwkBtn')
     nwkBtn.addEventListener('click', sendNwkData)
 
+    let slider = document.getElementById("slider");
+    let variable = document.getElementById('variable');
+    variable.textContent = slider.value;
+    slider.addEventListener('input', function(e) {
+        variable.textContent = slider.value;
+        scale = +slider.value;
+        buildTree(data)
+    });
+
+
     let resp = await fetch('http://localhost:8000/api/data')
 
     if (resp.status !== 200) alertMsg(resp.statusText)
@@ -62,7 +72,6 @@ function sendNwkData() {
         .then(async res => {
             if (res.status === 500) alertMsg('error')
             data = await res.json()
-            console.log(data)
         })
         .catch(err => alertMsg(err))
 }
@@ -70,7 +79,7 @@ function sendNwkData() {
 function addZoom(svg, elem) {
     svg
         .call(d3.zoom()
-            .scaleExtent([0.5, 5])
+            .scaleExtent([0.1, 100])
             .on("zoom", function (event) {
                 elem.attr("transform", event.transform)
             }))
@@ -91,6 +100,92 @@ function mouseOveredDend(active) {
         do d3.select(d.linkNode).classed("link--active", active).raise();
         while (d = d.parent);
     };
+}
+
+function clusterTree() {
+    function leafLeft(node) {
+        var children;
+        while (children = node.children) node = children[0];
+        return node;
+    }
+
+    function leafRight(node) {
+        var children;
+        while (children = node.children) node = children[children.length - 1];
+        return node;
+    }
+
+    function meanX(children) {
+        return children.reduce((x, c) => x + c.x, 0) / children.length;
+    }
+
+    function meanXReduce(x, c) {
+        return x + c.x;
+    }
+
+    function maxY(children) {
+        return 1 + children.reduce(maxYReduce, 0);
+    }
+
+    function maxYReduce(y, c) {
+        return Math.max(y, c.y);
+    }
+
+    let separation = (a, b) => a.parent === b.parent ? 1 : 2,
+        dx = 1,
+        dy = 1,
+        nodeSize = false;
+
+    function cluster(root) {
+        let previousNode,
+            x = 0;
+
+        // First walk, computing the initial x & y values.
+        root.eachAfter(function (node) {
+            let children = node.children;
+            if (children) {
+                node.x = meanX(children);
+                node.y = maxY(children);
+            } else {
+                node.x = previousNode ? x += separation(node, previousNode) : 0;
+                node.y = 0;
+                previousNode = node;
+            }
+        });
+
+        let left = leafLeft(root),
+            right = leafRight(root),
+            x0 = left.x - separation(left, right) / 2,
+            x1 = right.x + separation(right, left) / 2;
+
+        // Second walk, normalizing x & y to the desired size.
+        return root.eachAfter(nodeSize ?
+            function (node) {
+                node.x = (node.x - root.x) * dx;
+                node.y = (root.y - node.y) * dy;
+            } :
+            function (node) {
+                node.x = (node.x - x0) / (x1 - x0) * dx;
+                //node.y = (1 - (root.y ? node.y / root.y : 1)) * dy;
+                //node.y = node.depth * dy / root.y;
+                node.y = node.depth * scale;
+                // node.parent.y + (node.y - node.parent.y) * node.length
+            });
+    }
+
+    cluster.separation = function (x) {
+        return arguments.length ? (separation = x, cluster) : separation;
+    };
+
+    cluster.size = function (x) {
+        return arguments.length ? (nodeSize = false, dx = +x[0], dy = +x[1], cluster) : (nodeSize ? null : [dx, dy]);
+    };
+
+    cluster.nodeSize = function (x) {
+        return arguments.length ? (nodeSize = true, dx = +x[0], dy = +x[1], cluster) : (nodeSize ? [dx, dy] : null);
+    };
+
+    return cluster;
 }
 
 function alertMsg(message, kind) {

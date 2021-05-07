@@ -10,7 +10,7 @@
 
 .link--active {
     stroke: blue !important;
-    stroke-width: 1.5px;
+    stroke-width: 2px;
 }
 
 .link-extension--active {
@@ -19,4 +19,10 @@
 
 .label--active {
     font-weight: bold;
+}
+
+.text-label {
+    stroke: blue;
+    font-size: 12px;
+    fill: blue;
 }

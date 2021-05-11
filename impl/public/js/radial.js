@@ -19,36 +19,31 @@ function buildRadialTree(jsonData) {
 function radial(data) {
     const tree = buildRadialTree(data)
 
-    const width = 1920
-    const outerRadius = width / 2
-    const innerRadius = outerRadius - 170
-
-    d3.select('#container').select('svg').select('#zoom').select('#graph').remove()
-
-    if(!svg){
+    let svg, gZoom
+    if (!d3.select('#container').select('svg').empty()) {
+        d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
+        svg = d3.select('#container').select('svg');
+        gZoom = svg.select('#zoom');
+    } else {
         svg = d3
             .select("#container")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
-    }
 
-    if(!gZoom){
         gZoom = svg.append("g")
             .attr("id", "zoom")
             .attr("transform", "translate(" + [margin.left,margin.top] + ")")
     }
+    addZoom(svg, gZoom);
 
-
-    let graphGroup = gZoom.append('g').attr('id', 'graph')
-    //.attr('transform', "translate(" + (width / 2) + "," + (height / 2) + ")")
-    //.attr('transform', "translate(" + [margin.left, margin.top] + ")");
+    let graphGroup = gZoom.append('g').attr('id', 'graph');
 
     let link = graphGroup
         .selectAll(".link")
         .data(tree.descendants().slice(1))
         .enter()
-        .append("g")
+        .append("g");
 
     link
         .append("line")
@@ -58,8 +53,7 @@ function radial(data) {
         .attr("x1", d => d.parent.x)
         .attr("y1", d => d.parent.y)
         .attr("x2", d => d.x)
-        .attr("y2", d => d.y)
-        //.attr("transform", d => `rotate(${d.x * 180 / Math.PI + 180}) translate(${d.y},0)`);
+        .attr("y2", d => d.y);
 
     let node = graphGroup
         .selectAll(".node")
@@ -67,27 +61,15 @@ function radial(data) {
         .enter()
         .append("g")
         .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
+        .attr("transform", d => `translate(${[d.x, d.y]})`);
 
-        //.attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`);
-    // .attr("transform", d => {
-    //     let dx = d.x,
-    //         dy = d.y,
-    //         length = d.data.length
-    //     let point = radialPoint(dx,  dy * length)
-    //     return `translate(${point})`
-    // });
-
-    // node.append("circle").attr("r", 1).attr('class', 'nodeRadial');
+    node.append("circle").attr("r", 5).attr('class', 'nodeRadial');
 
     node.append("text")
         .attr("class", "text-label")
         .attr("dx", d => d.x < Math.PI ? 8 : -8)
         .attr("dy", ".31em")
-        //.attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
-        //.attr("transform", d => d.x < Math.PI ? null : "rotate(180)")
         .text(d => d.data.name);
-
-    addZoom(svg, graphGroup)
 }
 
 function collapseNode(node) {
@@ -101,6 +83,12 @@ function addStyle() {
 function getTree() {
 
 }
+
+
+
+/*
+private functions
+ */
 
 function radialCalc() {
     const pi = Math.PI
@@ -125,8 +113,8 @@ function radialCalc() {
                     w.rb = n;
                     w.ws = (2 * pi * w.leafcount) / root.leafcount
                     let alpha = w.rb + (w.ws / 2);
-                    w.x = v.x + Math.cos(alpha) * w.data.length;
-                    w.y = v.y + Math.sin(alpha) * w.data.length;
+                    w.x = v.x + Math.cos(alpha) * w.data.length * scale;
+                    w.y = v.y + Math.sin(alpha) * w.data.length * scale;
                     n = n + w.ws;
                 })
             }
@@ -135,16 +123,6 @@ function radialCalc() {
     }
 
     return radialTest;
-}
-
-/*
-aux functions
- */
-function radialPoint(x, y) {
-    // rotate(${d.x * 180 / Math.PI - 90})
-    // translate(${d.y},0)
-    //return [x * 180 / Math.PI - 90, y];
-    return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
 }
 
 function mouseovered(active) {

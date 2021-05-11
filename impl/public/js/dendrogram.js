@@ -5,25 +5,43 @@
 
 
 let tree
+let svg
+let gZoom
 
-function buildTree(data) {
-    let dendrogram = clusterTree().size([height, width]);
+function buildTree(data, flag) {
     let root = d3.hierarchy(data, d => d.children);
-    tree = dendrogram(root);
-    root.eachBefore(d => {
-        if (d.parent) d.y = d.parent.y + scale * d.data.length
-    })
+    if(flag){
+        let dendrogram = clusterTree().size([height, width]);
+        tree = dendrogram(root);
+        root.eachBefore(d => {
+            if (d.parent) d.y = d.parent.y + scale * d.data.length
+        })
+    } else {
+        let dendrogram = d3.cluster().size([height, width]);
+        tree = dendrogram(root);
+    }
 
-    d3.select('#container').select('svg').remove()
-    let svg = d3
-        .select("#container")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-    let gElement = svg
+    d3.select('#container').select('svg').select('#zoom').select('#graph').remove()
+
+    if(!svg){
+        svg = d3
+            .select("#container")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+    }
+
+    if(!gZoom){
+        gZoom = svg.append("g")
+            .attr("id", "zoom")
+            .attr("transform", "translate(" + [margin.left,margin.top] + ")")
+    }
+
+
+    let gElement = gZoom
         .append("g")
-        .attr("transform", "translate(" + [margin.left,margin.top] + ")")
         .attr("id", "graph");
+
     let link = gElement
         .selectAll(".link")
         .data(tree.descendants().slice(1))
@@ -59,7 +77,7 @@ function buildTree(data) {
 
     addLeafLabels(gElement)
 
-    addZoom(svg, gElement)
+    addZoom(svg, gZoom)
 }
 
 /**

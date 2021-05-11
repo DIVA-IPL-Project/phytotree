@@ -9,9 +9,12 @@ let margin = {
     bottom: 30,
     left: 90
 }
-let width = 1400 - margin.left - margin.right;
-let height = 800 - margin.top - margin.bottom;
+// let width = 1400 - margin.left - margin.right;
+// let height = 800 - margin.top - margin.bottom;
 
+
+let width = window.innerWidth - margin.left - margin.right
+let height = window.innerHeight - margin.top - margin.bottom
 
 // let height = 1920;
 // let width = 1920;
@@ -33,7 +36,7 @@ async function load() {
 
     let den = document.querySelector('.dendro-btn')
     den.addEventListener('click', evt => {
-        buildTree(data)
+        buildTree(data, true)
     })
 
     let b = document.querySelector('.b')
@@ -53,7 +56,7 @@ async function load() {
     slider.addEventListener('input', function(e) {
         variable.textContent = slider.value;
         scale = +slider.value;
-        buildTree(data)
+        buildTree(data, true)
     });
 
 

@@ -4,6 +4,10 @@
     stroke-width: 2px;
 }
 
+.nodeRadial {
+    fill: #808080;
+}
+
 .btn {
     color: grey;
 }

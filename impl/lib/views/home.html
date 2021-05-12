@@ -39,7 +39,7 @@
     <!-- Sidebar -->
     <nav class="sidenav">
         <div class="sidebar-header text-center">
-            <h3>Visualisation</h3>
+            <h3>Visualization</h3>
         </div>
         <div class="btn-group-vertical d-grid justify-content-center">
             <button type="button" class="radial-btn btn btn btn-light mt-1">Circular Radial</button>
@@ -52,12 +52,14 @@
             <input id='slider' type='range' min='25' max='1000' step='25' value='100' />
         </div>
         <div class="menu-div ">
-            <textarea id="nwk" rows="4" cols="25" name="newick">
-                (((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;
+            <textarea id="nwk" rows="4" cols="25" name="newick">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;
             </textarea>
             <button id="nwkBtn">
                 Send data
             </button>
+        </div>
+        <div class="padding-top-7">
+            <input class="form-control form-control-sm" id="formFileSm" type="file">
         </div>
     </nav>
                 <!-- Page Content -->

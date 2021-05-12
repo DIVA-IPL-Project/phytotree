@@ -63,7 +63,7 @@ function radial(data) {
         .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
         .attr("transform", d => `translate(${[d.x, d.y]})`);
 
-    node.append("circle").attr("r", 5).attr('class', 'nodeRadial');
+    node.append("circle").attr("r", 1).attr('class', 'nodeRadial');
 
     node.append("text")
         .attr("class", "text-label")

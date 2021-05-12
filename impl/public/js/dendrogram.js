@@ -1,14 +1,15 @@
+let tree;
+let scaleText = 0;
+let firstRender = true;
+
 /**
  * Builds a dendrogram with the JSON data received.
  * @param data the JSON data.
+ * @param flag
  */
-
-
-let tree
-
 function buildTree(data, flag) {
     let root = d3.hierarchy(data, d => d.children);
-    if(flag){
+    if (flag) {
         let dendrogram = clusterTree().size([height, width]);
         tree = dendrogram(root);
         root.eachBefore(d => {
@@ -33,7 +34,7 @@ function buildTree(data, flag) {
 
         gZoom = svg.append("g")
             .attr("id", "zoom")
-            .attr("transform", "translate(" + [margin.left,margin.top] + ")")
+            .attr("transform", "translate(" + [margin.left, margin.top] + ")")
     }
 
     let gElement = gZoom
@@ -52,12 +53,10 @@ function buildTree(data, flag) {
         .on("mouseout", mouseOveredDend(false))
         .attr("class", "link")
         .attr("d", d => {
-            return "M" + [d.parent.y,d.parent.x]
+            return "M" + [d.parent.y, d.parent.x]
                 + "V" + d.x
                 + "H" + d.y;
         });
-
-
 
     let node = gElement
         .selectAll(".node")
@@ -65,18 +64,24 @@ function buildTree(data, flag) {
         .enter()
         .append("g")
         .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
-        .attr("transform", d => "translate(" + [d.y,d.x] + ")");
+        .attr("transform", d => "translate(" + [d.y, d.x] + ")");
 
     node
         .append("circle")
         .attr("r", 2.5);
 
-    addZoom(svg, gZoom)
-    addLeafLabels(gElement)
+    addZoom(svg, gZoom);
+    addLeafLabels(gElement);
 
     // TODO Dendrogram Styles
     addLinkStyle(gElement)
     addNodeStyle(node)
+
+    if (firstRender) {
+        scaleText = horizontalScale();
+        firstRender = false;
+        applyScaleText(scaleText);
+    }
 }
 
 /**
@@ -110,7 +115,7 @@ function addLinkStyle(elem) {
         .style("fill", "none")
         .style("stroke", "darkgrey")
         .style("stroke-width", "2px")
-        .style("font", "14px sans-serif")
+        .style("font", "14px sans-serif");
 }
 
 function clusterTree() {
@@ -246,34 +251,69 @@ function addLinkLabels(elem) {
         .text(d => d.data.length);
 }
 
+let scaleLineWidth;
+let translateWidth = 100;
+let translateHeight = height - 10;
+let scaleLinePadding = 10;
+
 /**
- * Adds a horizontal axis with the scale.
+ * Adds a horizontal scale.
  */
-//TODO scale
-function axis(svg) {
-    let elem = svg
+function horizontalScale() {
+    d3.select("svg")
         .append("g")
+        .attr("transform", "translate(" + translateWidth + "," + translateHeight + ")")
+        .append("path")
+        .attr("d", d => {
+            scaleLineWidth = width * 0.15;
+            return "M" + scaleLinePadding + ",10L" + (scaleLineWidth + scaleLinePadding) + ",10"
+        })
+        .attr("stroke-width", 1)
+        .attr("stroke", "#000");
 
-    elem.append("line")
-        .attr("class", "scale")
-        .attr("x1", 10)
-        .attr("x2", width / 3)
-        .attr("y1", 710)
-        .attr("y2", 710)
-        .style("stroke", "#000");
-
-    // d3
-    //     .selectAll('.node')
-    //     .each(function (d) {
-    //         if (d.data.size > maxLinkSize) {
-    //             maxLinkSize = d.data.size
-    //         }
-    //     })
-
-    elem.append("text")
+    return d3.select("svg").append("text")
+        .attr("transform", "translate(" + translateWidth + "," + translateHeight + ")")
+        .attr("x", scaleLineWidth / 2 + scaleLinePadding)
+        .attr("y", 36)
+        .attr("font-family", "sans-serif")
         .text("")
-        .attr("x", 180)
-        .attr("y", "46em")
+        .attr("font-size", "14px")
+        .attr("fill", "#000")
+        .attr("text-anchor", "middle");
+}
+
+function applyScaleText(scaleText) {
+    if (tree.children) {
+        let children = getChildren(tree);
+        let length = 0;
+        let offset = 0;
+
+        for (let i = 0; i < children.length; i++) {
+            length = getLength(children[i]);
+            offset = children[i].y;
+            let test_length = length.toFixed(3);
+            if (parseFloat(test_length) !== 0 && offset !== 0) {
+                break;
+            }
+        }
+
+        let zoom = scale / 1000;
+        let text = (((scaleLineWidth / offset) * length) / zoom).toFixed(2);
+
+        scaleText.text(text);
+    }
+}
+
+function getLength(d) {
+    if (d.parent) {
+        return d.data.length + getLength(d.parent);
+    } else {
+        return 0;
+    }
+}
+
+function getChildren(d) {
+    return d.children ? d.children : [];
 }
 
 function mouseOveredDend(active) {

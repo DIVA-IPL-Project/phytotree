@@ -1,6 +1,6 @@
 window.onload = load
 
-let scale = 100
+let scale = 1000
 let numberOfNodes
 let maxLinkSize = 0
 let margin = {
@@ -59,7 +59,8 @@ async function load() {
     variable.textContent = slider.value;
     slider.addEventListener('input', function(e) {
         variable.textContent = slider.value;
-        scale = +slider.value;
+        scale = +slider.value * 10;
+        applyScaleText(scaleText)
         render(data, true)
     });
 
@@ -89,6 +90,8 @@ function addZoom(svg, elem) {
             .scaleExtent([0.1, 100])
             .on("zoom", function (event) {
                 elem.attr("transform", event.transform)
+                let zoom = document.getElementById("zoom")
+                applyScaleText(scaleText)
             }))
 }
 

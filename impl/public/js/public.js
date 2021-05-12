@@ -66,7 +66,6 @@ async function load() {
 
 
     let resp = await fetch('http://localhost:8000/api/data')
-
     if (resp.status !== 200) alertMsg(resp.statusText)
     else data = await resp.json()
 }

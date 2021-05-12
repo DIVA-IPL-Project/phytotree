@@ -6,6 +6,7 @@ function buildRadialTree(jsonData) {
     let diameter = height * 0.75;
     let radius = diameter / 2;
     let cluster = radialCalc()
+        .spread(20)
     // .size([2 * Math.PI, radius])
     // .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
     let tree = d3.hierarchy(jsonData);
@@ -65,11 +66,11 @@ function radial(data) {
 
     node.append("circle").attr("r", 1).attr('class', 'nodeRadial');
 
-    node.append("text")
-        .attr("class", "text-label")
-        .attr("dx", d => d.x < Math.PI ? 8 : -8)
-        .attr("dy", ".31em")
-        .text(d => d.data.name);
+    // node.append("text")
+    //     .attr("class", "text-label")
+    //     .attr("dx", d => d.x < Math.PI ? 8 : -8)
+    //     .attr("dy", ".31em")
+    //     .text(d => d.data.name);
 }
 
 function collapseNode(node) {
@@ -92,6 +93,7 @@ private functions
 
 function radialCalc() {
     const pi = Math.PI
+    let delta = 0;
 
     function radialTest(root) {
         root.eachAfter(d => {
@@ -111,7 +113,7 @@ function radialCalc() {
                 v.children.forEach(w => {
                     queue.push(w);
                     w.rb = n;
-                    w.ws = (2 * pi * w.leafcount) / root.leafcount
+                    w.ws = (2 * pi * w.leafcount + delta)  / root.leafcount
                     let alpha = w.rb + (w.ws / 2);
                     w.x = v.x + Math.cos(alpha) * w.data.length * scale;
                     w.y = v.y + Math.sin(alpha) * w.data.length * scale;
@@ -121,6 +123,8 @@ function radialCalc() {
         }
         return root;
     }
+
+    radialTest.spread = function(spreadValue) { delta = spreadValue; return radialTest };
 
     return radialTest;
 }

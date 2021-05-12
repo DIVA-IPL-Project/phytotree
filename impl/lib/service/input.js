@@ -112,11 +112,11 @@ let treeFile
  */
 function setNewTreeFile(tFile) {
     if (!tFile) throw new Error('You have to put tree file.')
-    // let extension = tFile.split('.', 2)
-    // console.log(extension)
-    // if (!extensionTreeFiles.includes(extension[1])) {
-    //     throw new Error(`${tFile} extension is not supported.`)
-    // }
+    const divided = tFile.split('\\');
+    let extension = divided[divided.length-1].split('.', 2)
+    if (!extensionTreeFiles.includes(extension[1])) {
+        throw new Error(`${tFile} extension is not supported.`)
+    }
     setUpTreeVariables()
     treeFile = tFile
     return treeFunctions
@@ -178,7 +178,8 @@ let profilesFile
  * @returns {Object} Return all functions for profiles file
  */
 function setNewProfilesFile(pFile){
-    let extension = pFile.split('.', 2)
+    const divided = pFile.split('\\');
+    let extension = divided[divided.length-1].split('.', 2)
     if(!extensionProfileAndIsolateFiles.includes(extension[1])){
         throw new Error(`${pFile} extension is not supported.`)
     }
@@ -395,7 +396,8 @@ let isolatesFile
  * @returns {Object} All functions for isolates.
  */
 function setNewIsolatesFile(iFile) {
-    let extension = iFile.split('.', 2)
+    const divided = iFile.split('\\');
+    let extension = divided[divided.length-1].split('.', 2)
     if(!extensionProfileAndIsolateFiles.includes(extension[1])){
         throw new Error(`${iFile} extension is not supported.`)
     }

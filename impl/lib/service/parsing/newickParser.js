@@ -1,9 +1,7 @@
 'use strict'
 
 function parseNewick(newickData) {
-    const data = parse(newickData)
-    console.log(data)
-    return data
+    return parse(newickData)
 }
 
 const parse = s => {

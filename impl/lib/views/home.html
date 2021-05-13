@@ -22,12 +22,29 @@
             <button type="button" class="radial-btn btn btn btn-light mt-1">Circular Radial</button>
             <button type="button" class="radialTree-btn btn btn btn-light mt-1">Radial</button>
             <button type="button" class="dendro-btn btn btn btn-light mt-1">Dendrogram</button>
-            <button type="button" class="b btn btn btn-light mt-1">Parent labels</button>
+            <button type="button" class="parentLabels btn btn btn-light mt-1">Parent labels</button>
+            <button type="button" class="align-nodes btn btn btn-light mt-1" style="display: none">Align nodes</button>
+            <p></p>
+            <div class="form-check">
+                <label id="labelLogScale" style="display: none" for="linearScaleButton">
+                    <input type="radio" class="logScale form-check-input" id="logScaleButton" name="radioButtons"
+                           style="display: none">
+                    Logarithmic scale
+                </label>
+                <label id="labelLinearScale" style="display: none" for="linearScaleButton">
+                    <input type="radio" class="linearScale form-check-input" id="linearScaleButton" checked
+                           name="radioButtons"
+                           style="display: none">
+                    Linear scale
+                </label>
+            </div>
         </div>
+        <p></p>
         <div>
             <label id='variable'></label>
-            <input id='slider' type='range' min='1' max='100' step='1' value='100' />
+            <input id='slider' type='range' min='1' max='500' step='1' value='100'/>
         </div>
+        <p></p>
         <div class="menu-div ">
             <textarea id="nwk" rows="4" cols="25" name="newick">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;
             </textarea>
@@ -35,11 +52,12 @@
                 Send data
             </button>
         </div>
+        <p></p>
         <div class="padding-top-7">
             <input class="form-control form-control-sm" id="formFileSm" type="file">
         </div>
     </nav>
-                <!-- Page Content -->
+    <!-- Page Content -->
     <div class="main">
         <div id="container" class="col"></div>
     </div>

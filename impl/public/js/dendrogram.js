@@ -1,22 +1,21 @@
 let tree;
-let scaleText = 0;
-let firstRender = true;
+let scaleText;
 
 /**
  * Builds a dendrogram with the JSON data received.
  * @param data the JSON data.
- * @param flag
+ * @param align
  */
-function buildTree(data, flag) {
-    let root = d3.hierarchy(data, d => d.children);
-    if (flag) {
-        let dendrogram = clusterTree().size([height, width]);
+function buildTree(data, align) {
+    const root = d3.hierarchy(data, d => d.children);
+    if (!align) {
+        const dendrogram = clusterTree().size([height, width]);
         tree = dendrogram(root);
         root.eachBefore(d => {
             if (d.parent) d.y = d.parent.y + scale * d.data.length
         })
     } else {
-        let dendrogram = d3.cluster().size([height, width]);
+        const dendrogram = d3.cluster().size([height, width]);
         tree = dendrogram(root);
     }
 
@@ -37,11 +36,11 @@ function buildTree(data, flag) {
             .attr("transform", "translate(" + [margin.left, margin.top] + ")")
     }
 
-    let gElement = gZoom
+    const gElement = gZoom
         .append("g")
         .attr("id", "graph");
 
-    let link = gElement
+    const link = gElement
         .selectAll(".link")
         .data(tree.descendants().slice(1))
         .enter()
@@ -58,7 +57,7 @@ function buildTree(data, flag) {
                 + "H" + d.y;
         });
 
-    let node = gElement
+    const node = gElement
         .selectAll(".node")
         .data(tree.descendants())
         .enter()
@@ -73,15 +72,14 @@ function buildTree(data, flag) {
     addZoom(svg, gZoom);
     addLeafLabels(gElement);
 
-    // TODO Dendrogram Styles
-    addLinkStyle(gElement)
-    addNodeStyle(node)
-
-    if (firstRender) {
+    if (!horizontalScaleVisible) {
         scaleText = horizontalScale();
-        firstRender = false;
-        applyScaleText(scaleText);
+        horizontalScaleVisible = true;
+        linearScale = true;
+        applyScaleText(scaleText, scale / 1000, linearScale);
     }
+
+    return { gElement, node };
 }
 
 /**
@@ -95,7 +93,7 @@ function getTree() {
 
 /**
  * Adds custom style to the nodes.
- * @param elem the html element to add the labels.
+ * @param elem the node element to add the labels.
  */
 function addNodeStyle(elem) {
     elem
@@ -117,6 +115,8 @@ function addLinkStyle(elem) {
         .style("stroke-width", "2px")
         .style("font", "14px sans-serif");
 }
+
+//********************* Auxiliary functions ************************
 
 function clusterTree() {
     function leafLeft(node) {
@@ -204,8 +204,6 @@ function clusterTree() {
     return cluster;
 }
 
-//********************* Auxiliary functions ************************
-
 /**
  * Adds labels to the parent nodes.
  * @param elem the html element to append the labels.
@@ -242,6 +240,7 @@ function addLeafLabels(elem) {
  * Adds labels to the links.
  * @param elem the html element to append the labels.
  */
+//TODO add button in html
 function addLinkLabels(elem) {
     elem
         .append("text")
@@ -263,6 +262,7 @@ function horizontalScale() {
     d3.select("svg")
         .append("g")
         .attr("transform", "translate(" + translateWidth + "," + translateHeight + ")")
+        .attr("class", "horizontalScale")
         .append("path")
         .attr("d", d => {
             scaleLineWidth = width * 0.15;
@@ -273,6 +273,7 @@ function horizontalScale() {
 
     return d3.select("svg").append("text")
         .attr("transform", "translate(" + translateWidth + "," + translateHeight + ")")
+        .attr("class", "scaleText")
         .attr("x", scaleLineWidth / 2 + scaleLinePadding)
         .attr("y", 36)
         .attr("font-family", "sans-serif")
@@ -282,7 +283,13 @@ function horizontalScale() {
         .attr("text-anchor", "middle");
 }
 
-function applyScaleText(scaleText) {
+/**
+ *
+ * @param scaleText the place to place the text
+ * @param scale the current scale
+ * @param isLinear if it will be used the linear scale or the logarithmic scale.
+ */
+function applyScaleText(scaleText, scale, isLinear) {
     if (tree.children) {
         let children = getChildren(tree);
         let length = 0;
@@ -290,37 +297,47 @@ function applyScaleText(scaleText) {
 
         for (let i = 0; i < children.length; i++) {
             length = getLength(children[i]);
-            offset = children[i].y;
-            let test_length = length.toFixed(3);
+            offset = children[i].x;
+            if (offset < 1) {
+                offset = children[i].y / 10;
+            }
+            const test_length = length.toFixed(3);
             if (parseFloat(test_length) !== 0 && offset !== 0) {
                 break;
             }
         }
 
-        let zoom = scale / 1000;
-        let text = (((scaleLineWidth / offset) * length) / zoom).toFixed(2);
-
-        scaleText.text(text);
+        if (isLinear) {
+            const text = (((scaleLineWidth / offset) * length) / scale).toFixed(2);
+            scaleText.text(text);
+        } else {
+            let text = (((scaleLineWidth / offset) * length) / scale);
+            text = Math.log(text);
+            if (text < 0) {
+                text = 1;
+            }
+            scaleText.text(text);
+        }
     }
 }
 
+/**
+ * Returns the length of a node.
+ * @param d the node to search the length.
+ * @returns {number|*} the length of the node or zero if the
+ * node does not have a length.
+ */
 function getLength(d) {
-    if (d.parent) {
-        return d.data.length + getLength(d.parent);
-    } else {
-        return 0;
-    }
+    if (d.parent) return d.data.length + getLength(d.parent);
+    else return 0;
 }
 
+/**
+ * Returns the children of a node.
+ * @param d the node to search the children.
+ * @returns {*|*[]} an array with the children or an empty array if
+ * the node does not have children.
+ */
 function getChildren(d) {
     return d.children ? d.children : [];
-}
-
-function mouseOveredDend(active) {
-    return function (event, d) {
-        d3.select(this).classed("link--active", active).raise();
-
-        do d3.select(d.linkNode).classed("link--active", active).raise();
-        while (d = d.parent);
-    };
 }

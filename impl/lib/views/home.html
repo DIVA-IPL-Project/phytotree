@@ -15,16 +15,17 @@
 <div class="wrapper">
     <!-- Sidebar -->
     <nav class="sidenav">
-        <div class="sidebar-header text-center">
+        <div class="sidebar-header text-center mt-md-3">
             <h3>Visualization</h3>
         </div>
         <div class="btn-group-vertical d-grid justify-content-center">
             <button type="button" class="radial-btn btn btn btn-light mt-1">Circular Radial</button>
             <button type="button" class="radialTree-btn btn btn btn-light mt-1">Radial</button>
             <button type="button" class="dendro-btn btn btn btn-light mt-1">Dendrogram</button>
-            <button type="button" class="parentLabels btn btn btn-light mt-1" style="display: none">Parent labels</button>
-            <button type="button" class="align-nodes btn btn btn-light mt-1" style="display: none">Align nodes</button>
-            <div class="form-check mt-md-5">
+            <button type="button" class="parentLabels btn btn btn-info mt-1" style="display: none">Parent labels</button>
+            <button type="button" class="align-nodes btn btn btn-info mt-1" style="display: none">Align nodes</button>
+            <button type="button" class="linkLabels btn btn btn-info mt-1" style="display: none">Link labels</button>
+            <div class="form-check mt-md-3">
                 <label id="labelLogScale" style="display: none" for="linearScaleButton">
                     <input type="radio" class="logScale form-check-input" id="logScaleButton" name="radioButtons"
                            style="display: none">
@@ -38,13 +39,13 @@
                 </label>
             </div>
         </div>
-        <div class="d-grid justify-content-center">
+        <div class="d-grid justify-content-center mt-md-3">
             <div>
                 <label id='variable'></label>
                 <input id='slider' type='range' min='1' max='500' step='1' value='100'/>
             </div>
         </div>
-        <div class="d-grid gap-1 justify-content-center">
+        <div class="d-grid gap-1 justify-content-center mt-md-3">
             <div class="d-grid gap-2 mt-2">
                 <div class="d-grid justify-content-center">
                     <input class="form-control form-control-sm" id="formFileNw" type="file">

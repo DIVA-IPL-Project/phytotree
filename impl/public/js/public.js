@@ -74,16 +74,14 @@ async function load() {
         variable.textContent = slider.value;
         scale = +slider.value * 10;
         applyScaleText(scaleText, scale / 1000, linearScale);
-        render(data, true)
+        render(data, false)
     });
 
     const logScaleButton = document.querySelector('.logScale')
     logScaleButton.addEventListener('click', () => {
         linearScale = false;
-
         render = buildTree;
         applyScaleText(scaleText, scale / 1000, linearScale);
-
         render(data, false);
     })
 

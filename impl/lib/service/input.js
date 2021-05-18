@@ -605,5 +605,7 @@ function renderFiles(file) {
 
 module.exports = {
     setAllFiles,
-    setNewTreeFile
+    setNewTreeFile,
+    setNewProfilesFile,
+    setNewIsolatesFile
 }

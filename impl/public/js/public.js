@@ -93,6 +93,17 @@ async function load() {
         render(data, false);
     })
 
+
+    const nwkSendButton = document.getElementById('idNwkBt')
+    //if (!nwkSendButton.addEventListener){
+        nwkSendButton.addEventListener('click', sendNewickData)
+    //}
+    const profSendButton = document.getElementById('idPrfBt')
+    profSendButton.addEventListener('click', sendProfileData)
+
+    const isoSendButton = document.getElementById('idIsoBt')
+    isoSendButton.addEventListener('click', sendIsolateData)
+
     let resp = await fetch('http://localhost:8000/api/data')
     if (resp.status !== 200) alertMsg(resp.statusText)
     else data = await resp.json()
@@ -136,6 +147,52 @@ function removeHorizontalScale() {
     if (document.querySelector('.scaleText')) {
         document.querySelector('.scaleText').remove();
     }
+}
+
+function sendNewickData(){
+    let headers = {'Content-Type': 'application/json'}
+    let nwk = document.getElementById('formFileNw').files[0]
+    nwk.text().then(newick => {
+        console.log(newick)
+        let body = JSON.stringify({data: newick})
+        fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
+            .then(() => {
+                fetch('/api/data', {method: 'post', body: body, headers: headers})
+                    .then(async res => {
+                        if (res.status === 500) alertMsg('error')
+                        data = await res.json()
+                    })
+                    .catch(err => alertMsg(err))
+            })
+            .catch()
+    })
+
+    //todo
+    document.getElementById('idPrfBt').style.display = "block";
+    document.getElementById('formFilePro').style.display = "block";
+}
+
+function sendProfileData(){
+    let headers = {'Content-Type': 'application/json'}
+    let profile = document.getElementById('formFilePro').files[0]
+    profile.text().then(prof => {
+        console.log(prof)
+        let body = JSON.stringify({data: prof})
+        fetch('/api/update/newick', {method: 'post', body: body, headers: headers}).catch()
+    })
+    //todo
+    document.getElementById('formFileIso').style.display = "block";
+    document.getElementById('idIsoBt').style.display = "block";
+}
+
+function sendIsolateData(){
+    let headers = {'Content-Type': 'application/json'}
+    let isolate = document.getElementById('formFileIso').files[0]
+    isolate.text().then(iso => {
+        console.log(iso)
+        let body = JSON.stringify({data: iso})
+        fetch('/api/update/newick', {method: 'post', body: body, headers: headers}).catch()
+    })
 }
 
 function sendNwkData() {

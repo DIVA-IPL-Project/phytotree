@@ -19,9 +19,9 @@
             <h3>Visualization</h3>
         </div>
         <div class="btn-group-vertical d-grid justify-content-center">
-            <button type="button" class="radial-btn btn btn btn-light mt-1">Circular Radial</button>
-            <button type="button" class="radialTree-btn btn btn btn-light mt-1">Radial</button>
-            <button type="button" class="dendro-btn btn btn btn-light mt-1">Dendrogram</button>
+            <button type="button" class="radial-btn btn btn btn-light mt-1" id="">Circular Radial</button>
+            <button type="button" class="radialTree-btn btn btn btn-light mt-1" id="radButton">Radial</button>
+            <button type="button" class="dendro-btn btn btn btn-light mt-1" id="denButton">Dendrogram</button>
             <button type="button" class="parentLabels btn btn btn-info mt-1" style="display: none">Parent labels</button>
             <button type="button" class="align-nodes btn btn btn-info mt-1" style="display: none">Align nodes</button>
             <button type="button" class="linkLabels btn btn btn-info mt-1" style="display: none">Link labels</button>
@@ -52,12 +52,12 @@
                     <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt">Send newick file</button>
                 </div>
                 <div class="d-grid justify-content-center">
-                    <input class="form-control form-control-sm" id="formFileIso" type="file">
-                    <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt">Send isolate file</button>
+                    <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt" style="display: none">Send profiles file</button>
                 </div>
-                <div class="d-grid justify-content-center">
-                    <input class="form-control form-control-sm" id="formFilePro" type="file">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt">Send profiles file</button>
+                <div class="d-grid justify-content-center" >
+                    <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">
+                    <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt" style="display: none">Send isolate file</button>
                 </div>
             </div>
             <div class="d-grid gap-2 mt-2">

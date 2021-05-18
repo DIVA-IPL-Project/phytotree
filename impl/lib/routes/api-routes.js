@@ -2,7 +2,7 @@ const nwkParser = require('../service/parsing/newickParser')
 const input = require('../service/input.js')
 const Router = require('express').Router
 const router = Router()
-const fs = require('fs/promises')
+const fs = require('fs').promises
 
 const dir = __dirname
 const nwk_path = dir.slice(0, dir.length-7) + "\\service\\data\\data.nwk"

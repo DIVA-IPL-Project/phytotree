@@ -4,7 +4,7 @@ let scaleText;
 /**
  * Builds a dendrogram with the JSON data received.
  * @param data the JSON data.
- * @param align
+ * @param align if the nodes are align.
  */
 function buildTree(data, align) {
     const root = d3.hierarchy(data, d => d.children);
@@ -40,13 +40,13 @@ function buildTree(data, align) {
         .append("g")
         .attr("id", "graph");
 
-    const link = gElement
+    const links = gElement
         .selectAll(".link")
         .data(tree.descendants().slice(1))
         .enter()
         .append("g")
 
-    link
+    links
         .append("path")
         .on("mouseover", mouseOveredDend(true))
         .on("mouseout", mouseOveredDend(false))
@@ -79,12 +79,11 @@ function buildTree(data, align) {
         applyScaleText(scaleText, scale / 1000, linearScale);
     }
 
-    return { gElement, node };
+    return {gElement, node, links};
 }
 
 /**
- * Returns a object that represents the tree
- * tha was drawn.
+ * Returns a object that represents the tree.
  * @returns {object} the tree previous built.
  */
 function getTree() {
@@ -93,7 +92,7 @@ function getTree() {
 
 /**
  * Adds custom style to the nodes.
- * @param elem the node element to add the labels.
+ * @param elem the element to add the style.
  */
 function addNodeStyle(elem) {
     elem
@@ -105,7 +104,7 @@ function addNodeStyle(elem) {
 
 /**
  * Adds custom style to the links.
- * @param elem the html element to add the style.
+ * @param elem the element to add the style.
  */
 function addLinkStyle(elem) {
     elem
@@ -114,6 +113,51 @@ function addLinkStyle(elem) {
         .style("stroke", "darkgrey")
         .style("stroke-width", "2px")
         .style("font", "14px sans-serif");
+}
+
+/**
+ * Adds labels to the parent nodes.
+ * @param elem the element to append the labels.
+ * @param visible if the text is to be removed or added to the screen.
+ */
+function addInternalLabels(elem, visible) {
+    if (visible) {
+        elem.selectAll(".node--internal text").remove();
+        parentLabelsVisible = false;
+    } else {
+        elem
+            .selectAll(".node--internal")
+            .append("text")
+            .attr("dy", 20)
+            .attr("x", -13)
+            .style("text-anchor", "end")
+            .style("font", "12px sans-serif")
+            .text(d => d.data.name);
+
+        parentLabelsVisible = true;
+    }
+}
+
+/**
+ * Adds labels to the links.
+ * @param elem the element to append the labels.
+ * @param visible if the text is to be removed or added to the screen.
+ */
+function addLinkLabels(elem, visible) {
+    if (visible) {
+        elem.select("text").remove();
+        linksVisible = false;
+    } else {
+        elem
+            .append("text")
+            .attr("x", d => (d.parent.y + d.y) / 2)
+            .attr("y", d => d.x - 5)
+            .attr("text-anchor", "middle")
+            .style("font", "12px sans-serif")
+            .text(d => d.data.length);
+
+        linksVisible = true;
+    }
 }
 
 //********************* Auxiliary functions ************************
@@ -205,23 +249,8 @@ function clusterTree() {
 }
 
 /**
- * Adds labels to the parent nodes.
- * @param elem the html element to append the labels.
- */
-function addInternalLabels(elem) {
-    elem
-        .selectAll(".node--internal")
-        .append("text")
-        .attr("dy", 20)
-        .attr("x", -13)
-        .style("text-anchor", "end")
-        .style("font", "12px sans-serif")
-        .text(d => d.data.name);
-}
-
-/**
  * Adds labels to the leaf nodes.
- * @param elem the html element to append the labels.
+ * @param elem the element to append the labels.
  */
 function addLeafLabels(elem) {
     elem
@@ -234,20 +263,6 @@ function addLeafLabels(elem) {
         .text(d => d.data.name)
         .on("mouseover", mouseOveredDend(true))
         .on("mouseout", mouseOveredDend(false));
-}
-
-/**
- * Adds labels to the links.
- * @param elem the html element to append the labels.
- */
-//TODO add button in html
-function addLinkLabels(elem) {
-    elem
-        .append("text")
-        .attr("x", d => (d.parent.y + d.y) / 2)
-        .attr("y", d => d.x - 5)
-        .attr("text-anchor", "middle")
-        .text(d => d.data.length);
 }
 
 let scaleLineWidth;
@@ -284,10 +299,10 @@ function horizontalScale() {
 }
 
 /**
- *
- * @param scaleText the place to place the text
- * @param scale the current scale
- * @param isLinear if it will be used the linear scale or the logarithmic scale.
+ * Adds the text to be append in the horizontal scale.
+ * @param scaleText the place to put the text.
+ * @param scale the current scale value.
+ * @param isLinear if it will be used the linear or the logarithmic scale.
  */
 function applyScaleText(scaleText, scale, isLinear) {
     if (tree.children) {
@@ -312,7 +327,7 @@ function applyScaleText(scaleText, scale, isLinear) {
             scaleText.text(text);
         } else {
             let text = (((scaleLineWidth / offset) * length) / scale);
-            text = Math.log(text);
+            text = Math.log(text).toFixed(2);
             if (text < 0) {
                 text = 1;
             }

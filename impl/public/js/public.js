@@ -12,21 +12,19 @@ let margin = {
 let width = window.innerWidth - margin.left - margin.right
 let height = window.innerHeight - margin.top - margin.bottom
 
-const dx = 10;
-const dy = width / 6;
-
 let data;
 let render;
+let dendrogram;
 let linearScale;
 let horizontalScaleVisible;
+let linksVisible;
+let parentLabelsVisible;
+let isAlign;
 
 async function load() {
     const circularRadialButton = document.querySelector('.radial-btn')
     circularRadialButton.addEventListener('click', () => {
         removeDendrogramButtons();
-        removeHorizontalScale();
-        horizontalScaleVisible = false;
-
         render = circularRadial;
         render(data);
     })
@@ -34,9 +32,7 @@ async function load() {
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
         removeDendrogramButtons();
-        removeHorizontalScale();
-        horizontalScaleVisible = false;
-
+        addSlider();
         render = radial;
         render(data);
     })
@@ -44,24 +40,31 @@ async function load() {
     const dendrogramButton = document.querySelector('.dendro-btn')
     dendrogramButton.addEventListener('click', () => {
         addDendrogramButtons();
+        addSlider();
 
         render = buildTree;
-        const dendrogram = render(data, false);
+        isAlign = false;
+        dendrogram = render(data, isAlign);
 
         addNodeStyle(dendrogram.node);
         addLinkStyle(dendrogram.gElement);
     })
 
+    const linkLabelsButton = document.querySelector('.linkLabels')
+    linkLabelsButton.addEventListener('click', () => {
+        addLinkLabels(dendrogram.links, linksVisible);
+    })
+
     const alignNodesInDendrogramButton = document.querySelector('.align-nodes')
     alignNodesInDendrogramButton.addEventListener('click', () => {
-        render = buildTree;
-        render(data, true);
+        isAlign = !isAlign;
+        dendrogram = render(data, isAlign);
     })
 
     const parentLabelsButton = document.querySelector('.parentLabels')
     parentLabelsButton.addEventListener('click', () => {
         const graph = d3.select('#container').select('svg').select('#graph');
-        addInternalLabels(graph);
+        addInternalLabels(graph, parentLabelsVisible);
     })
 
     const nwkBtn = document.getElementById('nwkBtn')
@@ -73,7 +76,7 @@ async function load() {
     slider.addEventListener('input', function () {
         variable.textContent = slider.value;
         scale = +slider.value * 10;
-        applyScaleText(scaleText, scale / 1000, linearScale);
+        if (render.name === "buildTree") applyScaleText(scaleText, scale / 1000, linearScale);
         render(data, false)
     });
 
@@ -121,6 +124,8 @@ function addDendrogramButtons() {
 
     document.getElementById('linearScaleButton').style.display = "block";
     document.getElementById('labelLinearScale').style.display = "block";
+
+    document.querySelector('.linkLabels').style.display = "block";
 }
 
 /**
@@ -135,6 +140,12 @@ function removeDendrogramButtons() {
 
     document.getElementById('linearScaleButton').style.display = "none";
     document.getElementById('labelLinearScale').style.display = "none";
+
+    document.querySelector('.linkLabels').style.display = "none";
+
+    removeHorizontalScale();
+
+    removeSlider();
 }
 
 /**
@@ -147,6 +158,23 @@ function removeHorizontalScale() {
     if (document.querySelector('.scaleText')) {
         document.querySelector('.scaleText').remove();
     }
+    horizontalScaleVisible = false;
+}
+
+/**
+ * Adds the slider for horizontal rescale.
+ */
+function addSlider() {
+    document.getElementById('slider').style.display = "block";
+    document.getElementById('variable').style.display = "block";
+}
+
+/**
+ * Removes de slider for the horizontal rescale.
+ */
+function removeSlider() {
+    document.getElementById('slider').style.display = "none";
+    document.getElementById('variable').style.display = "none";
 }
 
 function sendNewickData(){
@@ -226,7 +254,7 @@ function addZoom(svg, elem) {
                 const scaleAttr = zoom.substring(zoom.indexOf("scale"), zoom.length);
                 const scaleValue = scaleAttr.substring(scaleAttr.indexOf("(") + 1, scaleAttr.length - 1);
 
-                applyScaleText(scaleText, scaleValue, linearScale);
+                if (render.name === "buildTree") applyScaleText(scaleText, scaleValue, linearScale);
             }))
 }
 

@@ -1,4 +1,5 @@
 window.onload = load
+window.onresize = resize
 
 let scale = 1000
 let maxLinkSize = 0
@@ -21,7 +22,19 @@ let linksVisible;
 let parentLabelsVisible;
 let isAlign;
 
+// function resize(){
+//     console.log('OnResize')
+//     width = window.innerWidth - margin.left - margin.right
+//     height = window.innerHeight - margin.top - margin.bottom
+//     load()
+// }
+
 async function load() {
+
+    //todo (if the checkbox starts checked we have to run nonShowDataPart, if the checkbox starts unchecked we have to unchecked the box here)
+    const checkButton = document.getElementById('checkB')
+    checkButton.addEventListener('click', checkListener)
+
     const circularRadialButton = document.querySelector('.radial-btn')
     circularRadialButton.addEventListener('click', () => {
         removeDendrogramButtons();
@@ -110,6 +123,36 @@ async function load() {
     let resp = await fetch('http://localhost:8000/api/data')
     if (resp.status !== 200) alertMsg(resp.statusText)
     else data = await resp.json()
+}
+
+function checkListener(){
+    const checkButton = document.getElementById('checkB')
+
+    if (checkButton.checked === true){
+        nonShowDataPart()
+    } else {
+        showDataPart()
+    }
+}
+
+function showDataPart() {
+    document.getElementById('formFileNw').style.display = "block";
+    document.getElementById('idNwkBt').style.display = "block";
+    document.getElementById('nwk').style.display = "block";
+    document.getElementById('nwkBtn').style.display = "block";
+    document.getElementById('textData').style.display = "block";
+}
+
+function nonShowDataPart(){
+    document.getElementById('formFileNw').style.display = "none";
+    document.getElementById('idNwkBt').style.display = "none";
+    document.getElementById('formFilePro').style.display = "none";
+    document.getElementById('idPrfBt').style.display = "none";
+    document.getElementById('formFileIso').style.display = "none";
+    document.getElementById('idIsoBt').style.display = "none";
+    document.getElementById('nwk').style.display = "none";
+    document.getElementById('nwkBtn').style.display = "none";
+    document.getElementById('textData').style.display = "none";
 }
 
 /**

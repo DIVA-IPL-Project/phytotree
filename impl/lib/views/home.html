@@ -15,6 +15,12 @@
 <div class="wrapper">
     <!-- Sidebar -->
     <nav class="sidenav">
+        <div class="form-check ms-2">
+            <input class="form-check-input" type="checkbox" value="" id="checkB" checked>
+            <label class="form-check-label" for="checkB">
+                For test
+            </label>
+        </div>
         <div class="sidebar-header text-center mt-md-3">
             <h3>Visualization</h3>
         </div>
@@ -46,10 +52,13 @@
             </div>
         </div>
         <div class="d-grid gap-1 justify-content-center mt-md-3">
+            <div class="sidebar-header text-center mt-md-3" id="textData" style="display: none">
+                <h6>Data</h6>
+            </div>
             <div class="d-grid gap-2 mt-2">
                 <div class="d-grid justify-content-center">
-                    <input class="form-control form-control-sm" id="formFileNw" type="file">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt">Send newick file</button>
+                    <input class="form-control form-control-sm" id="formFileNw" style="display: none" type="file">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt" style="display: none">Send newick file</button>
                 </div>
                 <div class="d-grid justify-content-center">
                     <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
@@ -61,8 +70,8 @@
                 </div>
             </div>
             <div class="d-grid gap-2 mt-2">
-                <textarea id="nwk" rows="4" cols="25" name="newick">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
-                <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm">Send data</button>
+                <textarea id="nwk" rows="4" cols="25" name="newick" style="display: none">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
+                <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm" style="display: none">Send data</button>
             </div>
         </div>
     </nav>

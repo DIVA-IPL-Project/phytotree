@@ -1,5 +1,5 @@
 window.onload = load
-window.onresize = resize
+//window.onresize = resize
 
 let scale = 1000
 let maxLinkSize = 0
@@ -285,6 +285,16 @@ function sendNwkData() {
  * @param elem the g element containing the zoom area.
  */
 function addZoom(svg, elem) {
+    if (render.name === "buildTree") {
+        elem.attr("transform", "translate(" + [80, -20] + ")")
+    }
+    if (render.name === "circularRadial" || render.name === "radial") {
+        elem.attr("transform", "translate(" + [width/2 - 100, height/2] + ")")
+    }
+
+    //reset the zoom
+    svg.call(d3.zoom().transform, d3.zoomIdentity.scale(1));
+
     svg
         .call(d3.zoom()
             .scaleExtent([0.1, 100])

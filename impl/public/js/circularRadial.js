@@ -1,6 +1,6 @@
 function circularRadial(data) {
-    const width = 900
-    const outerRadius = width / 2
+    const width1 = 900
+    const outerRadius = width1 / 2
     const innerRadius = outerRadius - 170
     const cluster = d3.cluster()
         .size([360, innerRadius])
@@ -88,9 +88,8 @@ function circularRadial(data) {
         } else {
             svg = d3.select('#container')
                 .append("svg")
-                .attr("viewBox", [-outerRadius, -outerRadius, width, width])
-                .attr("font-family", "sans-serif")
-                .attr("font-size", 10);
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
 
             gZoom = svg.append("g")
                 .attr("id", "zoom")

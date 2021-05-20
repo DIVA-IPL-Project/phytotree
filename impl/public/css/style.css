@@ -2,6 +2,7 @@
     fill: none;
     stroke: #808080;
     stroke-width: 2px;
+    stroke-linecap: round;
 }
 
 .nodeRadial {
@@ -14,6 +15,7 @@
 
 .link--active {
     stroke: blue !important;
+    stroke-linecap: round;
     stroke-width: 2px;
 }
 

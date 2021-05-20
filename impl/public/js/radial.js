@@ -36,7 +36,8 @@ function radial(data) {
             .attr("id", "zoom")
             .attr("transform", "translate(" + [margin.left,margin.top] + ")")
     }
-    addZoom(svg, gZoom);
+
+    addRadialZoom(svg, gZoom);
 
     let graphGroup = gZoom.append('g').attr('id', 'graph');
 
@@ -48,8 +49,8 @@ function radial(data) {
 
     link
         .append("line")
-        .on("mouseover", mouseOveredDend(true))
-        .on("mouseout", mouseOveredDend(false))
+        .on("mouseover", mouseOveredRadial(true))
+        .on("mouseout", mouseOveredRadial(false))
         .attr("class", "link")
         .attr("x1", d => d.parent.x)
         .attr("y1", d => d.parent.y)
@@ -129,7 +130,7 @@ function radialCalc() {
     return radialTest;
 }
 
-function mouseovered(active) {
+function mouseOveredRadial(active) {
     return function (event, d) {
         d3.select(this).classed("label--active", active);
 
@@ -138,5 +139,25 @@ function mouseovered(active) {
         do d3.select(d.linkNode).classed("link--active", active).raise();
         while (d = d.parent);
     };
+}
+
+/**
+ * Adds the zoom event for the svg element.
+ * @param svg the svg element where the graph will be placed.
+ * @param elem the g element containing the zoom area.
+ */
+function addRadialZoom(svg, elem) {
+    elem.attr("transform", "translate(" + [width/2 - 100, height/2] + ")")
+
+    const zoom = d3.zoom();
+    const transform = d3.zoomIdentity.translate(width/2 - 100, height/2).scale(1);
+
+    svg
+        .call(zoom.transform, transform)
+        .call(zoom
+            .scaleExtent([0.1, 100])
+            .on("zoom", function (event) {
+                elem.attr("transform", event.transform)
+            }))
 }
 

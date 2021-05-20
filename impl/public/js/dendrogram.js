@@ -48,8 +48,8 @@ function buildTree(data, align) {
 
     links
         .append("path")
-        .on("mouseover", mouseOveredDend(true))
-        .on("mouseout", mouseOveredDend(false))
+        .on("mouseover", mouseOveredDendrogram(true))
+        .on("mouseout", mouseOveredDendrogram(false))
         .attr("class", "link")
         .attr("d", d => {
             return "M" + [d.parent.y, d.parent.x]
@@ -69,14 +69,13 @@ function buildTree(data, align) {
         .append("circle")
         .attr("r", 2.5);
 
-    addZoom(svg, gZoom);
+    addDendrogramZoom(svg, gZoom);
     addLeafLabels(gElement);
 
     if (!horizontalScaleVisible) {
         scaleText = horizontalScale();
         horizontalScaleVisible = true;
         linearScale = true;
-        applyScaleText(scaleText, scale / 1000, linearScale);
     }
 
     return {gElement, node, links};
@@ -261,8 +260,8 @@ function addLeafLabels(elem) {
         .style("text-anchor", "start")
         .style("font", "12px sans-serif")
         .text(d => d.data.name)
-        .on("mouseover", mouseOveredDend(true))
-        .on("mouseout", mouseOveredDend(false));
+        .on("mouseover", mouseOveredDendrogram(true))
+        .on("mouseout", mouseOveredDendrogram(false));
 }
 
 let scaleLineWidth;
@@ -302,9 +301,8 @@ function horizontalScale() {
  * Adds the text to be append in the horizontal scale.
  * @param scaleText the place to put the text.
  * @param scale the current scale value.
- * @param isLinear if it will be used the linear or the logarithmic scale.
  */
-function applyScaleText(scaleText, scale, isLinear) {
+function applyScaleText(scaleText, scale) {
     if (tree.children) {
         let children = getChildren(tree);
         let length = 0;
@@ -322,17 +320,8 @@ function applyScaleText(scaleText, scale, isLinear) {
             }
         }
 
-        if (isLinear) {
-            const text = (((scaleLineWidth / offset) * length) / scale).toFixed(2);
-            scaleText.text(text);
-        } else {
-            let text = (((scaleLineWidth / offset) * length) / scale);
-            text = Math.log(text).toFixed(2);
-            if (text < 0) {
-                text = 1;
-            }
-            scaleText.text(text);
-        }
+        let text = (((scaleLineWidth / offset) * length) / scale).toFixed(2);
+        scaleText.text(text);
     }
 }
 
@@ -355,4 +344,52 @@ function getLength(d) {
  */
 function getChildren(d) {
     return d.children ? d.children : [];
+}
+
+/**
+ *
+ * @param active
+ * @returns {(function(*, *): void)|*}
+ */
+function mouseOveredDendrogram(active) {
+    return function (event, d) {
+        d3.select(this).classed("link--active", active).raise();
+        do d3.select(d.linkNode).classed("link--active", active).raise();
+        while (d = d.parent);
+    };
+}
+
+/**
+ * Adds the zoom event for the svg element.
+ * @param svg the svg element where the graph will be placed.
+ * @param elem the g element containing the zoom area.
+ */
+function addDendrogramZoom(svg, elem) {
+    elem.attr("transform", "translate(" + [80, -20] + ")")
+
+    const zoom = d3.zoom();
+    const transform = d3.zoomIdentity.translate(200, 0).scale(1);
+    let applyScale;
+
+    svg
+        .call(zoom.transform, transform)
+        .call(zoom
+            .scaleExtent([0.1, 100])
+            .filter((event) => {
+                if (event.type === 'mousedown') applyScale = false;
+                if (event.type === 'wheel') applyScale = true;
+                return true;
+            })
+            .on("zoom", function (event) {
+                elem.attr("transform", event.transform)
+
+                const zoomElem = document
+                    .getElementById("zoom")
+                    .getAttribute("transform");
+
+                const scaleAttr = zoomElem.substring(zoomElem.indexOf("scale"), zoomElem.length);
+                const scaleValue = scaleAttr.substring(scaleAttr.indexOf("(") + 1, scaleAttr.length - 1);
+
+                if (applyScale) applyScaleText(scaleText, scaleValue);
+            }))
 }

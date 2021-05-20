@@ -98,10 +98,10 @@ function circularRadial(data) {
 
         const group = gZoom
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            //.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .attr("id", "graph");
 
-        addZoom(svg, gZoom)
+        addRadialCircularZoom(svg, gZoom)
 
         const linkExtension = group.append("g")
             .attr("fill", "none")
@@ -135,8 +135,8 @@ function circularRadial(data) {
             .attr("transform", d => `rotate(${d.x - 90}) translate(${innerRadius + 4},0)${d.x < 180 ? "" : " rotate(180)"}`)
             .attr("text-anchor", d => d.x < 180 ? "start" : "end")
             .text(d => d.data.name.replace(/_/g, " "))
-            .on("mouseover", mouseovered(true))
-            .on("mouseout", mouseovered(false));
+            .on("mouseover", mouseOveredRadialCircular(true))
+            .on("mouseout", mouseOveredRadialCircular(false));
 
         function update(checked) {
             const t = d3.transition().duration(750);
@@ -150,4 +150,33 @@ function circularRadial(data) {
     }
 
     const update = chart().update(true)
+}
+
+function mouseOveredRadialCircular(active) {
+    return function (event, d) {
+        d3.select(this).classed("link--active", active).raise();
+
+        do d3.select(d.linkNode).classed("link--active", active).raise();
+        while (d = d.parent);
+    };
+}
+
+/**
+ * Adds the zoom event for the svg element.
+ * @param svg the svg element where the graph will be placed.
+ * @param elem the g element containing the zoom area.
+ */
+function addRadialCircularZoom(svg, elem) {
+    elem.attr("transform", "translate(" + [width/2 - 100, height/2] + ")")
+
+    const zoom = d3.zoom();
+    const transform = d3.zoomIdentity.translate(width/2 - 100, height/2).scale(1);
+
+    svg
+        .call(zoom.transform, transform)
+        .call(zoom
+            .scaleExtent([0.1, 100])
+            .on("zoom", function (event) {
+                elem.attr("transform", event.transform)
+            }))
 }

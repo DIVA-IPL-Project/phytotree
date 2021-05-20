@@ -46,7 +46,6 @@ async function load() {
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
         removeDendrogramButtons();
-        //addSlider();
         render = radial;
         render(data);
     })
@@ -55,14 +54,10 @@ async function load() {
     dendrogramButton.addEventListener('click', () => {
         showConfig()
         addDendrogramButtons()
-        //addSlider();
 
         render = buildTree
         isAlign = false
-        dendrogram = render(data, isAlign)
-
-        addNodeStyle(dendrogram.node)
-        addLinkStyle(dendrogram.gElement)
+        renderDendrogram()
     })
 
     const linkLabelsButton = document.querySelector('.linkLabels')
@@ -73,7 +68,9 @@ async function load() {
     const alignNodesInDendrogramButton = document.querySelector('.align-nodes')
     alignNodesInDendrogramButton.addEventListener('click', () => {
         isAlign = !isAlign;
-        dendrogram = render(data, isAlign);
+        if (isAlign) showRescaleButtons("none");
+        else showRescaleButtons("block");
+        renderDendrogram()
     })
 
     const parentLabelsButton = document.querySelector('.parentLabels')
@@ -90,39 +87,46 @@ async function load() {
     variable.textContent = (parseInt(textScale)/10).toString()
     let leftButton = document.getElementById('leftButton')
     let rightButton = document.getElementById('rightButton')
+
     leftButton.addEventListener('click', function(){
         if(parseInt(textScale) - 10 > 0){ //todo (here we can optimize)
             textScale = parseInt(textScale) - 10
             variable.textContent = (parseInt(textScale)/10).toString();
-            scale =+ textScale * 10;
-            if (render.name === "buildTree") applyScaleText(scaleText, scale / 1000, linearScale);
-            render(data, false)
+
+            if (linearScale) scale =+ textScale * 10;
+            else scale = logarithmicScale().value(textScale);
+
+            if (render.name === "buildTree") renderDendrogram();
+            else render(data, false)
         }
     })
     rightButton.addEventListener('click', function (){
         if (parseInt(textScale) + 10 < 100){ //todo (here we can optimize)
             textScale = parseInt(textScale) + 10
             variable.textContent = (parseInt(textScale)/10).toString();
-            scale =+ textScale * 10;
-            if (render.name === "buildTree") applyScaleText(scaleText, scale / 1000, linearScale);
-            render(data, false)
+
+            if (linearScale) scale =+ textScale * 10;
+            else scale = logarithmicScale().value(textScale);
+
+            if (render.name === "buildTree") renderDendrogram();
+            else render(data, false)
         }
     })
 
     const logScaleButton = document.querySelector('.logScale')
     logScaleButton.addEventListener('click', () => {
         linearScale = false;
-        render = buildTree;
-        applyScaleText(scaleText, scale / 1000, linearScale);
-        render(data, false);
+        scale = logarithmicScale().value(textScale);
+        if (render.name === "buildTree") renderDendrogram();
+        else render(data);
     })
 
     const linearScaleButton = document.querySelector('.linearScale')
     linearScaleButton.addEventListener('click', () => {
         linearScale = true;
-        render = buildTree;
-        applyScaleText(scaleText, scale / 1000, linearScale);
-        render(data, false);
+        scale =+ textScale * 10;
+        if (render.name === "buildTree") renderDendrogram();
+        else render(data);
     })
 
 
@@ -139,6 +143,44 @@ async function load() {
     let resp = await fetch('http://localhost:8000/api/data')
     if (resp.status !== 200) alertMsg(resp.statusText)
     else data = await resp.json()
+}
+
+function alertMsg(message, kind) {
+    if (!kind) kind = 'danger'
+    document
+        .querySelector('.messages')
+        .innerHTML =
+        `<div class="alert alert-${kind} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                ${message}
+            </div>`
+}
+
+/** Visualizations*/
+
+/**
+ * Builds the logarithmic scale.
+ * @returns {logarithmicScale}
+ */
+function logarithmicScale() {
+    const minValue = Math.log(10);
+    const maxValue = Math.log(100);
+    const maxPosition = 100;
+    const minPosition = 10;
+
+    const scale = (maxValue - minValue) / (maxPosition - minPosition);
+
+    this.value = function (position) {
+        return Math.exp((position - minPosition) * scale + minValue);
+    }
+
+    this.position = function (value) {
+        return minPosition + (Math.log(value) - minValue) / scale;
+    }
+
+    return this;
 }
 
 function checkListener(){
@@ -180,20 +222,30 @@ function nonShowDataPart(){
 }
 
 /**
+ * Calls the render for the dendrogram function
+ * and applies style to the nodes and links.
+ */
+function renderDendrogram() {
+    dendrogram = render(data, isAlign);
+    addNodeStyle(dendrogram.node);
+    addLinkStyle(dendrogram.gElement);
+
+    applyScaleText(scaleText, scale / 1000);
+}
+
+/**
  * Adds buttons only applied for dendrogram.
  */
 function addDendrogramButtons() {
     document.querySelector('.align-nodes').style.display = "block"
     document.querySelector('.parentLabels').style.display = "block"
+    document.querySelector('.linkLabels').style.display = "block"
     document.getElementById('logScaleButton').style.display = "block"
     document.getElementById('labelLogScale').style.display = "block"
     document.getElementById('linearScaleButton').style.display = "block"
     document.getElementById('labelLinearScale').style.display = "block"
-    document.querySelector('.linkLabels').style.display = "block"
 
-    document.getElementById('variable').style.display = "block"
-    document.getElementById('leftButton').style.display = "block"
-    document.getElementById('rightButton').style.display = "block"
+    showRescaleButtons("block")
 }
 
 /**
@@ -202,6 +254,7 @@ function addDendrogramButtons() {
 function removeDendrogramButtons() {
     document.querySelector('.align-nodes').style.display = "none";
     document.querySelector('.parentLabels').style.display = "none";
+    document.querySelector('.linkLabels').style.display = "none";
 
     document.getElementById('logScaleButton').style.display = "none";
     document.getElementById('labelLogScale').style.display = "none";
@@ -209,17 +262,6 @@ function removeDendrogramButtons() {
     document.getElementById('linearScaleButton').style.display = "none";
     document.getElementById('labelLinearScale').style.display = "none";
 
-    document.querySelector('.linkLabels').style.display = "none";
-
-    removeHorizontalScale();
-
-    //removeSlider();
-}
-
-/**
- * Remove horizontal scale only applied for dendrogram.
- */
-function removeHorizontalScale() {
     if (document.querySelector('.horizontalScale')) {
         document.querySelector('.horizontalScale').remove();
     }
@@ -227,23 +269,21 @@ function removeHorizontalScale() {
         document.querySelector('.scaleText').remove();
     }
     horizontalScaleVisible = false;
+
+    showRescaleButtons("none");
 }
 
 /**
- * Adds the slider for horizontal rescale.
+ * Adds or removes de buttons for the horizontal rescale.
+ * @param display keyword "none" to remove the buttons or "block" to add.
  */
-// function addSlider() {
-//     document.getElementById('slider').style.display = "block";
-//     document.getElementById('variable').style.display = "block";
-// }
+function showRescaleButtons(display) {
+    document.getElementById('leftButton').style.display = display;
+    document.getElementById('rightButton').style.display = display;
+    document.getElementById('variable').style.display = display;
+}
 
-/**
- * Removes de slider for the horizontal rescale.
- */
-// function removeSlider() {
-//     document.getElementById('slider').style.display = "none";
-//     document.getElementById('variable').style.display = "none";
-// }
+/** Data **/
 
 function sendNewickData(){
     let headers = {'Content-Type': 'application/json'}
@@ -302,59 +342,4 @@ function sendNwkData() {
             data = await res.json()
         })
         .catch(err => alertMsg(err))
-}
-
-/**
- * Adds the zoom event for the svg element.
- * @param svg the svg element where the graph will be placed.
- * @param elem the g element containing the zoom area.
- */
-function addZoom(svg, elem) {
-    if (render.name === "buildTree") {
-        elem.attr("transform", "translate(" + [80, -20] + ")")
-    }
-    if (render.name === "circularRadial" || render.name === "radial") {
-        elem.attr("transform", "translate(" + [width/2 - 100, height/2] + ")")
-    }
-
-    //reset the zoom
-    svg.call(d3.zoom().transform, d3.zoomIdentity.scale(1));
-
-    svg
-        .call(d3.zoom()
-            .scaleExtent([0.1, 100])
-            .on("zoom", function (event) {
-                elem.attr("transform", event.transform)
-                const zoom = document
-                    .getElementById("zoom")
-                    .getAttribute("transform");
-
-                const scaleAttr = zoom.substring(zoom.indexOf("scale"), zoom.length);
-                const scaleValue = scaleAttr.substring(scaleAttr.indexOf("(") + 1, scaleAttr.length - 1);
-
-                if (render.name === "buildTree") applyScaleText(scaleText, scaleValue, linearScale);
-            }))
-}
-
-function alertMsg(message, kind) {
-    if (!kind) kind = 'danger'
-    document
-        .querySelector('.messages')
-        .innerHTML =
-        `<div class="alert alert-${kind} alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                ${message}
-            </div>`
-}
-
-//TODO change name
-function mouseOveredDend(active) {
-    return function (event, d) {
-        d3.select(this).classed("link--active", active).raise();
-
-        do d3.select(d.linkNode).classed("link--active", active).raise();
-        while (d = d.parent);
-    };
 }

@@ -10,6 +10,7 @@
     <script src="./public/js/radial.js"></script>
     <script src="./public/js/dendrogram.js"></script>
     <script src="./public/js/circularRadial.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
 <body>
 <div class="wrapper">
@@ -28,9 +29,16 @@
             <button type="button" class="radial-btn btn btn btn-light mt-1" id="">Circular Radial</button>
             <button type="button" class="radialTree-btn btn btn btn-light mt-1" id="radButton">Radial</button>
             <button type="button" class="dendro-btn btn btn btn-light mt-1" id="denButton">Dendrogram</button>
-            <button type="button" class="parentLabels btn btn btn-info mt-1" style="display: none">Parent labels</button>
-            <button type="button" class="align-nodes btn btn btn-info mt-1" style="display: none">Align nodes</button>
-            <button type="button" class="linkLabels btn btn btn-info mt-1" style="display: none">Link labels</button>
+        </div>
+        <div class="d-grid justify-content-center mt-md-3 ">
+            <h6 class="text-center" id="configText" style="display: none">
+                Graph Configuration
+            </h6>
+            <div class="btn-group-vertical d-grid justify-content-center">
+                <button type="button" class="parentLabels btn btn btn-info mt-1" style="display: none">Parent labels</button>
+                <button type="button" class="align-nodes btn btn btn-info mt-1" style="display: none">Align nodes</button>
+                <button type="button" class="linkLabels btn btn btn-info mt-1" style="display: none">Link labels</button>
+            </div>
             <div class="form-check mt-md-3">
                 <label id="labelLogScale" style="display: none" for="linearScaleButton">
                     <input type="radio" class="logScale form-check-input" id="logScaleButton" name="radioButtons"
@@ -44,11 +52,14 @@
                     Linear scale
                 </label>
             </div>
-        </div>
-        <div class="d-grid justify-content-center mt-md-3">
-            <div>
-                <label id='variable'></label>
-                <input id='slider' type='range' min='1' max='500' step='1' value='100'/>
+            <label id='variable' class="text-center" style="display: none"></label>
+            <div class="btn-group mx-auto gap-3" role="group">
+                <button id="leftButton" style="display: none">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <button id="rightButton" style="display: none">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
             </div>
         </div>
         <div class="d-grid gap-1 justify-content-center mt-md-3">
@@ -58,20 +69,28 @@
             <div class="d-grid gap-2 mt-2">
                 <div class="d-grid justify-content-center">
                     <input class="form-control form-control-sm" id="formFileNw" style="display: none" type="file">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt" style="display: none">Send newick file</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt" style="display: none">
+                        Send newick file
+                    </button>
                 </div>
-                <div class="d-grid justify-content-center">
-                    <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt" style="display: none">Send profiles file</button>
-                </div>
-                <div class="d-grid justify-content-center" >
-                    <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">
-                    <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt" style="display: none">Send isolate file</button>
-                </div>
+<!--                <div class="d-grid justify-content-center">-->
+<!--                    <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">-->
+<!--                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt" style="display: none">-->
+<!--                        Send profiles file-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                <div class="d-grid justify-content-center">-->
+<!--                    <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">-->
+<!--                    <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt" style="display: none">-->
+<!--                        Send isolate file-->
+<!--                    </button>-->
+<!--                </div>-->
             </div>
             <div class="d-grid gap-2 mt-2">
-                <textarea id="nwk" rows="4" cols="25" name="newick" style="display: none">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
-                <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm" style="display: none">Send data</button>
+                <label for="nwk"></label><textarea id="nwk" rows="4" cols="25" name="newick" style="display: none">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
+                <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm" style="display: none">Send
+                    data
+                </button>
             </div>
         </div>
     </nav>

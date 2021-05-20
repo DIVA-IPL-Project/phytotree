@@ -21,6 +21,7 @@ let horizontalScaleVisible;
 let linksVisible;
 let parentLabelsVisible;
 let isAlign;
+let textScale = '100';
 
 // function resize(){
 //     console.log('OnResize')
@@ -45,22 +46,23 @@ async function load() {
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
         removeDendrogramButtons();
-        addSlider();
+        //addSlider();
         render = radial;
         render(data);
     })
 
     const dendrogramButton = document.querySelector('.dendro-btn')
     dendrogramButton.addEventListener('click', () => {
-        addDendrogramButtons();
-        addSlider();
+        showConfig()
+        addDendrogramButtons()
+        //addSlider();
 
-        render = buildTree;
-        isAlign = false;
-        dendrogram = render(data, isAlign);
+        render = buildTree
+        isAlign = false
+        dendrogram = render(data, isAlign)
 
-        addNodeStyle(dendrogram.node);
-        addLinkStyle(dendrogram.gElement);
+        addNodeStyle(dendrogram.node)
+        addLinkStyle(dendrogram.gElement)
     })
 
     const linkLabelsButton = document.querySelector('.linkLabels')
@@ -83,15 +85,29 @@ async function load() {
     const nwkBtn = document.getElementById('nwkBtn')
     nwkBtn.addEventListener('click', sendNwkData)
 
-    let slider = document.getElementById("slider");
-    let variable = document.getElementById('variable');
-    variable.textContent = slider.value;
-    slider.addEventListener('input', function () {
-        variable.textContent = slider.value;
-        scale = +slider.value * 10;
-        if (render.name === "buildTree") applyScaleText(scaleText, scale / 1000, linearScale);
-        render(data, false)
-    });
+    //let slider = document.getElementById("slider");
+    let variable = document.getElementById('variable')
+    variable.textContent = (parseInt(textScale)/10).toString()
+    let leftButton = document.getElementById('leftButton')
+    let rightButton = document.getElementById('rightButton')
+    leftButton.addEventListener('click', function(){
+        if(parseInt(textScale) - 10 > 0){ //todo (here we can optimize)
+            textScale = parseInt(textScale) - 10
+            variable.textContent = (parseInt(textScale)/10).toString();
+            scale =+ textScale * 10;
+            if (render.name === "buildTree") applyScaleText(scaleText, scale / 1000, linearScale);
+            render(data, false)
+        }
+    })
+    rightButton.addEventListener('click', function (){
+        if (parseInt(textScale) + 10 < 100){ //todo (here we can optimize)
+            textScale = parseInt(textScale) + 10
+            variable.textContent = (parseInt(textScale)/10).toString();
+            scale =+ textScale * 10;
+            if (render.name === "buildTree") applyScaleText(scaleText, scale / 1000, linearScale);
+            render(data, false)
+        }
+    })
 
     const logScaleButton = document.querySelector('.logScale')
     logScaleButton.addEventListener('click', () => {
@@ -112,13 +128,13 @@ async function load() {
 
     const nwkSendButton = document.getElementById('idNwkBt')
     //if (!nwkSendButton.addEventListener){
-        nwkSendButton.addEventListener('click', sendNewickData)
+    nwkSendButton.addEventListener('click', sendNewickData)
     //}
-    const profSendButton = document.getElementById('idPrfBt')
-    profSendButton.addEventListener('click', sendProfileData)
-
-    const isoSendButton = document.getElementById('idIsoBt')
-    isoSendButton.addEventListener('click', sendIsolateData)
+    // const profSendButton = document.getElementById('idPrfBt')
+    // profSendButton.addEventListener('click', sendProfileData)
+    //
+    // const isoSendButton = document.getElementById('idIsoBt')
+    // isoSendButton.addEventListener('click', sendIsolateData)
 
     let resp = await fetch('http://localhost:8000/api/data')
     if (resp.status !== 200) alertMsg(resp.statusText)
@@ -135,6 +151,14 @@ function checkListener(){
     }
 }
 
+function showConfig(){
+    document.getElementById('configText').style.display = "block"
+}
+
+function nonShowConfig(){
+    document.getElementById('configText').style.display = "none"
+}
+
 function showDataPart() {
     document.getElementById('formFileNw').style.display = "block";
     document.getElementById('idNwkBt').style.display = "block";
@@ -146,10 +170,10 @@ function showDataPart() {
 function nonShowDataPart(){
     document.getElementById('formFileNw').style.display = "none";
     document.getElementById('idNwkBt').style.display = "none";
-    document.getElementById('formFilePro').style.display = "none";
-    document.getElementById('idPrfBt').style.display = "none";
-    document.getElementById('formFileIso').style.display = "none";
-    document.getElementById('idIsoBt').style.display = "none";
+    //document.getElementById('formFilePro').style.display = "none";
+    //document.getElementById('idPrfBt').style.display = "none";
+    //document.getElementById('formFileIso').style.display = "none";
+    //document.getElementById('idIsoBt').style.display = "none";
     document.getElementById('nwk').style.display = "none";
     document.getElementById('nwkBtn').style.display = "none";
     document.getElementById('textData').style.display = "none";
@@ -159,16 +183,17 @@ function nonShowDataPart(){
  * Adds buttons only applied for dendrogram.
  */
 function addDendrogramButtons() {
-    document.querySelector('.align-nodes').style.display = "block";
-    document.querySelector('.parentLabels').style.display = "block";
+    document.querySelector('.align-nodes').style.display = "block"
+    document.querySelector('.parentLabels').style.display = "block"
+    document.getElementById('logScaleButton').style.display = "block"
+    document.getElementById('labelLogScale').style.display = "block"
+    document.getElementById('linearScaleButton').style.display = "block"
+    document.getElementById('labelLinearScale').style.display = "block"
+    document.querySelector('.linkLabels').style.display = "block"
 
-    document.getElementById('logScaleButton').style.display = "block";
-    document.getElementById('labelLogScale').style.display = "block";
-
-    document.getElementById('linearScaleButton').style.display = "block";
-    document.getElementById('labelLinearScale').style.display = "block";
-
-    document.querySelector('.linkLabels').style.display = "block";
+    document.getElementById('variable').style.display = "block"
+    document.getElementById('leftButton').style.display = "block"
+    document.getElementById('rightButton').style.display = "block"
 }
 
 /**
@@ -188,7 +213,7 @@ function removeDendrogramButtons() {
 
     removeHorizontalScale();
 
-    removeSlider();
+    //removeSlider();
 }
 
 /**
@@ -207,18 +232,18 @@ function removeHorizontalScale() {
 /**
  * Adds the slider for horizontal rescale.
  */
-function addSlider() {
-    document.getElementById('slider').style.display = "block";
-    document.getElementById('variable').style.display = "block";
-}
+// function addSlider() {
+//     document.getElementById('slider').style.display = "block";
+//     document.getElementById('variable').style.display = "block";
+// }
 
 /**
  * Removes de slider for the horizontal rescale.
  */
-function removeSlider() {
-    document.getElementById('slider').style.display = "none";
-    document.getElementById('variable').style.display = "none";
-}
+// function removeSlider() {
+//     document.getElementById('slider').style.display = "none";
+//     document.getElementById('variable').style.display = "none";
+// }
 
 function sendNewickData(){
     let headers = {'Content-Type': 'application/json'}
@@ -239,8 +264,8 @@ function sendNewickData(){
     })
 
     //todo
-    document.getElementById('idPrfBt').style.display = "block";
-    document.getElementById('formFilePro').style.display = "block";
+    //document.getElementById('idPrfBt').style.display = "block";
+    //document.getElementById('formFilePro').style.display = "block";
 }
 
 function sendProfileData(){
@@ -252,8 +277,8 @@ function sendProfileData(){
         fetch('/api/update/newick', {method: 'post', body: body, headers: headers}).catch()
     })
     //todo
-    document.getElementById('formFileIso').style.display = "block";
-    document.getElementById('idIsoBt').style.display = "block";
+    //document.getElementById('formFileIso').style.display = "block";
+    //document.getElementById('idIsoBt').style.display = "block";
 }
 
 function sendIsolateData(){

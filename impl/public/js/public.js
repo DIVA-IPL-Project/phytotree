@@ -158,7 +158,7 @@ function alertMsg(message, kind) {
             </div>`
 }
 
-/** Visualizations*/
+/** Visualizations **/
 
 /**
  * Builds the logarithmic scale.
@@ -281,6 +281,12 @@ function showRescaleButtons(display) {
     document.getElementById('leftButton').style.display = display;
     document.getElementById('rightButton').style.display = display;
     document.getElementById('variable').style.display = display;
+
+    document.getElementById('logScaleButton').style.display = display;
+    document.getElementById('labelLogScale').style.display = display;
+
+    document.getElementById('linearScaleButton').style.display = display;
+    document.getElementById('labelLinearScale').style.display = display;
 }
 
 /** Data **/

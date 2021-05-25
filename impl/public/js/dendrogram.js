@@ -41,13 +41,23 @@ function update(align){
     let treeData
 
     if (!align) {
-        dendrogram_fun = clusterTree().size([height, width]);
+        dendrogram_fun = clusterTree()
+            .nodeSize([1, 1])
+            .separation((a, b) => {
+                console.log(scaleVertical)
+                return scaleVertical
+            });
         tree = treeData = dendrogram_fun(root);
         root.eachBefore(d => {
             if (d.parent) d.y = d.parent.y + scale * d.data.length
         })
     } else {
-        dendrogram_fun = d3.cluster().size([height, width]);
+        dendrogram_fun = d3.cluster()
+            .nodeSize([1, 1])
+            .separation((a, b) => {
+                console.log(scaleVertical)
+                return scaleVertical
+            });
         tree = treeData = dendrogram_fun(root);
     }
 
@@ -291,6 +301,9 @@ function addLeafLabels(elem) {
         .on("mouseover", mouseOveredDendrogram(true))
         .on("mouseout", mouseOveredDendrogram(false));
 }
+
+
+/** Horizontal scale line **/
 
 let scaleLineWidth;
 let translateWidth = 100;

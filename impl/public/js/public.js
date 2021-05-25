@@ -2,6 +2,7 @@ window.onload = load
 //window.onresize = resize
 
 let scale = 1000
+let scaleVertical = 5
 let maxLinkSize = 0
 let margin = {
     top: 20,
@@ -83,16 +84,17 @@ async function load() {
     const nwkBtn = document.getElementById('nwkBtn')
     nwkBtn.addEventListener('click', sendNwkData)
 
-    //let slider = document.getElementById("slider");
-    let variable = document.getElementById('variable')
-    variable.textContent = (parseInt(textScale)/10).toString()
+    // let variable = document.getElementById('variable')
+    // variable.textContent = (parseInt(textScale)/10).toString()
     let leftButton = document.getElementById('leftButton')
     let rightButton = document.getElementById('rightButton')
+    let upButton = document.getElementById('upButton')
+    let downButton = document.getElementById('downButton')
 
     leftButton.addEventListener('click', function(){
         if(parseInt(textScale) - 10 > 0){ //todo (here we can optimize)
             textScale = parseInt(textScale) - 10
-            variable.textContent = (parseInt(textScale)/10).toString();
+            //variable.textContent = (parseInt(textScale)/10).toString();
 
             if (linearScale) scale =+ textScale * 10;
             else scale = logarithmicScale().value(textScale);
@@ -104,13 +106,25 @@ async function load() {
     rightButton.addEventListener('click', function (){
         if (parseInt(textScale) + 10 < 1000){ //todo (here we can optimize)
             textScale = parseInt(textScale) + 10
-            variable.textContent = (parseInt(textScale)/10).toString();
+            // variable.textContent = (parseInt(textScale)/10).toString();
 
             if (linearScale) scale =+ textScale * 10;
             else scale = logarithmicScale().value(textScale);
 
             if (render.name === "buildTree") renderDendrogram();
             else render(data, false)
+        }
+    })
+    upButton.addEventListener('click', function () {
+        if (scaleVertical > 5) {
+            scaleVertical -= 5
+            render(data, false)
+        }
+    })
+    downButton.addEventListener('click', function () {
+        if (scaleVertical < 50) {
+            scaleVertical += 5
+            render(data, false)
         }
     })
 
@@ -279,9 +293,8 @@ function removeDendrogramButtons() {
  * @param display keyword "none" to remove the buttons or "block" to add.
  */
 function showRescaleButtons(display) {
-    document.getElementById('leftButton').style.display = display;
-    document.getElementById('rightButton').style.display = display;
-    document.getElementById('variable').style.display = display;
+    document.getElementById('scaleButtons').style.display = display;
+    // document.getElementById('variable').style.display = display;
 
     document.getElementById('logScaleButton').style.display = display;
     document.getElementById('labelLogScale').style.display = display;

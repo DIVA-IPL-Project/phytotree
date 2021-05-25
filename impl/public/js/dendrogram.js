@@ -1,25 +1,29 @@
 let tree;
 let scaleText;
-
+let tree_data;
+let root
+let i = 0
+let svg, gZoom
+let dendrogram_fun
 /**
  * Builds a dendrogram with the JSON data received.
  * @param data the JSON data.
  * @param align if the nodes are align.
  */
 function buildTree(data, align) {
-    const root = d3.hierarchy(data, d => d.children);
+    root = d3.hierarchy(data, d => d.children);
     if (!align) {
-        const dendrogram = clusterTree().size([height, width]);
-        tree = dendrogram(root);
+        dendrogram_fun = clusterTree().size([height, width]);
+        tree = dendrogram_fun(root);
         root.eachBefore(d => {
             if (d.parent) d.y = d.parent.y + scale * d.data.length
         })
     } else {
-        const dendrogram = d3.cluster().size([height, width]);
-        tree = dendrogram(root);
+        dendrogram_fun = d3.cluster().size([height, width]);
+        tree = dendrogram_fun(root);
     }
 
-    let svg, gZoom
+
     if (!d3.select('#container').select('svg').empty()) {
         d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
         svg = d3.select('#container').select('svg');
@@ -35,19 +39,27 @@ function buildTree(data, align) {
             .attr("id", "zoom")
             .attr("transform", "translate(" + [margin.left, margin.top] + ")")
     }
+    return update(tree)
 
+}
+
+function update(tree){
+    d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
     const gElement = gZoom
         .append("g")
         .attr("id", "graph");
 
-    const links = gElement
-        .selectAll(".link")
-        .data(tree.descendants().slice(1))
-        .enter()
-        .append("g")
+    var treeData = dendrogram_fun(root);
 
-    links
-        .append("path")
+    var nodes = treeData.descendants(),
+        links = treeData.descendants().slice(1);
+
+    nodes.forEach(function(d){ d.y = d.depth * 180});
+
+    var link = gElement.selectAll('.link')
+        .data(links, function(d) { return d.id; });
+
+    var linkEnter = link.enter().append('path')
         .on("mouseover", mouseOveredDendrogram(true))
         .on("mouseout", mouseOveredDendrogram(false))
         .attr("class", "link")
@@ -57,17 +69,16 @@ function buildTree(data, align) {
                 + "H" + d.y;
         });
 
-    const node = gElement
-        .selectAll(".node")
-        .data(tree.descendants())
-        .enter()
-        .append("g")
-        .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
-        .attr("transform", d => "translate(" + [d.y, d.x] + ")");
+    var node = gElement.selectAll('.node')
+        .data(nodes);
 
-    node
-        .append("circle")
-        .attr("r", 2.5);
+    var nodeEnter = node.enter().append('g')
+        .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
+        .attr("transform", d => "translate(" + [d.y, d.x] + ")")
+        .on("click", click);
+
+    nodeEnter.append("circle")
+         .attr("r", 2.5);
 
     addDendrogramZoom(svg, gZoom);
     addLeafLabels(gElement);
@@ -80,6 +91,20 @@ function buildTree(data, align) {
 
     return {gElement, node, links};
 }
+
+function click(event, d) {
+    console.log(d)
+    if (d.children) {
+        d._children = d.children;
+        d.children = null;
+    } else {
+        d.children = d._children;
+        d._children = null;
+    }
+    console.log(d)
+    update(d)
+}
+
 
 /**
  * Returns a object that represents the tree.
@@ -95,10 +120,10 @@ function getTree() {
  */
 function addNodeStyle(elem) {
     elem
-        .select(".node circle")
+        .select(".node")
         .style("fill", "#000000")
         .style("stroke", "#000000")
-        .style("stroke-width", "3px");
+        .style("stroke-width", "10px");
 }
 
 /**

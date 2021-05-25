@@ -62,6 +62,7 @@ async function load() {
 
     const linkLabelsButton = document.querySelector('.linkLabels')
     linkLabelsButton.addEventListener('click', () => {
+        console.log(dendrogram)
         addLinkLabels(dendrogram.links, linksVisible);
     })
 
@@ -101,7 +102,7 @@ async function load() {
         }
     })
     rightButton.addEventListener('click', function (){
-        if (parseInt(textScale) + 10 < 100){ //todo (here we can optimize)
+        if (parseInt(textScale) + 10 < 1000){ //todo (here we can optimize)
             textScale = parseInt(textScale) + 10
             variable.textContent = (parseInt(textScale)/10).toString();
 

@@ -78,7 +78,7 @@ const extensionProfileAndIsolateFiles = ["tab"]
  * @param iFile {String} Isolates file.
  * @returns {Object} Return all functions that can be use.
  */
-function setAllFiles(tFile, pFile, iFile){
+function setAllFilesPath(tFile, pFile, iFile){
     checkFiles(tFile, pFile, iFile)
     return API
 }
@@ -90,12 +90,12 @@ function setAllFiles(tFile, pFile, iFile){
  * @param iFile {String} Isolates file.
  */
 function checkFiles(tFile, pFile, iFile){
-    setNewTreeFile(tFile)
+    setNewTreeFilePath(tFile)
     if(pFile){
-        setNewProfilesFile(pFile)
+        setNewProfilesFilePath(pFile)
     }
     if(iFile) {
-        setNewIsolatesFile(iFile)
+        setNewIsolatesFilePath(iFile)
     }
 }
 
@@ -110,7 +110,7 @@ let treeFile
  * @param tFile {String} Tree file.
  * @returns {Object} All functions for tree file.
  */
-function setNewTreeFile(tFile) {
+function setNewTreeFilePath(tFile) {
     if (!tFile) throw new Error('You have to put tree file.')
     const divided = tFile.split('\\');
     let extension = divided[divided.length-1].split('.', 2)
@@ -124,6 +124,12 @@ function setNewTreeFile(tFile) {
 
 let tree_a
 let tree_s
+
+function setNewTreeFileData(data){
+    setUpTreeVariables()
+    tree_a = tree_s = data
+    return treeFunctions
+}
 
 /**
  * Setup tree variables.
@@ -165,7 +171,6 @@ function getTreeAsync() {
         .catch(err => Error(err))
 }
 
-
 /**
  *  Profile Data Part.
  */
@@ -177,7 +182,7 @@ let profilesFile
  * @param pFile {String} Profile file.
  * @returns {Object} Return all functions for profiles file
  */
-function setNewProfilesFile(pFile){
+function setNewProfilesFilePath(pFile){
     const divided = pFile.split('\\');
     let extension = divided[divided.length-1].split('.', 2)
     if(!extensionProfileAndIsolateFiles.includes(extension[1])){
@@ -384,6 +389,12 @@ async function getXProfileAsync(id) {
     return null
 }
 
+function setNewProfilesFileData(data){
+    stepUpProfileVariables()
+    profiles_a = profiles_s = data
+    return profileFunctions
+}
+
 /**
  *  Isolate Data Part.
  */
@@ -395,7 +406,7 @@ let isolatesFile
  * @param iFile
  * @returns {Object} All functions for isolates.
  */
-function setNewIsolatesFile(iFile) {
+function setNewIsolatesFilePath(iFile) {
     const divided = iFile.split('\\');
     let extension = divided[divided.length-1].split('.', 2)
     if(!extensionProfileAndIsolateFiles.includes(extension[1])){
@@ -414,6 +425,11 @@ function setUpIsolateVariables(){
     isolatesIdentifier_s = null
     idxIsolate_s = 0
     idxColumnIsolate_s = null
+    isolates_a = null
+    isolatesIdentifier_a = null
+    idxIsolate_a = 0
+    idxColumnIsolate_a = null
+
 }
 
 //Sync
@@ -586,6 +602,11 @@ async function getXIsolateAsync(id) {
     return toReturn
 }
 
+function setNewIsolatesFileData(data){
+    setUpIsolateVariables()
+    isolates_a = isolates_s = data
+    return isolateFunctions2
+}
 
 /**
  * Auxiliary Functions.
@@ -604,8 +625,11 @@ function renderFiles(file) {
 }
 
 module.exports = {
-    setAllFiles,
-    setNewTreeFile,
-    setNewProfilesFile,
-    setNewIsolatesFile
+    setAllFilesPath,
+    setNewTreeFilePath,
+    setNewProfilesFilePath,
+    setNewIsolatesFilePath,
+    setNewIsolatesFileData,
+    setNewProfilesFileData,
+    setNewTreeFileData,
 }

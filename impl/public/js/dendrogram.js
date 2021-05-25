@@ -12,17 +12,6 @@ let dendrogram_fun
  */
 function buildTree(data, align) {
     root = d3.hierarchy(data, d => d.children);
-    if (!align) {
-        dendrogram_fun = clusterTree().size([height, width]);
-        tree = dendrogram_fun(root);
-        root.eachBefore(d => {
-            if (d.parent) d.y = d.parent.y + scale * d.data.length
-        })
-    } else {
-        dendrogram_fun = d3.cluster().size([height, width]);
-        tree = dendrogram_fun(root);
-    }
-
 
     if (!d3.select('#container').select('svg').empty()) {
         d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
@@ -39,27 +28,38 @@ function buildTree(data, align) {
             .attr("id", "zoom")
             .attr("transform", "translate(" + [margin.left, margin.top] + ")")
     }
-    return update(tree)
+    return update(align)
 
 }
 
-function update(tree){
+function update(align){
     d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
     const gElement = gZoom
         .append("g")
         .attr("id", "graph");
 
-    var treeData = dendrogram_fun(root);
+    let treeData
+
+    if (!align) {
+        dendrogram_fun = clusterTree().size([height, width]);
+        tree = treeData = dendrogram_fun(root);
+        root.eachBefore(d => {
+            if (d.parent) d.y = d.parent.y + scale * d.data.length
+        })
+    } else {
+        dendrogram_fun = d3.cluster().size([height, width]);
+        tree = treeData = dendrogram_fun(root);
+    }
+
 
     var nodes = treeData.descendants(),
         links = treeData.descendants().slice(1);
 
-    nodes.forEach(function(d){ d.y = d.depth * 180});
-
     var link = gElement.selectAll('.link')
-        .data(links, function(d) { return d.id; });
+        .data(links, function(d) { return d.id; })
+        .enter().append('g');
 
-    var linkEnter = link.enter().append('path')
+    var linkEnter = link.append('path')
         .on("mouseover", mouseOveredDendrogram(true))
         .on("mouseout", mouseOveredDendrogram(false))
         .attr("class", "link")
@@ -78,7 +78,7 @@ function update(tree){
         .on("click", click);
 
     nodeEnter.append("circle")
-         .attr("r", 2.5);
+         .attr("r", 10);
 
     addDendrogramZoom(svg, gZoom);
     addLeafLabels(gElement);
@@ -102,7 +102,7 @@ function click(event, d) {
         d._children = null;
     }
     console.log(d)
-    update(d)
+    update()
 }
 
 
@@ -119,10 +119,11 @@ function getTree() {
  * @param elem the element to add the style.
  */
 function addNodeStyle(elem) {
+    console.log(elem.select(".node circle"))
     elem
-        .select(".node")
-        .style("fill", "#000000")
-        .style("stroke", "#000000")
+        .select(".node circle")
+        .style("fill", "red")
+        .style("stroke", "red")
         .style("stroke-width", "10px");
 }
 
@@ -131,6 +132,8 @@ function addNodeStyle(elem) {
  * @param elem the element to add the style.
  */
 function addLinkStyle(elem) {
+    console.log(elem
+        .selectAll(".link"))
     elem
         .selectAll(".link")
         .style("fill", "none")
@@ -328,6 +331,7 @@ function horizontalScale() {
  * @param scale the current scale value.
  */
 function applyScaleText(scaleText, scale) {
+    console.log(tree)
     if (tree.children) {
         let children = getChildren(tree);
         let length = 0;
@@ -390,7 +394,7 @@ function mouseOveredDendrogram(active) {
  * @param elem the g element containing the zoom area.
  */
 function addDendrogramZoom(svg, elem) {
-    elem.attr("transform", "translate(" + [80, -20] + ")")
+    //elem.attr("transform", "translate(" + [80, -20] + ")")
 
     const zoom = d3.zoom();
     const transform = d3.zoomIdentity.translate(200, 0).scale(1);

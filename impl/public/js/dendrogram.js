@@ -1,75 +1,93 @@
-let tree;
-let scaleText;
-let tree_data;
+let tree
 let root
-let i = 0
-let svg, gZoom
 let dendrogram_fun
+let dendrogram
+
+//graph configurations
+let linksVisible
+let parentLabelsVisible
+let isAlign
+let linearScale
+
+//graph elements
+let svg
+let link
+let graphElement
+let node
+
+//zoom
+let zoomPosition = {x: 100, y: 400}
+let zoomScale = 1
+
+//horizontal line with text scale
+let horizontalScaleVisible
+let scaleText
+let scaleLineWidth
+let translateWidth = 100
+let translateHeight = height - 10
+let scaleLinePadding = 10
+
 /**
  * Builds a dendrogram with the JSON data received.
  * @param data the JSON data.
  * @param align if the nodes are align.
  */
 function buildTree(data, align) {
-    root = d3.hierarchy(data, d => d.children);
+    root = d3.hierarchy(data, d => d.children)
 
     if (!d3.select('#container').select('svg').empty()) {
-        d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
-        svg = d3.select('#container').select('svg');
-        gZoom = svg.select('#zoom');
+        d3.select('#container').select('svg').select('#graph').remove();
+        svg = d3
+            .select('#container')
+            .select('svg')
     } else {
         svg = d3
             .select("#container")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
-
-        gZoom = svg.append("g")
-            .attr("id", "zoom")
-            .attr("transform", "translate(" + [margin.left, margin.top] + ")")
     }
     return update(align)
-
 }
 
-function update(align){
-    d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
-    const gElement = gZoom
+function update(align) {
+    d3.select('#container').select('svg').select('#graph').remove()
+
+    graphElement = svg
         .append("g")
-        .attr("id", "graph");
+        .attr("id", "graph")
+        .attr("transform", "translate(" + [zoomPosition.x, zoomPosition.y] + ")")
 
     let treeData
 
     if (!align) {
         dendrogram_fun = clusterTree()
             .nodeSize([1, 1])
-            .separation((a, b) => {
-                console.log(scaleVertical)
-                return scaleVertical
-            });
+            .separation((a, b) => scaleVertical)
         tree = treeData = dendrogram_fun(root);
         root.eachBefore(d => {
             if (d.parent) d.y = d.parent.y + scale * d.data.length
         })
     } else {
         dendrogram_fun = d3.cluster()
-            .nodeSize([1, 1])
-            .separation((a, b) => {
-                console.log(scaleVertical)
-                return scaleVertical
-            });
-        tree = treeData = dendrogram_fun(root);
+            .nodeSize([1, 200])
+            .separation((a, b) => scaleVertical)
+        tree = treeData = dendrogram_fun(root)
+        root.eachBefore(d => {
+            if (d.parent) d.y = d.parent.y + scale
+        })
     }
 
-
-    var nodes = treeData.descendants(),
+    let nodes = treeData.descendants(),
         links = treeData.descendants().slice(1);
 
-    var link = gElement.selectAll('.link')
-        .data(links, function(d) { return d.id; })
+    link = graphElement.selectAll('.link')
+        .data(links, function (d) {
+            return d.id;
+        })
         .enter().append('g');
 
-    var linkEnter = link.append('path')
+    link.append('path')
         .on("mouseover", mouseOveredDendrogram(true))
         .on("mouseout", mouseOveredDendrogram(false))
         .attr("class", "link")
@@ -79,31 +97,27 @@ function update(align){
                 + "H" + d.y;
         });
 
-    var node = gElement.selectAll('.node')
+    node = graphElement.selectAll('.node')
         .data(nodes);
 
-    var nodeEnter = node.enter().append('g')
+    let nodeEnter = node.enter().append('g')
         .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
         .attr("transform", d => "translate(" + [d.y, d.x] + ")")
         .on("click", click);
 
-    nodeEnter.append("circle")
-         .attr("r", 10);
+    nodeEnter.append("circle").attr("r", 10);
 
-    addDendrogramZoom(svg, gZoom);
-    addLeafLabels(gElement);
+    addDendrogramZoom();
+    addLeafLabels();
 
     if (!horizontalScaleVisible) {
         scaleText = horizontalScale();
         horizontalScaleVisible = true;
         linearScale = true;
     }
-
-    return {gElement, node, links};
 }
 
 function click(event, d) {
-    console.log(d)
     if (d.children) {
         d._children = d.children;
         d.children = null;
@@ -111,10 +125,8 @@ function click(event, d) {
         d.children = d._children;
         d._children = null;
     }
-    console.log(d)
     update()
 }
-
 
 /**
  * Returns a object that represents the tree.
@@ -124,27 +136,23 @@ function getTree() {
     return tree;
 }
 
+//styles
 /**
  * Adds custom style to the nodes.
- * @param elem the element to add the style.
  */
-function addNodeStyle(elem) {
-    console.log(elem.select(".node circle"))
-    elem
+function addNodeStyle() {
+    node
         .select(".node circle")
-        .style("fill", "red")
-        .style("stroke", "red")
+        .style("fill", '#000000')
+        .style("stroke", '#000000')
         .style("stroke-width", "10px");
 }
 
 /**
  * Adds custom style to the links.
- * @param elem the element to add the style.
  */
-function addLinkStyle(elem) {
-    console.log(elem
-        .selectAll(".link"))
-    elem
+function addLinkStyle() {
+    graphElement
         .selectAll(".link")
         .style("fill", "none")
         .style("stroke", "darkgrey")
@@ -152,17 +160,16 @@ function addLinkStyle(elem) {
         .style("font", "14px sans-serif");
 }
 
+//labels
 /**
  * Adds labels to the parent nodes.
- * @param elem the element to append the labels.
- * @param visible if the text is to be removed or added to the screen.
  */
-function addInternalLabels(elem, visible) {
-    if (visible) {
-        elem.selectAll(".node--internal text").remove();
+function addInternalLabels() {
+    if (parentLabelsVisible) {
+        d3.select('#container').select('svg').select('#graph').selectAll(".node--internal text").remove();
         parentLabelsVisible = false;
     } else {
-        elem
+        d3.select('#container').select('svg').select('#graph')
             .selectAll(".node--internal")
             .append("text")
             .attr("dy", 20)
@@ -177,15 +184,13 @@ function addInternalLabels(elem, visible) {
 
 /**
  * Adds labels to the links.
- * @param elem the element to append the labels.
- * @param visible if the text is to be removed or added to the screen.
  */
-function addLinkLabels(elem, visible) {
-    if (visible) {
-        elem.select("text").remove();
+function addLinkLabels() {
+    if (linksVisible) {
+        link.select("text").remove();
         linksVisible = false;
     } else {
-        elem
+        link
             .append("text")
             .attr("x", d => (d.parent.y + d.y) / 2)
             .attr("y", d => d.x - 5)
@@ -195,6 +200,29 @@ function addLinkLabels(elem, visible) {
 
         linksVisible = true;
     }
+}
+
+/**
+ * Adds labels to the leaf nodes.
+ */
+function addLeafLabels() {
+    graphElement
+        .selectAll(".node--leaf")
+        .append("text")
+        .attr("dy", 5)
+        .attr("x", 13)
+        .style("text-anchor", "start")
+        .style("font", "12px sans-serif")
+        .text(d => d.data.name)
+        .on("mouseover", mouseOveredDendrogram(true))
+        .on("mouseout", mouseOveredDendrogram(false));
+}
+
+//align nodes
+function alignNodes() {
+    isAlign = !isAlign
+    update(isAlign)
+    applyScaleText(scaleText, scale / 1000)
 }
 
 //********************* Auxiliary functions ************************
@@ -285,31 +313,7 @@ function clusterTree() {
     return cluster;
 }
 
-/**
- * Adds labels to the leaf nodes.
- * @param elem the element to append the labels.
- */
-function addLeafLabels(elem) {
-    elem
-        .selectAll(".node--leaf")
-        .append("text")
-        .attr("dy", 5)
-        .attr("x", 13)
-        .style("text-anchor", "start")
-        .style("font", "12px sans-serif")
-        .text(d => d.data.name)
-        .on("mouseover", mouseOveredDendrogram(true))
-        .on("mouseout", mouseOveredDendrogram(false));
-}
-
-
-/** Horizontal scale line **/
-
-let scaleLineWidth;
-let translateWidth = 100;
-let translateHeight = height - 10;
-let scaleLinePadding = 10;
-
+//horizontal line for scale text
 /**
  * Adds a horizontal scale.
  */
@@ -344,7 +348,6 @@ function horizontalScale() {
  * @param scale the current scale value.
  */
 function applyScaleText(scaleText, scale) {
-    console.log(tree)
     if (tree.children) {
         let children = getChildren(tree);
         let length = 0;
@@ -403,35 +406,97 @@ function mouseOveredDendrogram(active) {
 
 /**
  * Adds the zoom event for the svg element.
- * @param svg the svg element where the graph will be placed.
- * @param elem the g element containing the zoom area.
  */
-function addDendrogramZoom(svg, elem) {
-    //elem.attr("transform", "translate(" + [80, -20] + ")")
+function addDendrogramZoom() {
+    const zoom = d3.zoom()
+    const transform = d3.zoomIdentity.translate(zoomPosition.x, zoomPosition.y).scale(zoomScale)
+    let applyScale
 
-    const zoom = d3.zoom();
-    const transform = d3.zoomIdentity.translate(200, 0).scale(1);
-    let applyScale;
+    graphElement.attr("transform", "translate(" + [zoomPosition.x, zoomPosition.y] + ") scale(" + zoomScale + ")")
 
     svg
         .call(zoom.transform, transform)
         .call(zoom
             .scaleExtent([0.1, 100])
             .filter((event) => {
-                if (event.type === 'mousedown') applyScale = false;
-                if (event.type === 'wheel') applyScale = true;
-                return true;
+                if (event.type === 'mousedown') applyScale = false
+                if (event.type === 'wheel') applyScale = true
+                return true
             })
             .on("zoom", function (event) {
-                elem.attr("transform", event.transform)
+                zoomPosition.x = event.transform.x
+                zoomPosition.y = event.transform.y
+                zoomScale = event.transform.k
+
+                graphElement.attr("transform", event.transform)
 
                 const zoomElem = document
-                    .getElementById("zoom")
-                    .getAttribute("transform");
+                    .getElementById("graph")
+                    .getAttribute("transform")
 
-                const scaleAttr = zoomElem.substring(zoomElem.indexOf("scale"), zoomElem.length);
-                const scaleValue = scaleAttr.substring(scaleAttr.indexOf("(") + 1, scaleAttr.length - 1);
+                const scaleAttr = zoomElem.substring(zoomElem.indexOf("scale"), zoomElem.length)
+                const scaleValue = scaleAttr.substring(scaleAttr.indexOf("(") + 1, scaleAttr.length - 1)
 
-                if (applyScale) applyScaleText(scaleText, scaleValue);
+                if (applyScale) applyScaleText(scaleText, scaleValue)
             }))
+}
+
+//rescaling
+/**
+ * Builds the logarithmic scale.
+ * @returns {logarithmicScale}
+ */
+function logarithmicScale() {
+    const minValue = Math.log(1);
+    const maxValue = Math.log(100);
+    const maxPosition = 100;
+    const minPosition = 1;
+
+    const scale = (maxValue - minValue) / (maxPosition - minPosition);
+
+    this.value = function (position) {
+        return Math.exp((position - minPosition) * scale + minValue);
+    }
+
+    this.position = function (value) {
+        return minPosition + (Math.log(value) - minValue) / scale;
+    }
+
+    return this;
+}
+
+function applyLinearScale() {
+    linearScale = true
+    scale = +textScale * 10
+    update(isAlign)
+}
+
+function applyLogScale() {
+    linearScale = false
+    scale = logarithmicScale().value(textScale)
+    update(isAlign)
+}
+
+function verticalRescale(up) {
+    if (up) {
+        if (scaleVertical > 5) scaleVertical -= 5
+    } else {
+        if (scaleVertical < 50) scaleVertical += 5
+    }
+    update(isAlign)
+}
+
+function horizontalRescale(right) {
+    if (right) {
+        if (parseInt(textScale) + 10 < 1000) { //todo (here we can optimize)
+            textScale = parseInt(textScale) + 10
+        }
+    } else {
+        if (parseInt(textScale) - 10 > 0) { //todo (here we can optimize)
+            textScale = parseInt(textScale) - 10
+        }
+    }
+    if (linearScale) scale = +textScale * 10
+    else scale = logarithmicScale().value(textScale)
+    update(isAlign)
 }

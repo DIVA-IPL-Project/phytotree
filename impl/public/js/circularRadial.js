@@ -82,7 +82,7 @@ function circularRadial(data) {
 
         let svg, gZoom
         if (!d3.select('#container').select('svg').empty()) {
-            d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
+            d3.select('#container').select('svg').select('#graph').remove();
             svg = d3.select('#container').select('svg');
             gZoom = svg.select('#zoom');
         } else {
@@ -91,17 +91,16 @@ function circularRadial(data) {
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
 
-            gZoom = svg.append("g")
-                .attr("id", "zoom")
-                .attr("transform", "translate(" + [margin.left, margin.top] + ")")
+
         }
 
-        const group = gZoom
+        const group = svg
             .append("g")
-            //.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .attr("id", "graph");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("id", "graph")
+            .attr("transform", "translate(" + [margin.left, margin.top] + ")");
 
-        addRadialCircularZoom(svg, gZoom)
+        addRadialCircularZoom(svg, group)
 
         const linkExtension = group.append("g")
             .attr("fill", "none")

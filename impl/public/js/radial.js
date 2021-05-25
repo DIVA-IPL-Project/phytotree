@@ -21,9 +21,8 @@ function radial(data) {
 
     let svg, gZoom
     if (!d3.select('#container').select('svg').empty()) {
-        d3.select('#container').select('svg').select('#zoom').select('#graph').remove();
+        d3.select('#container').select('svg').select('#graph').remove();
         svg = d3.select('#container').select('svg');
-        gZoom = svg.select('#zoom');
     } else {
         svg = d3
             .select("#container")
@@ -31,14 +30,11 @@ function radial(data) {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
 
-        gZoom = svg.append("g")
-            .attr("id", "zoom")
-            .attr("transform", "translate(" + [margin.left,margin.top] + ")")
     }
 
-    addRadialZoom(svg, gZoom);
+    let graphGroup = svg.append('g').attr('id', 'graph').attr("transform", "translate(" + [margin.left,margin.top] + ")");
 
-    let graphGroup = gZoom.append('g').attr('id', 'graph');
+    addRadialZoom(svg, graphGroup);
 
     let link = graphGroup
         .selectAll(".link")
@@ -191,10 +187,11 @@ function mouseOveredRadial(active) {
  * @param elem the g element containing the zoom area.
  */
 function addRadialZoom(svg, elem) {
-    elem.attr("transform", "translate(" + [width/2 - 100, height/2] + ")")
+    let scale = 0.5
+    elem.attr("transform", "translate(" + [width/2 + 100, height/2 - 100] + ") scale(" + scale + ")")
 
     const zoom = d3.zoom();
-    const transform = d3.zoomIdentity.translate(width/2 - 100, height/2).scale(1);
+    const transform = d3.zoomIdentity.translate(width/2 + 100, height/2 - 100).scale(scale);
 
     svg
         .call(zoom.transform, transform)

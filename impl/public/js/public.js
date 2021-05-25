@@ -3,25 +3,18 @@ window.onload = load
 
 let scale = 1000
 let scaleVertical = 5
-let maxLinkSize = 0
+
 let margin = {
     top: 20,
     right: 90,
     bottom: 30,
     left: 90
 }
-
 let width = window.innerWidth - margin.left - margin.right
 let height = window.innerHeight - margin.top - margin.bottom
 
 let data;
 let render;
-let dendrogram;
-let linearScale;
-let horizontalScaleVisible;
-let linksVisible;
-let parentLabelsVisible;
-let isAlign;
 let textScale = '100';
 
 // function resize(){
@@ -32,7 +25,6 @@ let textScale = '100';
 // }
 
 async function load() {
-
     //todo (if the checkbox starts checked we have to run nonShowDataPart, if the checkbox starts unchecked we have to unchecked the box here)
     const checkButton = document.getElementById('checkB')
     checkButton.addEventListener('click', checkListener)
@@ -53,97 +45,48 @@ async function load() {
 
     const dendrogramButton = document.querySelector('.dendro-btn')
     dendrogramButton.addEventListener('click', () => {
-        showConfig()
         addDendrogramButtons()
-
-        render = buildTree
         isAlign = false
-        renderDendrogram()
+        render = buildTree
+        dendrogram = render(data, isAlign)
+        addNodeStyle()
+        addLinkStyle()
+        applyScaleText(scaleText, scale / 1000)
     })
 
+    //link labels for dendrogram
     const linkLabelsButton = document.querySelector('.linkLabels')
-    linkLabelsButton.addEventListener('click', () => {
-        console.log(dendrogram)
-        addLinkLabels(dendrogram.links, linksVisible);
-    })
+    linkLabelsButton.addEventListener('click', addLinkLabels)
 
+    //align nodes in dendrogram
     const alignNodesInDendrogramButton = document.querySelector('.align-nodes')
-    alignNodesInDendrogramButton.addEventListener('click', () => {
-        isAlign = !isAlign;
-        if (isAlign) showRescaleButtons("none");
-        else showRescaleButtons("block");
-        renderDendrogram()
-    })
+    alignNodesInDendrogramButton.addEventListener('click', alignNodes)
 
+    //parent labels for dendrogram
     const parentLabelsButton = document.querySelector('.parentLabels')
-    parentLabelsButton.addEventListener('click', () => {
-        const graph = d3.select('#container').select('svg').select('#graph');
-        addInternalLabels(graph, parentLabelsVisible);
-    })
+    parentLabelsButton.addEventListener('click', addInternalLabels)
 
     const nwkBtn = document.getElementById('nwkBtn')
     nwkBtn.addEventListener('click', sendNwkData)
 
-    // let variable = document.getElementById('variable')
-    // variable.textContent = (parseInt(textScale)/10).toString()
+    //buttons for rescale
     let leftButton = document.getElementById('leftButton')
     let rightButton = document.getElementById('rightButton')
     let upButton = document.getElementById('upButton')
     let downButton = document.getElementById('downButton')
 
-    leftButton.addEventListener('click', function(){
-        if(parseInt(textScale) - 10 > 0){ //todo (here we can optimize)
-            textScale = parseInt(textScale) - 10
-            //variable.textContent = (parseInt(textScale)/10).toString();
+    leftButton.addEventListener('click', () => horizontalRescale(false))
+    rightButton.addEventListener('click', () => horizontalRescale(true))
+    upButton.addEventListener('click', () => verticalRescale(true))
+    downButton.addEventListener('click', () => verticalRescale(false))
 
-            if (linearScale) scale =+ textScale * 10;
-            else scale = logarithmicScale().value(textScale);
-
-            if (render.name === "buildTree") renderDendrogram();
-            else render(data, false)
-        }
-    })
-    rightButton.addEventListener('click', function (){
-        if (parseInt(textScale) + 10 < 1000){ //todo (here we can optimize)
-            textScale = parseInt(textScale) + 10
-            // variable.textContent = (parseInt(textScale)/10).toString();
-
-            if (linearScale) scale =+ textScale * 10;
-            else scale = logarithmicScale().value(textScale);
-
-            if (render.name === "buildTree") renderDendrogram();
-            else render(data, false)
-        }
-    })
-    upButton.addEventListener('click', function () {
-        if (scaleVertical > 5) {
-            scaleVertical -= 5
-            render(data, false)
-        }
-    })
-    downButton.addEventListener('click', function () {
-        if (scaleVertical < 50) {
-            scaleVertical += 5
-            render(data, false)
-        }
-    })
-
+    //button for logarithmic scale
     const logScaleButton = document.querySelector('.logScale')
-    logScaleButton.addEventListener('click', () => {
-        linearScale = false;
-        scale = logarithmicScale().value(textScale);
-        if (render.name === "buildTree") renderDendrogram();
-        else render(data);
-    })
+    logScaleButton.addEventListener('click', applyLogScale)
 
+    //button for linear scale
     const linearScaleButton = document.querySelector('.linearScale')
-    linearScaleButton.addEventListener('click', () => {
-        linearScale = true;
-        scale =+ textScale * 10;
-        if (render.name === "buildTree") renderDendrogram();
-        else render(data);
-    })
-
+    linearScaleButton.addEventListener('click', applyLinearScale)
 
     const nwkSendButton = document.getElementById('idNwkBt')
     //if (!nwkSendButton.addEventListener){
@@ -175,29 +118,6 @@ function alertMsg(message, kind) {
 
 /** Visualizations **/
 
-/**
- * Builds the logarithmic scale.
- * @returns {logarithmicScale}
- */
-function logarithmicScale() {
-    const minValue = Math.log(10);
-    const maxValue = Math.log(100);
-    const maxPosition = 100;
-    const minPosition = 10;
-
-    const scale = (maxValue - minValue) / (maxPosition - minPosition);
-
-    this.value = function (position) {
-        return Math.exp((position - minPosition) * scale + minValue);
-    }
-
-    this.position = function (value) {
-        return minPosition + (Math.log(value) - minValue) / scale;
-    }
-
-    return this;
-}
-
 function checkListener(){
     const checkButton = document.getElementById('checkB')
 
@@ -208,12 +128,8 @@ function checkListener(){
     }
 }
 
-function showConfig(){
-    document.getElementById('configText').style.display = "block"
-}
-
-function nonShowConfig(){
-    document.getElementById('configText').style.display = "none"
+function showConfig(display){
+    document.getElementById('configText').style.display = display
 }
 
 function showDataPart() {
@@ -237,18 +153,6 @@ function nonShowDataPart(){
 }
 
 /**
- * Calls the render for the dendrogram function
- * and applies style to the nodes and links.
- */
-function renderDendrogram() {
-    dendrogram = render(data, isAlign);
-    addNodeStyle(dendrogram.node);
-    addLinkStyle(dendrogram.gElement);
-
-    applyScaleText(scaleText, scale / 1000);
-}
-
-/**
  * Adds buttons only applied for dendrogram.
  */
 function addDendrogramButtons() {
@@ -259,8 +163,9 @@ function addDendrogramButtons() {
     document.getElementById('labelLogScale').style.display = "block"
     document.getElementById('linearScaleButton').style.display = "block"
     document.getElementById('labelLinearScale').style.display = "block"
+    document.getElementById('scaleButtons').style.display = "block"
 
-    showRescaleButtons("block")
+    showConfig("block")
 }
 
 /**
@@ -270,12 +175,11 @@ function removeDendrogramButtons() {
     document.querySelector('.align-nodes').style.display = "none";
     document.querySelector('.parentLabels').style.display = "none";
     document.querySelector('.linkLabels').style.display = "none";
-
     document.getElementById('logScaleButton').style.display = "none";
     document.getElementById('labelLogScale').style.display = "none";
-
     document.getElementById('linearScaleButton').style.display = "none";
     document.getElementById('labelLinearScale').style.display = "none";
+    document.getElementById('scaleButtons').style.display = "none";
 
     if (document.querySelector('.horizontalScale')) {
         document.querySelector('.horizontalScale').remove();
@@ -284,26 +188,10 @@ function removeDendrogramButtons() {
         document.querySelector('.scaleText').remove();
     }
     horizontalScaleVisible = false;
-
-    showRescaleButtons("none");
+    showConfig("none")
 }
 
-/**
- * Adds or removes de buttons for the horizontal rescale.
- * @param display keyword "none" to remove the buttons or "block" to add.
- */
-function showRescaleButtons(display) {
-    document.getElementById('scaleButtons').style.display = display;
-    // document.getElementById('variable').style.display = display;
-
-    document.getElementById('logScaleButton').style.display = display;
-    document.getElementById('labelLogScale').style.display = display;
-
-    document.getElementById('linearScaleButton').style.display = display;
-    document.getElementById('labelLinearScale').style.display = display;
-}
-
-/** Data **/
+/** input data **/
 
 function sendNewickData(){
     let headers = {'Content-Type': 'application/json'}

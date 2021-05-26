@@ -358,7 +358,7 @@ function applyScaleText(scaleText, scale) {
             length = getLength(children[i]);
             offset = children[i].x;
             if (offset < 1) {
-                offset = children[i].y / 10;
+                offset = children[i].y // 10;
             }
             const test_length = length.toFixed(3);
             if (parseFloat(test_length) !== 0 && offset !== 0) {

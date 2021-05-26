@@ -1,8 +1,7 @@
 window.onload = load
-//window.onresize = resize
 
 let scale = 1000
-let scaleVertical = 5
+let scaleVertical = 20
 
 let margin = {
     top: 20,
@@ -89,9 +88,7 @@ async function load() {
     linearScaleButton.addEventListener('click', applyLinearScale)
 
     const nwkSendButton = document.getElementById('idNwkBt')
-    //if (!nwkSendButton.addEventListener){
     nwkSendButton.addEventListener('click', sendNewickData)
-    //}
     // const profSendButton = document.getElementById('idPrfBt')
     // profSendButton.addEventListener('click', sendProfileData)
     //

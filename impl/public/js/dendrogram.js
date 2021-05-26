@@ -34,17 +34,18 @@ let scaleLinePadding = 10
  */
 function buildTree(data, align) {
     root = d3.hierarchy(data, d => d.children)
-
+    discoverLeafTree(data)
     if (!d3.select('#container').select('svg').empty()) {
         d3.select('#container').select('svg').select('#graph').remove();
         svg = d3
             .select('#container')
             .select('svg')
     } else {
+        //scaleVertical = scaleVertical + leaf
         svg = d3
             .select("#container")
             .append("svg")
-            .attr("width", width + margin.left + margin.right)
+            .attr("width", width  + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
     }
     return update(align)
@@ -105,7 +106,7 @@ function update(align) {
         .attr("transform", d => "translate(" + [d.y, d.x] + ")")
         .on("click", click);
 
-    nodeEnter.append("circle").attr("r", 10);
+    nodeEnter.append("circle").attr("r", 3);
 
     addDendrogramZoom();
     addLeafLabels();
@@ -479,9 +480,9 @@ function applyLogScale() {
 
 function verticalRescale(up) {
     if (up) {
-        if (scaleVertical > 5) scaleVertical -= 5
+        if (scaleVertical > 15) scaleVertical -= 5
     } else {
-        if (scaleVertical < 50) scaleVertical += 5
+        if (scaleVertical < 100) scaleVertical += 5
     }
     update(isAlign)
 }
@@ -499,4 +500,28 @@ function horizontalRescale(right) {
     if (linearScale) scale = +textScale * 10
     else scale = logarithmicScale().value(textScale)
     update(isAlign)
+    applyScaleText(scaleText, scale/1000)
 }
+
+let leaf = 0;
+function discoverLeafTree(data){
+    if(data.children){
+        for (let i = 0; i<data.children.length; ++i){
+            numberOfLeaf(data.children[i])
+        }
+    } else {
+        ++leaf
+    }
+}
+
+function numberOfLeaf(data){
+    if(data.children){
+        for (let i = 0; i<data.children.length; ++i){
+            numberOfLeaf(data.children[i])
+        }
+    }else{
+        ++leaf
+    }
+}
+
+

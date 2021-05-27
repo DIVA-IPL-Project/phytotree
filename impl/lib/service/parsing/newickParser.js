@@ -5,45 +5,26 @@ function parseNewick(newickData) {
 }
 
 const parse = s => {
+    const links = []
     const ancestors = []
     let tree = {
-        //------
-        children_Size: 0,
-        tree_size:0
-        //------
     }
     const tokens = s.split(/\s*([;(),:])\s*/)
     let subtree
+
     for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i]
         switch (token) {
             case '(': // new children
-                subtree = {
-                    //------
-                    children_Size: 0,
-                    tree_size:0
-                    //------
-                }
+                subtree = {}
                 tree.children = [subtree]
-                //------
-                tree.children_Size++
-                tree.tree_size++
-                //------
+
                 ancestors.push(tree)
                 tree = subtree
                 break
             case ',': // another branch
-                subtree = {
-                    //------
-                    children_Size: 0,
-                    tree_size:0
-                    //------
-                }
+                subtree = {}
                 ancestors[ancestors.length - 1].children.push(subtree)
-                //------
-                ancestors[ancestors.length - 1].children_Size++
-                ancestors[ancestors.length - 1].tree_size++
-                //------
                 tree = subtree
                 break
             case ')': // optional name next
@@ -57,23 +38,26 @@ const parse = s => {
 
                 if (x === ')' || x === '(' || x === ',') {
                     tree.name = token
-                    //------
-                    if(tree.children != null){
-                        tree.children.forEach(children => {
-                            tree.tree_size += children.tree_size
-                        })
+                    if(tree.children){
+                        for (let j = 0; j < tree.children.length; j++) {
+                            links.push({
+                                source: token,
+                                target: tree.children[j].name,
+                                value: tree.children[j].length
+                            })
+                        }
                     }
-
-                    //------
                 } else if (x === ':') {
                     tree.length = parseFloat(token)
                 }
         }
     }
-
-    return tree
+    links.push({
+        source: null,
+        target: tree.name,
+        value: tree.length
+    })
+    return links
 }
-
-//console.log(parse('(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;'))
 
 module.exports = parseNewick

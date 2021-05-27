@@ -16,13 +16,6 @@ let data;
 let render;
 let textScale = '100';
 
-// function resize(){
-//     console.log('OnResize')
-//     width = window.innerWidth - margin.left - margin.right
-//     height = window.innerHeight - margin.top - margin.bottom
-//     load()
-// }
-
 async function load() {
     //todo (if the checkbox starts checked we have to run nonShowDataPart, if the checkbox starts unchecked we have to unchecked the box here)
     const checkButton = document.getElementById('checkB')

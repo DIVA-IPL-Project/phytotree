@@ -33,26 +33,26 @@ let scaleLinePadding = 10
  * @param align if the nodes are align.
  */
 function buildTree(data, align) {
-    const a = [
-        { "source": null, "target": "A", "value": 1.0, "visible": true },
-        { "source": "A", "target": "B", "value": 0.3, "visible": true },
-        { "source": "A", "target": "C", "value": 0.7, "visible": true },
-        { "source": "B", "target": "D", "value": 0.3, "visible": true },
-        { "source": "B", "target": "E", "value": 0.2, "visible": true },
-        { "source": "D", "target": "F", "value": 0.2, "visible": true },
-        { "source": "D", "target": "G", "value": 0.3, "visible": true },
-        { "source": "E", "target": "H", "value": 0.5, "visible": true },
-        { "source": "E", "target": "I", "value": 0.3, "visible": true },
-        { "source": "I", "target": "J", "value": 0.2, "visible": true },
-        { "source": "I", "target": "K", "value": 0.3, "visible": true },
-    ]
+    // const a = [
+    //     { "source": null, "target": "A", "value": 1.0, "visible": true },
+    //     { "source": "A", "target": "B", "value": 0.3, "visible": true },
+    //     { "source": "A", "target": "C", "value": 0.7, "visible": true },
+    //     { "source": "B", "target": "D", "value": 0.3, "visible": true },
+    //     { "source": "B", "target": "E", "value": 0.2, "visible": true },
+    //     { "source": "D", "target": "F", "value": 0.2, "visible": true },
+    //     { "source": "D", "target": "G", "value": 0.3, "visible": true },
+    //     { "source": "E", "target": "H", "value": 0.5, "visible": true },
+    //     { "source": "E", "target": "I", "value": 0.3, "visible": true },
+    //     { "source": "I", "target": "J", "value": 0.2, "visible": true },
+    //     { "source": "I", "target": "K", "value": 0.3, "visible": true },
+    // ]
 
-    const treeD = d3.stratify()
-        .id(function(d) { return d.target; })
-        .parentId(function(d) { return d.source; })
-        (a);
+    // const treeD = d3.stratify()
+    //     .id(function(d) { return d.target; })
+    //     .parentId(function(d) { return d.source; })
+    //     (a);
 
-    root = d3.hierarchy(treeD, d => d.children)
+    root = d3.hierarchy(data, d => d.children)
     //discoverLeafTree(data)
     if (!d3.select('#container').select('svg').empty()) {
         d3.select('#container').select('svg').select('#graph').remove();
@@ -86,7 +86,7 @@ function update(align) {
             .separation((a, b) => scaleVertical)
         tree = treeData = dendrogram_fun(root);
         root.eachBefore(d => {
-            if (d.parent) d.y = d.parent.y + scale * d.data.data.value
+            if (d.parent) d.y = d.parent.y + scale * d.data.length
         })
     } else {
         dendrogram_fun = d3.cluster()
@@ -196,7 +196,7 @@ function addInternalLabels() {
             .attr("x", -13)
             .style("text-anchor", "end")
             .style("font", "12px sans-serif")
-            .text(d => d.data.id);
+            .text(d => d.data.name);
 
         parentLabelsVisible = true;
     }
@@ -216,7 +216,7 @@ function addLinkLabels() {
             .attr("y", d => d.x - 5)
             .attr("text-anchor", "middle")
             .style("font", "12px sans-serif")
-            .text(d => d.data.data.value);
+            .text(d => d.data.length);
 
         linksVisible = true;
     }
@@ -233,7 +233,7 @@ function addLeafLabels() {
         .attr("x", 13)
         .style("text-anchor", "start")
         .style("font", "12px sans-serif")
-        .text(d => d.data.id)
+        .text(d => d.data.name)
         .on("mouseover", mouseOveredDendrogram(true))
         .on("mouseout", mouseOveredDendrogram(false));
 }
@@ -397,7 +397,7 @@ function applyScaleText(scaleText, scale) {
  * node does not have a length.
  */
 function getLength(d) {
-    if (d.parent) return d.data.data.value + getLength(d.parent);
+    if (d.parent) return d.data.length+ getLength(d.parent);
     else return 0;
 }
 
@@ -520,27 +520,6 @@ function horizontalRescale(right) {
     else scale = logarithmicScale().value(textScale)
     update(isAlign)
     applyScaleText(scaleText, scale/1000)
-}
-
-let leaf = 0;
-function discoverLeafTree(data){
-    if(data.children){
-        for (let i = 0; i<data.children.length; ++i){
-            numberOfLeaf(data.children[i])
-        }
-    } else {
-        ++leaf
-    }
-}
-
-function numberOfLeaf(data){
-    if(data.children){
-        for (let i = 0; i<data.children.length; ++i){
-            numberOfLeaf(data.children[i])
-        }
-    }else{
-        ++leaf
-    }
 }
 
 

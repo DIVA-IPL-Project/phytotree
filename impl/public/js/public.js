@@ -1,7 +1,7 @@
 window.onload = load
 
 let scale = 1000
-let scaleVertical = 20
+let scaleVertical = 5
 
 let margin = {
     top: 20,
@@ -14,13 +14,16 @@ let height = window.innerHeight - margin.top - margin.bottom
 
 let data;
 let render;
-let textScale = '100';
+
 
 async function load() {
     //todo (if the checkbox starts checked we have to run nonShowDataPart, if the checkbox starts unchecked we have to unchecked the box here)
     const checkButton = document.getElementById('checkB')
     checkButton.addEventListener('click', checkListener)
 
+    /*
+     * Representation Buttons
+     */
     const circularRadialButton = document.querySelector('.radial-btn')
     circularRadialButton.addEventListener('click', () => {
         removeDendrogramButtons();
@@ -46,6 +49,9 @@ async function load() {
         applyScaleText(scaleText, scale / 1000)
     })
 
+    /*
+     * Aux Buttons
+     */
     //link labels for dendrogram
     const linkLabelsButton = document.querySelector('.linkLabels')
     linkLabelsButton.addEventListener('click', addLinkLabels)
@@ -67,10 +73,29 @@ async function load() {
     let upButton = document.getElementById('upButton')
     let downButton = document.getElementById('downButton')
 
-    leftButton.addEventListener('click', () => horizontalRescale(false))
-    rightButton.addEventListener('click', () => horizontalRescale(true))
-    upButton.addEventListener('click', () => verticalRescale(true))
-    downButton.addEventListener('click', () => verticalRescale(false))
+    setupScaleBtn(upButton, () => verticalRescale(true))
+    setupScaleBtn(downButton, () => verticalRescale(false))
+    setupScaleBtn(leftButton, () => horizontalRescale(false))
+    setupScaleBtn(rightButton, () => horizontalRescale(true))
+
+    function setupScaleBtn(elem, func) {
+        let event = events()
+        elem.addEventListener('mousedown', event.mDown)
+        elem.addEventListener('mouseup', event.mUp)
+
+        function events() {
+            let id
+            function mDown() {
+                func()
+                id = setInterval(func, 100);
+            }
+            function mUp() {
+                clearInterval(id);
+            }
+            return { mDown, mUp }
+        }
+    }
+
 
     //button for logarithmic scale
     const logScaleButton = document.querySelector('.logScale')
@@ -91,6 +116,7 @@ async function load() {
     let resp = await fetch('http://localhost:8000/api/data')
     if (resp.status !== 200) alertMsg(resp.statusText)
     else data = await resp.json()
+    console.log(data)
 }
 
 function alertMsg(message, kind) {

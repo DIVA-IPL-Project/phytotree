@@ -2,6 +2,7 @@ let tree
 let root
 let dendrogram_fun
 let dendrogram
+let textScale = '100';
 
 //graph configurations
 let linksVisible
@@ -33,13 +34,13 @@ let scaleLinePadding = 10
  * @param align if the nodes are align.
  */
 function buildTree(data, align) {
-
     const treeD = d3.stratify()
         .id(function(d) { return d.target; })
         .parentId(function(d) { return d.source; })
         (data);
 
     root = d3.hierarchy(treeD, d => d.children)
+
     //discoverLeafTree(data)
     if (!d3.select('#container').select('svg').empty()) {
         d3.select('#container').select('svg').select('#graph').remove();
@@ -72,14 +73,18 @@ function update(align) {
             .nodeSize([1, 1])
             .separation((a, b) => scaleVertical)
         tree = treeData = dendrogram_fun(root);
+        console.log('obj')
+        console.log(tree)
+        console.log('obj')
         root.eachBefore(d => {
+            d.x = d.x * scaleVertical
             if (d.parent) {
                 d.y = d.parent.y + scale * d.data.data.value
             }
         })
     } else {
         dendrogram_fun = d3.cluster()
-            .nodeSize([1, 200])
+            .nodeSize([1, 0])
             .separation((a, b) => scaleVertical)
         tree = treeData = dendrogram_fun(root)
         root.eachBefore(d => {
@@ -387,10 +392,7 @@ function clusterTree() {
             } :
             function (node) {
                 node.x = (node.x - x0) / (x1 - x0) * dx;
-                //node.y = (1 - (root.y ? node.y / root.y : 1)) * dy;
-                //node.y = node.depth * dy / root.y;
                 node.y = node.depth * scale;
-                // node.parent.y + (node.y - node.parent.y) * node.length
             });
     }
 
@@ -561,12 +563,14 @@ function logarithmicScale() {
     return this;
 }
 
-function setNewPositions() {
+function setNewYPositions() {
     root.eachBefore(d => {
         if (d.parent) {
             d.y = d.parent.y + scale * d.data.data.value
-            document.getElementById('node' + d.data.id).setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
-            document.getElementById('link' + d.data.id).setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
+            document.getElementById('node' + d.data.id)
+                .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
+            document.getElementById('link' + d.data.id)
+                .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
         }
     })
 }
@@ -575,7 +579,7 @@ function applyLinearScale() {
     if (!linearScale) {
         linearScale = true
         scale = +textScale * 10
-        setNewPositions();
+        setNewYPositions();
     }
 }
 
@@ -583,17 +587,39 @@ function applyLogScale() {
     if(linearScale) {
         linearScale = false
         scale = logarithmicScale().value(textScale)
-        setNewPositions()
+        setNewYPositions()
     }
 }
 
-function verticalRescale(up) {
-    if (up) {
-        if (scaleVertical > 15) scaleVertical -= 5
+// todo
+function verticalRescale(increment) {
+    if (increment) {
+        if (scaleVertical > 1) {
+            let last = scaleVertical
+            scaleVertical -= 1
+            setNewXPositions(last)
+        }
     } else {
-        if (scaleVertical < 100) scaleVertical += 5
+        if (scaleVertical < 100) {
+            let last = scaleVertical
+            scaleVertical += 1
+            setNewXPositions(last)
+        }
     }
-    update(isAlign)
+}
+
+function setNewXPositions(last) {
+    root.eachBefore(d => {
+        d.x = d.x / last
+        d.x = d.x * scaleVertical
+
+        document.getElementById('node' + d.data.id)
+            .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
+        if (d.parent) {
+            document.getElementById('link' + d.data.id)
+                .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
+        }
+    })
 }
 
 function horizontalRescale(right) {
@@ -608,7 +634,7 @@ function horizontalRescale(right) {
     }
     if (linearScale) scale =+ textScale * 10
     else scale = logarithmicScale().value(textScale)
-    setNewPositions()
+    setNewYPositions()
     applyScaleText(scaleText, scale/1000)
 }
 

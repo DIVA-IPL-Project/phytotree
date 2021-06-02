@@ -176,53 +176,63 @@ function searchInChildren(children, id){
     }
 }
 
-function removeNodesAndLinks(children){
+function removeNodesAndLinks(children) {
     for (let i = 0; i < children.length; i++) {
-        let child= children[i]
-        let id = child.data.id !== undefined? child.data.id : child.id
+        let child = children[i]
+        let id = child.data.id !== undefined ? child.data.id : child.id
         child.visibility = false
+        // todo selectAll
         graphElement.select(`#node${id}`).remove()
         graphElement.select(`#link${id}`).remove()
         // document.getElementById('node'+id).remove()
         // document.getElementById('link'+id).remove()
-        if(child.children !== undefined){
+        if (child.children !== undefined) {
             removeNodesAndLinks(child.children)
         }
     }
 }
 
-function addNodesAndLinks(parent, children){
+function addNodesAndLinks(parent, children) {
+    expandAux(children)
+
+    graphElement.select(`#node${parent.data.id}`).remove()
+    graphElement.data(parent).append('g')
+        .attr("class", d => "node" + (d.children ?
+            " node--internal" : " node--leaf") + (d.parent ? " node--norm" : " node--root"))
+        .attr("transform", d => "translate(" + [d.y, d.x] + ")")
+        .attr("id", d => 'node' + d.data.id)
+        .on("click", click)
+        .append("circle")
+        .attr("r", 3)
+}
+
+function expandAux(children) {
     for (let i = 0; i < children.length; i++) {
         let child = children[i]
-        let id = child.data.id
         child.visibility = true
 
-        graphElement.data(child).append('g').append('path')
-            .on("mouseover", mouseOveredDendrogram(true))
-            .on("mouseout", mouseOveredDendrogram(false))
-            .attr("class", "link")
-            .attr('style', 'z-index: -1;')
-            .attr('id', d => {
-                return 'link'+id
-            })
-            .attr("d", d => {
-                return "M" + [child.parent.y, child.parent.x]
-                    + "V" + child.x
-                    + "H" + child.y;
-            })
+        if (child.children) { expandAux(child.children) }
 
         graphElement.data(child).append('g')
-            .attr("class", d => "node" + (child.children ? " node--internal" : " node--leaf") + (child.parent ? " node--norm" : " node--root") )
-            .attr("transform", d => "translate(" + [child.y, child.x] + ")")
-            .attr("id", d => 'node'+id)
-            .on("click", click)
-            .append("circle").attr("r", 3)
+            .attr("class", "link")
+            .attr('id', d => 'link' + d.data.id)
+            .append('path')
+            .attr("d", d => `M${[d.parent.y, d.parent.x]} V${d.x} H${d.y}`)
+            .on("mouseover", mouseOveredDendrogram(true))
+            .on("mouseout", mouseOveredDendrogram(false))
 
-        if(child.children !== undefined){
-            addNodesAndLinks(child, child.children)
-        }
+        graphElement.data(child).append('g')
+            .attr("class", d => "node" + (d.children ?
+                " node--internal" : " node--leaf") + (d.parent ? " node--norm" : " node--root"))
+            .attr("transform", d => "translate(" + [d.y, d.x] + ")")
+            .attr("id", d => 'node' + d.data.id)
+            .on("click", click)
+            .append("circle")
+            .attr("r", 3)
     }
 }
+
+
 
 /**
  * Returns a object that represents the tree.

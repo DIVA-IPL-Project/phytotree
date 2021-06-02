@@ -88,18 +88,18 @@
                         Send newick file
                     </button>
                 </div>
-                <!--                <div class="d-grid justify-content-center">-->
-                <!--                    <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">-->
-                <!--                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt" style="display: none">-->
-                <!--                        Send profiles file-->
-                <!--                    </button>-->
-                <!--                </div>-->
-                <!--                <div class="d-grid justify-content-center">-->
-                <!--                    <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">-->
-                <!--                    <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt" style="display: none">-->
-                <!--                        Send isolate file-->
-                <!--                    </button>-->
-                <!--                </div>-->
+                                <div class="d-grid justify-content-center">
+                                    <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt" style="display: none">
+                                        Send profiles file
+                                    </button>
+                                </div>
+                                <div class="d-grid justify-content-center">
+                                    <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt" style="display: none">
+                                        Send isolate file
+                                    </button>
+                                </div>
             </div>
             <div class="d-grid gap-2 mt-2">
                 <label for="nwk"></label><textarea id="nwk" rows="4" cols="25" name="newick" style="display: none">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
@@ -111,6 +111,26 @@
     </nav>
     <!-- Page Content -->
     <div class="main">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item active">
+                        <button class="btn btn-light nav-link tree">Tree<span class="sr-only"></span></button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-light nav-link profiles">Profiles</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-light nav-link isolates">Isolates</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
         <div id="container" class="col"></div>
     </div>
 </div>

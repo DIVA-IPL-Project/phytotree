@@ -107,16 +107,19 @@ async function load() {
 
     const nwkSendButton = document.getElementById('idNwkBt')
     nwkSendButton.addEventListener('click', sendNewickData)
-    // const profSendButton = document.getElementById('idPrfBt')
-    // profSendButton.addEventListener('click', sendProfileData)
-    //
-    // const isoSendButton = document.getElementById('idIsoBt')
-    // isoSendButton.addEventListener('click', sendIsolateData)
+    const profSendButton = document.getElementById('idPrfBt')
+    profSendButton.addEventListener('click', sendProfileData)
+
+    const isoSendButton = document.getElementById('idIsoBt')
+    isoSendButton.addEventListener('click', sendIsolateData)
 
     let resp = await fetch('http://localhost:8000/api/data')
     if (resp.status !== 200) alertMsg(resp.statusText)
     else data = await resp.json()
     console.log(data)
+
+    windowNavBar()
+    addListenersToTables()
 }
 
 function alertMsg(message, kind) {
@@ -159,10 +162,10 @@ function showDataPart() {
 function nonShowDataPart(){
     document.getElementById('formFileNw').style.display = "none";
     document.getElementById('idNwkBt').style.display = "none";
-    //document.getElementById('formFilePro').style.display = "none";
-    //document.getElementById('idPrfBt').style.display = "none";
-    //document.getElementById('formFileIso').style.display = "none";
-    //document.getElementById('idIsoBt').style.display = "none";
+    document.getElementById('formFilePro').style.display = "none";
+    document.getElementById('idPrfBt').style.display = "none";
+    document.getElementById('formFileIso').style.display = "none";
+    document.getElementById('idIsoBt').style.display = "none";
     document.getElementById('nwk').style.display = "none";
     document.getElementById('nwkBtn').style.display = "none";
     document.getElementById('textData').style.display = "none";
@@ -228,8 +231,8 @@ function sendNewickData(){
     })
 
     //todo
-    //document.getElementById('idPrfBt').style.display = "block";
-    //document.getElementById('formFilePro').style.display = "block";
+    document.getElementById('idPrfBt').style.display = "block";
+    document.getElementById('formFilePro').style.display = "block";
 }
 
 function sendProfileData(){
@@ -238,11 +241,11 @@ function sendProfileData(){
     profile.text().then(prof => {
         console.log(prof)
         let body = JSON.stringify({data: prof})
-        fetch('/api/update/newick', {method: 'post', body: body, headers: headers}).catch()
+        fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).catch()
     })
     //todo
-    //document.getElementById('formFileIso').style.display = "block";
-    //document.getElementById('idIsoBt').style.display = "block";
+    document.getElementById('formFileIso').style.display = "block";
+    document.getElementById('idIsoBt').style.display = "block";
 }
 
 function sendIsolateData(){
@@ -251,7 +254,7 @@ function sendIsolateData(){
     isolate.text().then(iso => {
         console.log(iso)
         let body = JSON.stringify({data: iso})
-        fetch('/api/update/newick', {method: 'post', body: body, headers: headers}).catch()
+        fetch('/api/update/isolates', {method: 'post', body: body, headers: headers}).catch()
     })
 }
 
@@ -264,6 +267,270 @@ function sendNwkData() {
         .then(async res => {
             if (res.status === 500) alertMsg('error')
             data = await res.json()
+        })
+        .catch(err => alertMsg(err))
+}
+
+function windowNavBar() {
+    document.querySelector('.tree').style.background = '#0DCAF0'
+    document.querySelector('.tree').addEventListener('click', () => {
+        document.querySelector('.tree').style.background = '#0DCAF0'
+        document.querySelector('.profiles').style.background = 'white'
+        document.querySelector('.isolates').style.background = 'white'
+    })
+    document.querySelector('.profiles').addEventListener('click', () => {
+        document.querySelector('.profiles').style.background = '#0DCAF0'
+        document.querySelector('.tree').style.background = 'white'
+        document.querySelector('.isolates').style.background = 'white'
+        fetchProfiles()
+
+    })
+    document.querySelector('.isolates').addEventListener('click', () => {
+        document.querySelector('.isolates').style.background = '#0DCAF0'
+        document.querySelector('.profiles').style.background = 'white'
+        document.querySelector('.tree').style.background = 'white'
+        fetchIsolates()
+    })
+}
+
+function fetchProfiles() {
+    const headers = {'Content-Type': 'application/json'}
+    fetch('/api/profiles')
+        .then(body => body.json())
+        .then(res => {
+            const data = res[0]
+            let headerRow
+            let profiles
+
+            data.indexOf('\r') > 0 ?
+                headerRow = data.substring(0, data.indexOf('\r')).split('\t') :
+                headerRow = data.substring(0, data.indexOf('\n')).split('\t')
+
+            data.indexOf('\r') > 0 ?
+                profiles = data.substring(data.indexOf('\r') + 1, data.length).split('\r') :
+                profiles = data.substring(data.indexOf('\n') + 1, data.length).split('\n')
+
+            profiles = profiles.map(item => item
+                .replaceAll('\n', "")
+                .replaceAll('\t', " ")
+                .split(" ")
+            )
+
+            if (profiles[profiles.length - 1][0] === "") profiles = profiles.slice(0, profiles.length - 1)
+
+            const body = JSON.stringify({header: headerRow, prof: profiles})
+
+            fetch('/profiles', {method: 'post', body: body, headers: headers})
+                .then(async res => {
+                    if (res.status === 500) alertMsg('error')
+                    else document.location.href = '/profiles'
+                })
+                .catch(err => alertMsg(err))
+        })
+}
+
+function fetchIsolates() {
+    const headers = {'Content-Type': 'application/json'}
+    fetch('/api/isolates')
+        .then(body => body.json())
+        .then(res => {
+            let headerRow
+            let isolates
+
+            res.indexOf('\r') > 0 ?
+                headerRow = res.split('\r')[0].substring(0, res.indexOf('\r')).split('\t') :
+                headerRow = res.split('\n')[0].substring(0, res.indexOf('\n')).split('\t')
+
+            res.indexOf('\r') > 0 ?
+                isolates = res.substring(res.indexOf('\r') + 1, res.length).split('\r') :
+                isolates = res.substring(res.indexOf('\n') + 1, res.length).split('\n')
+
+            isolates = isolates.map(item => item
+                .replaceAll('\n', "")
+                .replaceAll('\t', " ")
+                .split(" ")
+            )
+
+            if (isolates[isolates.length - 1][0] === "") isolates = isolates.slice(0, isolates.length - 1)
+
+            let body = JSON.stringify({header: headerRow, iso: isolates})
+
+            fetch('/isolates', {method: 'post', body: body, headers: headers})
+                .then(async res => {
+                    if (res.status === 500) alertMsg('error')
+                    else document.location.href = '/isolates'
+                })
+                .catch(err => alertMsg(err))
+        })
+}
+
+function addListenersToTables() {
+    if (document.querySelector('.prof') !== null) {
+        document.querySelectorAll('.prof').forEach(elem => {
+            elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
+            elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#FFFFFF')
+            elem.addEventListener('click', () => clickHeader(elem))
+        })
+    }
+    if (document.querySelector('.iso') !== null) {
+        document.querySelectorAll('.iso').forEach(elem => {
+            elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
+            elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#FFFFFF')
+            elem.addEventListener('click', () => clickHeader(elem))
+        })
+    }
+    if (document.querySelector('.treeButton') !== null) {
+        document.querySelector('.treeButton').addEventListener('click', () => document.location = '/home')
+    }
+    if (document.querySelector('.profilesButton') !== null) {
+        document.querySelector('.profilesButton').addEventListener('click', goToProfiles)
+    }
+    if (document.querySelector('.isolatesButton') !== null) {
+        document.querySelector('.isolatesButton').addEventListener('click', goToIsolates)
+    }
+}
+
+function clickHeader(header) {
+    const HeaderId = header.parentNode.getElementsByTagName('th')[header.id].cellIndex
+    const headerName = header.parentNode.getElementsByTagName('th')[header.id].innerHTML
+    const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
+    const categories = []
+
+    for (let i = 0; i < tdElements.length; i++) {
+        if (tdElements[i].cellIndex === HeaderId) {
+            tdElements[i].style.backgroundColor = '#cfcfcf'
+            categories.push({
+                profile: tdElements[i].parentNode.cells[0].innerText,
+                isolate: tdElements[i].innerText
+            })
+        } else {
+            tdElements[i].style.backgroundColor = '#FFFFFF'
+        }
+    }
+
+    let counts = [];
+    categories.forEach(function (d) {
+        let item = {}
+        if (!counts.find(i => i.name === d.isolate)) {
+            item.name = d.isolate
+            item.value = 0;
+            counts.push(item)
+        }
+        counts.find(i => i.name === d.isolate).value++
+    });
+    const totalLength = counts.length
+    if (counts.length > 20) {
+        counts = counts.slice(0, 19)
+        counts.push({name: 'Others', value: totalLength - 20})
+    }
+    constructPieChart(counts, headerName)
+}
+
+const colorsRange = [
+    "#1b70fc", "#33f0ff", "#718a90", "#b21bff", "#fe6616",
+    "#f9bc0f", "#b65d66", "#07a2e6", "#c091ae", "#10b437",
+    "#ea42fe", "#c281fe", "#4f33ff", "#a946aa", "#16977e",
+    "#a88178", "#5776a9", "#678007", "#fa9316", "#85c070",
+    "#6aa2a9", "#989e5d", "#cd714a", "#c5639c", "#c23271",
+    "#678275", "#c5a121", "#a978ba", "#ee534e", "#d24506",
+    "#6f7385", "#9a634a", "#48aa6f", "#ad9ad0", "#6a8a53",
+    "#8c46fc", "#8f5ab8", "#7133ff", "#d77cd1", "#a9804b",
+    "#a67389", "#9e8cfe", "#bd443c", "#6d63ff", "#d110d5",
+    "#798cc3", "#25b3a7", "#938c6d", "#a05787", "#9c87a0",
+    "#20c773", "#8b696d", "#78762d", "#e154c6", "#40835f",
+    "#d73656", "#1397a3", "#f940a5", "#66aeff", "#d097e7",
+    "#cf7c97", "#8b900a", "#d47270",
+]
+
+function constructPieChart(data, headerName) {
+    if (!d3.select('svg').selectAll('g').empty()) {
+        d3.select('svg').selectAll('g').remove()
+    }
+    const g = d3.select('svg').append('g').attr("transform", `translate(550, 150)`).attr('id', 'pieChart')
+
+    const pie = d3.pie().value(d => d.value)
+
+    const path = d3.arc().outerRadius(150).innerRadius(30)
+
+    const color = d3.scaleOrdinal()
+        .domain(d3.range(0, length))
+        .range(colorsRange)
+
+    const pies = g.selectAll('.arc')
+        .data(pie(data))
+        .enter()
+        .append('g')
+        .classed('arc', true)
+
+    pies.append('path')
+        .attr('d', d => path(d))
+        .attr('fill', (d, i) => color(i))
+        .attr('id', d => d.data.name)
+
+    let colors = []
+    let labels = []
+
+    document.querySelectorAll('.arc').forEach(item => {
+        colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
+    })
+
+    document.querySelectorAll('.arc').forEach(item => {
+        labels.push(item.getElementsByTagName('path')[0].attributes['id'].nodeValue)
+    })
+
+    const pieChart = d3.select('svg').append('g')
+
+    let position = 30
+    data.forEach((item, i) => {
+        pieChart.append('circle')
+            .attr('cy', position)
+            .attr('cx', 760)
+            .attr('r', 6)
+            .style('fill', colors[i])
+
+        pieChart.append('text')
+            .attr('y', position)
+            .attr('x', 770)
+            .text(labels[i])
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        position += 20
+    })
+
+    const legend = pieChart.attr('id', 'legend')
+    legend.append('text')
+        .attr('y', 350)
+        .attr('x', 525)
+        .text(headerName)
+        .style("font-size", "15px")
+        .attr("alignment-baseline", "middle")
+
+    legend.append('text')
+        .attr('y', 380)
+        .attr('x', 510)
+        .text('Categories: ' + data.length)
+        .style("font-size", "15px")
+        .attr("alignment-baseline", "middle")
+
+    colors = []
+    labels = []
+}
+
+function goToIsolates() {
+    fetch('/isolates')
+        .then(async res => {
+            if (res.status === 500) alertMsg('error')
+            else document.location.href = '/isolates'
+        })
+        .catch(err => alertMsg(err))
+}
+
+function goToProfiles() {
+    fetch('/profiles')
+        .then(async res => {
+            if (res.status === 500) alertMsg('error')
+            else document.location.href = '/profiles'
         })
         .catch(err => alertMsg(err))
 }

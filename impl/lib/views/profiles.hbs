@@ -1,0 +1,28 @@
+<div>
+    <p></p>
+    <button class="btn btn-light treeButton">Tree</button>
+    <button class="btn btn-light isolatesButton">Isolates</button>
+    <h3 class="lead text-center">Profiles</h3>
+    <p></p>
+    <table class="table table-bordered table-hover table-responsive"
+           id="table"
+           height="450">
+        <thead>
+        <tr class="text-center">
+            {{#each header}}
+                <th class="prof" style="cursor: pointer" id="{{.}}">{{.}}</th>
+            {{/each}}
+        </tr>
+        </thead>
+        <tbody>
+        {{#each prof}}
+            <tr class="text-center">
+                {{#each .}}
+                    <td style="cursor: pointer">{{.}}</td>
+                {{/each}}
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+    <svg width="1500" height="500"/>
+</div>

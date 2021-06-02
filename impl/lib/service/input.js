@@ -329,7 +329,7 @@ async function getProfilesAsync() {
     if(!profiles_a){
         await getProfileDataAsync()
     }
-    return profiles_a
+    return profiles_a.split(" ")
 }
 
 
@@ -341,7 +341,7 @@ async function getNextProfileAsync(){
     if(profiles_a == null){
         await getProfileDataAsync()
     }
-    if(idxProfile_a >= profiles_a.length) return
+    if(idxProfile_a >= profiles_a.length) return profiles_a
     let toReturn = profiles_a[idxProfile_a]
     idxProfile_a++
     return toReturn
@@ -464,7 +464,8 @@ function getIsolateSync() {
     if (!isolates_s) {
         getIsolateDataSync()
     }
-    return isolates_s
+    console.log(isolates_s.split(" "))
+    return isolates_s.split(" ")
 }
 
 /**
@@ -475,7 +476,7 @@ function getNextIsolateSync() {
     if (!isolates_s) {
         getIsolateDataSync()
     }
-    if(idxColumnIsolate_s >= isolates_s.length) return null
+    if(idxColumnIsolate_s >= isolates_s.length) return isolates_s
     let toReturn = isolates_s[idxIsolate_s]
     idxIsolate_s++
     return toReturn
@@ -632,4 +633,5 @@ module.exports = {
     setNewIsolatesFileData,
     setNewProfilesFileData,
     setNewTreeFileData,
+    API
 }

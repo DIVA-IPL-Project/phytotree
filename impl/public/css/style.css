@@ -37,7 +37,7 @@
     width: 250px; /* Set the width of the sidebar */
     position: fixed; /* Fixed Sidebar (stay in place on scroll) */
     z-index: 1; /* Stay on top */
-    top: 0; /* Stay at the top */
+    top: 41px; /* Stay at the top */
     left: 0;
     background-color: #cfcfcf;
     overflow-x: hidden; /* Disable horizontal scroll */
@@ -47,5 +47,6 @@
 /* Style page content */
 .main {
     margin-left: 250px; /* Same as the width of the sidebar */
+    top: 41px;
     padding: 0px 10px;
 }

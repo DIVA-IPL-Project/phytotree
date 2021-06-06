@@ -14,8 +14,8 @@ app.use(bodyParser.json({limit: "50mb"}))
 app.use('/api', routesApi)
 app.use(routesWeb)
 
-app.set('view engine', 'hbs')
-app.set('views', path.join(__dirname, './lib/views/'))
+// app.set('view engine', 'hbs')
+// app.set('views', path.join(__dirname, './lib/views/'))
 
 app.listen(PORT, function (err) {
     if (err) console.log(err);

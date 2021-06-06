@@ -34,13 +34,17 @@ let scaleLinePadding = 10
  * @param align if the nodes are align.
  */
 function buildTree(data, align) {
+    console.log('data')
+    console.log(data.links)
     const treeD = d3.stratify()
         .id(function(d) { return d.target; })
         .parentId(function(d) { return d.source; })
-        (data);
+        (data.links);
 
     root = d3.hierarchy(treeD, d => d.children)
 
+    console.log('root')
+    console.log(root)
     //discoverLeafTree(data)
     if (!d3.select('#container').select('svg').empty()) {
         d3.select('#container').select('svg').select('#graph').remove();
@@ -52,8 +56,8 @@ function buildTree(data, align) {
         svg = d3
             .select("#container")
             .append("svg")
-            .attr("width", width  + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width )// + margin.left + margin.right)
+            .attr("height", height )//+ margin.top + margin.bottom)
     }
     return update(align)
 }

@@ -4,17 +4,85 @@ let scale = 1000
 let scaleVertical = 5
 
 let margin = {
-    top: 20,
-    right: 90,
+    top: 41,
+    right: 10,
     bottom: 30,
-    left: 90
+    left: 250
 }
 let width = window.innerWidth - margin.left - margin.right
 let height = window.innerHeight - margin.top - margin.bottom
 
-let data;
-let render;
+let data
+let render
+let is_table_profile_create = false
+let is_table_isolate_create = false
 
+
+function create_table_profile(data) {
+    console.log('create table')
+    const div = document.getElementById('profileContent')
+    /** Table **/
+    const table = document.createElement('table')
+    table.setAttribute('class', 'table table-bordered table-hover table-responsive')
+    table.setAttribute('height', '450')
+    table.clientHeight = 450
+
+    /** head **/
+    const head = table.createTHead()
+    const head_row = head.insertRow()
+    data.schemeGenes.forEach(row => {
+        const cell = head_row.insertCell()
+        cell.textContent = row
+        cell.setAttribute('scope', 'col')
+    })
+
+    /** body **/
+    const body = table.createTBody()
+    data.nodes.forEach( node => {
+        const body_row = body.insertRow()
+        const cell_node_name = body_row.insertCell()
+        cell_node_name.textContent = node.key
+        const b_cells = node.profile.forEach(profile => {
+            const cell = body_row.insertCell()
+            cell.textContent = profile
+        })
+    })
+
+    /** Append table  **/
+    div.appendChild(table)
+}
+
+function create_table_isolate(data) {
+    console.log('create table')
+    const div = document.getElementById('isolateContent')
+    /** Table **/
+    const table = document.createElement('table')
+    table.setAttribute('class', 'table table-bordered table-hover table-responsive')
+    table.setAttribute('height', '450')
+    table.clientHeight = 450
+
+    /** head **/
+    const head = table.createTHead()
+    const head_row = head.insertRow()
+    data.metadata.forEach(row => {
+        const cell = head_row.insertCell()
+        cell.textContent = row
+        cell.setAttribute('scope', 'col')
+    })
+
+    /** body **/
+    const body = table.createTBody()
+    data.nodes.forEach( node => {
+        const body_row = body.insertRow()
+        const b_cells = node.isolates[0].forEach(profile => {
+            const cell = body_row.insertCell()
+            cell.textContent = profile
+        })
+    })
+
+    /** Append table  **/
+    div.appendChild(table)
+}
 
 async function load() {
     //todo (if the checkbox starts checked we have to run nonShowDataPart, if the checkbox starts unchecked we have to unchecked the box here)
@@ -47,6 +115,24 @@ async function load() {
         addNodeStyle()
         addLinkStyle()
         applyScaleText(scaleText, scale / 1000)
+    })
+
+    const primary_data = document.getElementById('profile-tab')
+    primary_data.addEventListener('click', () => {
+        if(!is_table_profile_create){
+            create_table_profile(data)
+            is_table_profile_create = true
+            console.log('create table profile')
+        }
+    })
+
+    const auxiliary_data = document.getElementById('isolate-tab')
+    auxiliary_data.addEventListener('click', () => {
+        if(!is_table_isolate_create){
+            console.log('create table isolate')
+            create_table_isolate(data)
+            is_table_isolate_create = true
+        }
     })
 
     /*
@@ -116,10 +202,11 @@ async function load() {
     let resp = await fetch('http://localhost:8000/api/data')
     if (resp.status !== 200) alertMsg(resp.statusText)
     else data = await resp.json()
+    console.log('___')
     console.log(data)
 
-    windowNavBar()
-    addListenersToTables()
+    // windowNavBar()
+    // addListenersToTables()z<z<
 }
 
 function alertMsg(message, kind) {
@@ -214,21 +301,22 @@ function removeDendrogramButtons() {
 
 function sendNewickData(){
     let headers = {'Content-Type': 'application/json'}
-    let nwk = document.getElementById('formFileNw').files[0]
-    nwk.text().then(newick => {
-        console.log(newick)
-        let body = JSON.stringify({data: newick})
-        fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
-            .then(() => {
-                fetch('/api/data', {method: 'post', body: body, headers: headers})
-                    .then(async res => {
-                        if (res.status === 500) alertMsg('error')
-                        data = await res.json()
-                    })
-                    .catch(err => alertMsg(err))
-            })
-            .catch()
-    })
+    //let nwk = document.getElementById('formFileNw').files[0]
+    // nwk.text().then(newick => {
+    //     console.log(newick)
+    //     let body = JSON.stringify({data: newick})
+    //     fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
+    //         .then(() => {
+    //             fetch('/api/data', {method: 'post', body: body, headers: headers})
+    //                 .then(async res => {
+    //                     if (res.status === 500) alertMsg('error')
+    //                     data = await res.json()
+    //                     console.log(data)
+    //                 })
+    //                 .catch(err => alertMsg(err))
+    //         })
+    //         .catch()
+    // })
 
     //todo
     document.getElementById('idPrfBt').style.display = "block";
@@ -238,10 +326,11 @@ function sendNewickData(){
 function sendProfileData(){
     let headers = {'Content-Type': 'application/json'}
     let profile = document.getElementById('formFilePro').files[0]
+    console.log(profile)
     profile.text().then(prof => {
         console.log(prof)
-        let body = JSON.stringify({data: prof})
-        fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).catch()
+    //     let body = JSON.stringify({data: prof})
+    //     fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).catch()
     })
     //todo
     document.getElementById('formFileIso').style.display = "block";
@@ -251,10 +340,11 @@ function sendProfileData(){
 function sendIsolateData(){
     let headers = {'Content-Type': 'application/json'}
     let isolate = document.getElementById('formFileIso').files[0]
+    console.log(isolate)
     isolate.text().then(iso => {
         console.log(iso)
-        let body = JSON.stringify({data: iso})
-        fetch('/api/update/isolates', {method: 'post', body: body, headers: headers}).catch()
+        // let body = JSON.stringify({data: iso})
+        // fetch('/api/update/isolates', {method: 'post', body: body, headers: headers}).catch()
     })
 }
 
@@ -263,168 +353,78 @@ function sendNwkData() {
     let body = JSON.stringify({data: nwk})
     let headers = {'Content-Type': 'application/json'}
 
-    fetch('/api/data', {method: 'post', body: body, headers: headers})
+    fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
         .then(async res => {
             if (res.status === 500) alertMsg('error')
+            console.log('data::')
             data = await res.json()
+            console.log('data::')
+            console.log(data)
         })
         .catch(err => alertMsg(err))
 }
 
-function windowNavBar() {
-    document.querySelector('.tree').style.background = '#0DCAF0'
-    document.querySelector('.tree').addEventListener('click', () => {
-        document.querySelector('.tree').style.background = '#0DCAF0'
-        document.querySelector('.profiles').style.background = 'white'
-        document.querySelector('.isolates').style.background = 'white'
-    })
-    document.querySelector('.profiles').addEventListener('click', () => {
-        document.querySelector('.profiles').style.background = '#0DCAF0'
-        document.querySelector('.tree').style.background = 'white'
-        document.querySelector('.isolates').style.background = 'white'
-        fetchProfiles()
-
-    })
-    document.querySelector('.isolates').addEventListener('click', () => {
-        document.querySelector('.isolates').style.background = '#0DCAF0'
-        document.querySelector('.profiles').style.background = 'white'
-        document.querySelector('.tree').style.background = 'white'
-        fetchIsolates()
-    })
-}
-
-function fetchProfiles() {
-    const headers = {'Content-Type': 'application/json'}
-    fetch('/api/profiles')
-        .then(body => body.json())
-        .then(res => {
-            const data = res[0]
-            let headerRow
-            let profiles
-
-            data.indexOf('\r') > 0 ?
-                headerRow = data.substring(0, data.indexOf('\r')).split('\t') :
-                headerRow = data.substring(0, data.indexOf('\n')).split('\t')
-
-            data.indexOf('\r') > 0 ?
-                profiles = data.substring(data.indexOf('\r') + 1, data.length).split('\r') :
-                profiles = data.substring(data.indexOf('\n') + 1, data.length).split('\n')
-
-            profiles = profiles.map(item => item
-                .replaceAll('\n', "")
-                .replaceAll('\t', " ")
-                .split(" ")
-            )
-
-            if (profiles[profiles.length - 1][0] === "") profiles = profiles.slice(0, profiles.length - 1)
-
-            const body = JSON.stringify({header: headerRow, prof: profiles})
-
-            fetch('/profiles', {method: 'post', body: body, headers: headers})
-                .then(async res => {
-                    if (res.status === 500) alertMsg('error')
-                    else document.location.href = '/profiles'
-                })
-                .catch(err => alertMsg(err))
-        })
-}
-
-function fetchIsolates() {
-    const headers = {'Content-Type': 'application/json'}
-    fetch('/api/isolates')
-        .then(body => body.json())
-        .then(res => {
-            let headerRow
-            let isolates
-
-            res.indexOf('\r') > 0 ?
-                headerRow = res.split('\r')[0].substring(0, res.indexOf('\r')).split('\t') :
-                headerRow = res.split('\n')[0].substring(0, res.indexOf('\n')).split('\t')
-
-            res.indexOf('\r') > 0 ?
-                isolates = res.substring(res.indexOf('\r') + 1, res.length).split('\r') :
-                isolates = res.substring(res.indexOf('\n') + 1, res.length).split('\n')
-
-            isolates = isolates.map(item => item
-                .replaceAll('\n', "")
-                .replaceAll('\t', " ")
-                .split(" ")
-            )
-
-            if (isolates[isolates.length - 1][0] === "") isolates = isolates.slice(0, isolates.length - 1)
-
-            let body = JSON.stringify({header: headerRow, iso: isolates})
-
-            fetch('/isolates', {method: 'post', body: body, headers: headers})
-                .then(async res => {
-                    if (res.status === 500) alertMsg('error')
-                    else document.location.href = '/isolates'
-                })
-                .catch(err => alertMsg(err))
-        })
-}
-
-function addListenersToTables() {
-    if (document.querySelector('.prof') !== null) {
-        document.querySelectorAll('.prof').forEach(elem => {
-            elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
-            elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#FFFFFF')
-            elem.addEventListener('click', () => clickHeader(elem))
-        })
-    }
-    if (document.querySelector('.iso') !== null) {
-        document.querySelectorAll('.iso').forEach(elem => {
-            elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
-            elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#FFFFFF')
-            elem.addEventListener('click', () => clickHeader(elem))
-        })
-    }
-    if (document.querySelector('.treeButton') !== null) {
-        document.querySelector('.treeButton').addEventListener('click', () => document.location = '/home')
-    }
-    if (document.querySelector('.profilesButton') !== null) {
-        document.querySelector('.profilesButton').addEventListener('click', goToProfiles)
-    }
-    if (document.querySelector('.isolatesButton') !== null) {
-        document.querySelector('.isolatesButton').addEventListener('click', goToIsolates)
-    }
-}
-
-function clickHeader(header) {
-    const HeaderId = header.parentNode.getElementsByTagName('th')[header.id].cellIndex
-    const headerName = header.parentNode.getElementsByTagName('th')[header.id].innerHTML
-    const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
-    const categories = []
-
-    for (let i = 0; i < tdElements.length; i++) {
-        if (tdElements[i].cellIndex === HeaderId) {
-            tdElements[i].style.backgroundColor = '#cfcfcf'
-            categories.push({
-                profile: tdElements[i].parentNode.cells[0].innerText,
-                isolate: tdElements[i].innerText
-            })
-        } else {
-            tdElements[i].style.backgroundColor = '#FFFFFF'
-        }
-    }
-
-    let counts = [];
-    categories.forEach(function (d) {
-        let item = {}
-        if (!counts.find(i => i.name === d.isolate)) {
-            item.name = d.isolate
-            item.value = 0;
-            counts.push(item)
-        }
-        counts.find(i => i.name === d.isolate).value++
-    });
-    const totalLength = counts.length
-    if (counts.length > 20) {
-        counts = counts.slice(0, 19)
-        counts.push({name: 'Others', value: totalLength - 20})
-    }
-    constructPieChart(counts, headerName)
-}
+// function addListenersToTables() {
+//     if (document.querySelector('.prof') !== null) {
+//         document.querySelectorAll('.prof').forEach(elem => {
+//             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
+//             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#FFFFFF')
+//             elem.addEventListener('click', () => clickHeader(elem))
+//         })
+//     }
+//     if (document.querySelector('.iso') !== null) {
+//         document.querySelectorAll('.iso').forEach(elem => {
+//             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
+//             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#FFFFFF')
+//             elem.addEventListener('click', () => clickHeader(elem))
+//         })
+//     }
+//     if (document.querySelector('.treeButton') !== null) {
+//         document.querySelector('.treeButton').addEventListener('click', () => document.location = '/home')
+//     }
+//     if (document.querySelector('.profilesButton') !== null) {
+//         document.querySelector('.profilesButton').addEventListener('click', goToProfiles)
+//     }
+//     if (document.querySelector('.isolatesButton') !== null) {
+//         document.querySelector('.isolatesButton').addEventListener('click', goToIsolates)
+//     }
+// }
+//
+// function clickHeader(header) {
+//     const HeaderId = header.parentNode.getElementsByTagName('th')[header.id].cellIndex
+//     const headerName = header.parentNode.getElementsByTagName('th')[header.id].innerHTML
+//     const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
+//     const categories = []
+//
+//     for (let i = 0; i < tdElements.length; i++) {
+//         if (tdElements[i].cellIndex === HeaderId) {
+//             tdElements[i].style.backgroundColor = '#cfcfcf'
+//             categories.push({
+//                 profile: tdElements[i].parentNode.cells[0].innerText,
+//                 isolate: tdElements[i].innerText
+//             })
+//         } else {
+//             tdElements[i].style.backgroundColor = '#FFFFFF'
+//         }
+//     }
+//
+//     let counts = [];
+//     categories.forEach(function (d) {
+//         let item = {}
+//         if (!counts.find(i => i.name === d.isolate)) {
+//             item.name = d.isolate
+//             item.value = 0;
+//             counts.push(item)
+//         }
+//         counts.find(i => i.name === d.isolate).value++
+//     });
+//     const totalLength = counts.length
+//     if (counts.length > 20) {
+//         counts = counts.slice(0, 19)
+//         counts.push({name: 'Others', value: totalLength - 20})
+//     }
+//     constructPieChart(counts, headerName)
+// }
 
 const colorsRange = [
     "#1b70fc", "#33f0ff", "#718a90", "#b21bff", "#fe6616",
@@ -432,7 +432,7 @@ const colorsRange = [
     "#ea42fe", "#c281fe", "#4f33ff", "#a946aa", "#16977e",
     "#a88178", "#5776a9", "#678007", "#fa9316", "#85c070",
     "#6aa2a9", "#989e5d", "#cd714a", "#c5639c", "#c23271",
-    "#678275", "#c5a121", "#a978ba", "#ee534e", "#d24506",
+    "#678275", "#c5a121", "#a978ba", "#e7160c", "#d24506",
     "#6f7385", "#9a634a", "#48aa6f", "#ad9ad0", "#6a8a53",
     "#8c46fc", "#8f5ab8", "#7133ff", "#d77cd1", "#a9804b",
     "#a67389", "#9e8cfe", "#bd443c", "#6d63ff", "#d110d5",

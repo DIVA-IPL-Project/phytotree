@@ -6,6 +6,7 @@ function parseNewick(newickData) {
 
 const parse = s => {
     const links = []
+    const nodes = []
     const ancestors = []
     let tree = {
     }
@@ -39,9 +40,12 @@ const parse = s => {
                     target: tree.name,
                     value: tree.length
                 })
+                nodes.push({
+                    name: tree.name
+                })
                 idx = 0
                 map = new Map()
-                return links
+                return { links, nodes }
             default:
                 // const x = tokens[i - 1]
                 // if (x === ')' || x === '(' || x === ',') {
@@ -70,13 +74,16 @@ const parse = s => {
                             target: tree.children[j].name,
                             value: tree.children[j].length
                         })
+                        nodes.push({
+                            name: tree.children[j].name
+                        })
                     }
                 }
         }
     }
     idx = 0
     map = new Map()
-    return links // todo throw err invalid format
+    return { links, nodes } // todo throw err invalid format
 }
 
 let idx = 0

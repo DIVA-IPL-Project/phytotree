@@ -10,130 +10,133 @@
     <script src="../../public/js/src/radial.js"></script>
     <script src="../../public/js/src/dendrogram.js"></script>
     <script src="../../public/js/src/circularRadial.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
 <body>
-<div class="wrapper">
-    <!-- Sidebar -->
-    <nav class="sidenav">
-        <div class="form-check ms-2">
-            <input class="form-check-input" type="checkbox" value="" id="checkB" checked>
-            <label class="form-check-label" for="checkB">
-                For test
-            </label>
-        </div>
-        <div class="sidebar-header text-center mt-md-3">
-            <h3>Visualization</h3>
-        </div>
-        <div class="btn-group-vertical d-grid justify-content-center">
-            <button type="button" class="radial-btn btn btn btn-light mt-1" id="">Circular Radial</button>
-            <button type="button" class="radialTree-btn btn btn btn-light mt-1" id="radButton">Radial</button>
-            <button type="button" class="dendro-btn btn btn btn-light mt-1" id="denButton">Dendrogram</button>
-        </div>
-        <div class="d-grid justify-content-center mt-md-3 ">
-            <h6 class="text-center" id="configText" style="display: none">
-                Graph Configuration
-            </h6>
-            <div class="btn-group-vertical d-grid justify-content-center">
-                <button type="button" class="parentLabels btn btn btn-info mt-1" style="display: none">Parent labels
-                </button>
-                <button type="button" class="align-nodes btn btn btn-info mt-1" style="display: none">Align nodes
-                </button>
-                <button type="button" class="linkLabels btn btn btn-info mt-1" style="display: none">Link labels
-                </button>
-            </div>
-            <div class="form-check mt-md-3">
-                <label id="labelLogScale" style="display: none" for="linearScaleButton">
-                    <input type="radio" class="logScale form-check-input" id="logScaleButton" name="radioButtons"
-                           style="display: none">
-                    Logarithmic scale
-                </label>
-                <label id="labelLinearScale" style="display: none" for="linearScaleButton">
-                    <input type="radio" class="linearScale form-check-input" id="linearScaleButton" checked
-                           name="radioButtons"
-                           style="display: none">
-                    Linear scale
-                </label>
-            </div>
-<!--            <label id='variable' class="text-center" style="display: none"></label>-->
-            <div class="mt-3" id="scaleButtons" style="text-align:center;display: none">
-                <div>
-                    <button id="upButton">
-                        <i class="bi bi-arrow-up"></i>
-                    </button>
+<div>
+    <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#treeContent" type="button" role="tab" aria-controls="tree" aria-selected="true">Tree</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profileContent" type="button" role="tab" aria-controls="profile" aria-selected="false">Primary Data</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="isolate-tab" data-bs-toggle="tab" data-bs-target="#isolateContent" type="button" role="tab" aria-controls="isolate" aria-selected="false">Auxiliary Data</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="tab_content">
+        <div class="tab-pane fade show active" id="treeContent" role="tabpanel" aria-labelledby="tree-tab" >
+            <div class="wrapper">
+                <!-- Sidebar -->
+                <nav class="sidenav">
+                    <div class="form-check ms-2">
+                        <input class="form-check-input" type="checkbox" value="" id="checkB" checked>
+                        <label class="form-check-label" for="checkB">
+                            For test
+                        </label>
+                    </div>
+                    <div class="sidebar-header text-center mt-md-3">
+                        <h3>Visualization</h3>
+                    </div>
+                    <div class="btn-group-vertical d-grid justify-content-center">
+                        <button type="button" class="radial-btn btn btn btn-light mt-1" id="">Circular Radial</button>
+                        <button type="button" class="radialTree-btn btn btn btn-light mt-1" id="radButton">Radial</button>
+                        <button type="button" class="dendro-btn btn btn btn-light mt-1" id="denButton">Dendrogram</button>
+                    </div>
+                    <div class="d-grid justify-content-center mt-md-3 ">
+                        <h6 class="text-center" id="configText" style="display: none">
+                            Graph Configuration
+                        </h6>
+                        <div class="btn-group-vertical d-grid justify-content-center">
+                            <button type="button" class="parentLabels btn btn btn-info mt-1" style="display: none">Parent labels
+                            </button>
+                            <button type="button" class="align-nodes btn btn btn-info mt-1" style="display: none">Align nodes
+                            </button>
+                            <button type="button" class="linkLabels btn btn btn-info mt-1" style="display: none">Link labels
+                            </button>
+                        </div>
+                        <div class="form-check mt-md-3">
+                            <label id="labelLogScale" style="display: none" for="linearScaleButton">
+                                <input type="radio" class="logScale form-check-input" id="logScaleButton" name="radioButtons"
+                                       style="display: none">
+                                Logarithmic scale
+                            </label>
+                            <label id="labelLinearScale" style="display: none" for="linearScaleButton">
+                                <input type="radio" class="linearScale form-check-input" id="linearScaleButton" checked
+                                       name="radioButtons"
+                                       style="display: none">
+                                Linear scale
+                            </label>
+                        </div>
+                        <!--            <label id='variable' class="text-center" style="display: none"></label>-->
+                        <div class="mt-3" id="scaleButtons" style="text-align:center;display: none">
+                            <div>
+                                <button id="upButton">
+                                    <i class="bi bi-arrow-up"></i>
+                                </button>
+                            </div>
+                            <div class="btn-group mx-auto gap-4 mt-1" role="group">
+                                <button id="leftButton">
+                                    <i class="bi bi-arrow-left"></i>
+                                </button>
+                                <button id="rightButton">
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <button class="mt-1" id="downButton">
+                                    <i class="bi bi-arrow-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-1 justify-content-center mt-md-3">
+                        <div class="sidebar-header text-center mt-md-3" id="textData" style="display: none">
+                            <h6>Data</h6>
+                        </div>
+                        <div class="d-grid gap-2 mt-2">
+                            <div class="d-grid justify-content-center">
+                                <input class="form-control form-control-sm" id="formFileNw" style="display: none" type="file">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt"
+                                        style="display: none">
+                                    Send newick file
+                                </button>
+                            </div>
+                            <div class="d-grid justify-content-center">
+                                <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt"
+                                        style="display: none">
+                                    Send profiles file
+                                </button>
+                            </div>
+                            <div class="d-grid justify-content-center">
+                                <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">
+                                <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt"
+                                        style="display: none">
+                                    Send isolate file
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2 mt-2">
+                            <label for="nwk"></label><textarea id="nwk" rows="4" cols="25" name="newick" style="display: none">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
+                            <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm" style="display: none">
+                                Send
+                                data
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+                <!-- Page Content -->
+                <div class="main">
+                    <div id="container" class="col"></div>
                 </div>
-                <div class="btn-group mx-auto gap-4 mt-1" role="group">
-                    <button id="leftButton">
-                        <i class="bi bi-arrow-left"></i>
-                    </button>
-                    <button id="rightButton">
-                        <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
-                <div>
-                    <button class="mt-1" id="downButton">
-                        <i class="bi bi-arrow-down"></i>
-                    </button>
-                </div>
             </div>
         </div>
-        <div class="d-grid gap-1 justify-content-center mt-md-3">
-            <div class="sidebar-header text-center mt-md-3" id="textData" style="display: none">
-                <h6>Data</h6>
-            </div>
-            <div class="d-grid gap-2 mt-2">
-                <div class="d-grid justify-content-center">
-                    <input class="form-control form-control-sm" id="formFileNw" style="display: none" type="file">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt" style="display: none">
-                        Send newick file
-                    </button>
-                </div>
-                                <div class="d-grid justify-content-center">
-                                    <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt" style="display: none">
-                                        Send profiles file
-                                    </button>
-                                </div>
-                                <div class="d-grid justify-content-center">
-                                    <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt" style="display: none">
-                                        Send isolate file
-                                    </button>
-                                </div>
-            </div>
-            <div class="d-grid gap-2 mt-2">
-                <label for="nwk"></label><textarea id="nwk" rows="4" cols="25" name="newick" style="display: none">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
-                <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm" style="display: none">Send
-                    data
-                </button>
-            </div>
-        </div>
-    </nav>
-    <!-- Page Content -->
-    <div class="main">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item active">
-                        <button class="btn btn-light nav-link tree">Tree<span class="sr-only"></span></button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-light nav-link profiles">Profiles</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-light nav-link isolates">Isolates</button>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div id="container" class="col"></div>
+        <div class="tab-pane fade" id="profileContent" role="tabpanel" aria-labelledby="profile-tab"></div>
+        <div class="tab-pane fade" id="isolateContent" role="tabpanel" aria-labelledby="isolate-tab"></div>
     </div>
 </div>
-
 </body>
 </html>

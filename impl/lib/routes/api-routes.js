@@ -19,6 +19,14 @@ router.get('/data', (req, res, next) =>{
 router.post('/update/newick', (req, res, next) => {
     let newick = req.body.data;
     tree = render.set_tree_data(newick)
+
+    // todo was not here
+    render.getRenderData().then(data => {
+       console.log(data)
+       res.json(data)
+    })
+
+
 })
 
 router.post('/update/profiles', (req, res, next) =>{

@@ -1,21 +1,129 @@
-function circularRadial(data) {
-    const width1 = 900
-    const outerRadius = width1 / 2
-    const innerRadius = outerRadius - 170
-    const cluster = d3.cluster()
-        .size([360, innerRadius])
-        .separation((a, b) => 1)
+const circularRadial = function () {
+
+    const margin = {
+        top: 20,
+        right: 90,
+        bottom: 30,
+        left: 90
+    }
+    const canvas = {
+        container: null,
+        width: window.innerWidth - margin.left - margin.right,
+        height: window.innerHeight - margin.top - margin.bottom,
+        margin: margin,
+        zoom: {
+            x: 500,
+            y: 400,
+            scale: 0.6
+        }
+    }
+    const data = {
+        root: null,
+        tree: null
+    }
+    const graph = {
+        element: null,
+        links: null,
+        linkExtensions: null,
+        textLabels: null,
+        outerRadius: canvas.width / 2,
+        innerRadius: canvas.width / 2 - 170
+    }
+    const svg = {
+        element: null,
+        graph: graph,
+    }
+
+    const context = {
+        canvas: canvas,
+        build: null,
+        data: data,
+        svg: svg
+    }
 
     const color = d3.scaleOrdinal()
         .domain(["Bacteria", "Eukaryota", "Archaea"])
         .range(d3.schemeCategory10)
 
+    /********************* Main functions ************************/
+
+    function build(input) {
+        context.build = d3.cluster()
+            .size([360, graph.innerRadius])
+            .separation((a, b) => 1)
+
+        const strat = d3.stratify().id(d => d.target).parentId(d => d.source)(input.links);
+
+        data.root = d3.hierarchy(strat, d => d.children)
+            .sum(d => d.children ? 0 : 1)
+            .sort((a, b) => (a.value - b.value) || d3.ascending(a.data.length, b.data.length));
+
+        data.tree = context.build(data.root);
+
+        console.log(data.root.data.data.value)
+        setRadius(data.root, data.root.data.data.value = 0, graph.innerRadius / maxLength(data.root));
+
+        console.log(data.root)
+        return data
+    }
+
+    function draw(container, tree) {
+        canvas.container = d3.select(container)
+        svg.element = canvas.container.select('svg')
+
+        if (!svg.element.empty()) {
+            svg.element.select('#graph').remove();
+        } else {
+            svg.element = d3.select('#container')
+                .append("svg")
+                .attr("width", canvas.width + margin.left + margin.right)
+                .attr("height", canvas.height + margin.top + margin.bottom)
+        }
+
+        graph.element = svg.element
+            .append("g")
+            .attr("id", "graph")
+            .attr("transform", "translate(" + [margin.left, margin.top] + ")");
+
+        update(tree)
+
+        addRadialCircularZoom()
+    }
+
+    function update(tree) {
+        graph.linkExtensions = graph.element
+            .selectAll(".linkExtension")
+            .data(tree.links().filter(d => !d.target.children)).enter()
+            .append('g')
+
+        graph.links = graph.element
+            .selectAll('.link')
+            .data(tree.links()).enter()
+            .append('g')
+
+        graph.textLables = graph.element
+            .selectAll('text')
+            .data(tree.leaves()).enter()
+            .append('g')
+
+        linksExtensionAttr(graph.linkExtensions)
+        linksAttr(graph.links)
+        labelsAttr(graph.textLables)
+
+        /** transition from constant to variable links lenght **/
+        // const t = d3.transition().duration(750)
+        // graph.linkExtensions.transition(t).attr("d", linkExtensionVariable)
+        // graph.links.transition(t).attr("d", linkVariable)
+    }
+
+    /********************* Auxiliary functions ************************/
+
     function maxLength(d) {
-        return d.data.length + (d.children ? d3.max(d.children, maxLength) : 0);
+        return d.data.data.value + (d.children ? d3.max(d.children, maxLength) : 0);
     }
 
     function setRadius(d, y0, k) {
-        d.radius = (y0 += d.data.length) * k;
+        d.radius = (y0 += d.data.data.value) * k;
         if (d.children) d.children.forEach(d => setRadius(d, y0, k));
     }
 
@@ -25,21 +133,38 @@ function circularRadial(data) {
         if (d.children) d.children.forEach(setColor);
     }
 
-    function linkVariable(d) {
-        return linkStep(d.source.x, d.source.radius, d.target.x, d.target.radius);
+    /********************* Style functions ************************/
+
+    function linksAttr(links) {
+        links
+            .attr('class', 'link-circular')
+            .append('path')
+            .each(function(d) { d.target.linkNode = this; })
+            //.attr("d", linkConstant)
+            .attr("d", linkVariable)
     }
 
-    function linkConstant(d) {
-        return linkStep(d.source.x, d.source.y, d.target.x, d.target.y);
+    function linksExtensionAttr(linksExtension) {
+        linksExtension
+            .attr('class', 'link-extension')
+            .append("path")
+            .each(function(d) { d.target.linkExtensionNode = this; })
+            //.attr("d", linkExtensionConstant)
+            .attr("d", linkExtensionVariable)
     }
 
-    function linkExtensionVariable(d) {
-        return linkStep(d.target.x, d.target.radius, d.target.x, innerRadius);
+    function labelsAttr(labels) {
+        labels
+            .append("text")
+            .attr("dy", ".31em")
+            .attr("transform", d => `rotate(${d.x - 90}) translate(${graph.innerRadius + 4},0)${d.x < 180 ? "" : " rotate(180)"}`)
+            .attr("text-anchor", d => d.x < 180 ? "start" : "end")
+            .text(d => d.data.id.replace(/_/g, " "))
+            .on("mouseover", mouseOveredRadialCircular(true))
+            .on("mouseout", mouseOveredRadialCircular(false))
     }
 
-    function linkExtensionConstant(d) {
-        return linkStep(d.target.x, d.target.y, d.target.x, innerRadius);
-    }
+    /********************* Links functions ************************/
 
     function linkStep(startAngle, startRadius, endAngle, endRadius) {
         const c0 = Math.cos(startAngle = (startAngle - 90) / 180 * Math.PI);
@@ -52,130 +177,53 @@ function circularRadial(data) {
             + "L" + endRadius * c1 + "," + endRadius * s1;
     }
 
-    const legend = svg => {
-        const g = svg
-            .selectAll("g")
-            .data(color.domain())
-            .join("g")
-            .attr("transform", (d, i) => `translate(${-outerRadius},${-outerRadius + i * 20})`);
-
-        g.append("rect")
-            .attr("width", 18)
-            .attr("height", 18)
-            .attr("fill", color);
-
-        g.append("text")
-            .attr("x", 24)
-            .attr("y", 9)
-            .attr("dy", "0.35em")
-            .text(d => d);
+    function linkVariable(d) {
+        return linkStep(d.source.x, d.source.radius, d.target.x, d.target.radius);
     }
 
-    function chart() {
-        const root = d3.hierarchy(data, d => d.children)
-            .sum(d => d.children ? 0 : 1)
-            .sort((a, b) => (a.value - b.value) || d3.ascending(a.data.length, b.data.length));
-
-        cluster(root);
-        setRadius(root, root.data.length = 0, innerRadius / maxLength(root));
-        //setColor(root);
-
-        let svg, gZoom
-        if (!d3.select('#container').select('svg').empty()) {
-            d3.select('#container').select('svg').select('#graph').remove();
-            svg = d3.select('#container').select('svg');
-            gZoom = svg.select('#zoom');
-        } else {
-            svg = d3.select('#container')
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-
-
-        }
-
-        const group = svg
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .attr("id", "graph")
-            .attr("transform", "translate(" + [margin.left, margin.top] + ")");
-
-        addRadialCircularZoom(svg, group)
-
-        const linkExtension = group.append("g")
-            .attr("fill", "none")
-            .attr("stroke", "#000")
-            .attr("stroke-opacity", 0.25)
-            .selectAll("path")
-            .data(root.links().filter(d => !d.target.children))
-            .join("path")
-            .each(function (d) {
-                d.target.linkExtensionNode = this;
-            })
-            .attr("d", linkExtensionConstant);
-
-        const link = group.append("g")
-            .attr("fill", "none")
-            .attr("stroke", "#000")
-            .selectAll("path")
-            .data(root.links())
-            .join("path")
-            .each(function (d) {
-                d.target.linkNode = this;
-            })
-            .attr("d", linkConstant)
-            .attr("stroke", d => d.target.color);
-
-        group.append("g")
-            .selectAll("text")
-            .data(root.leaves())
-            .join("text")
-            .attr("dy", ".31em")
-            .attr("transform", d => `rotate(${d.x - 90}) translate(${innerRadius + 4},0)${d.x < 180 ? "" : " rotate(180)"}`)
-            .attr("text-anchor", d => d.x < 180 ? "start" : "end")
-            .text(d => d.data.name.replace(/_/g, " "))
-            .on("mouseover", mouseOveredRadialCircular(true))
-            .on("mouseout", mouseOveredRadialCircular(false));
-
-        function update(checked) {
-            const t = d3.transition().duration(750);
-            linkExtension.transition(t).attr("d", checked ? linkExtensionVariable : linkExtensionConstant);
-            link.transition(t).attr("d", checked ? linkVariable : linkConstant);
-        }
-
-        let node = group.node()
-        node.update = update
-        return node;
+    function linkConstant(d) {
+        return linkStep(d.source.x, d.source.y, d.target.x, d.target.y);
     }
 
-    const update = chart().update(true)
-}
+    function linkExtensionVariable(d) {
+        return linkStep(d.target.x, d.target.radius, d.target.x, graph.innerRadius);
+    }
 
-function mouseOveredRadialCircular(active) {
-    return function (event, d) {
-        d3.select(this).classed("link--active", active).raise();
+    function linkExtensionConstant(d) {
+        return linkStep(d.target.x, d.target.y, d.target.x, graph.innerRadius);
+    }
 
-        do d3.select(d.linkNode).classed("link--active", active).raise();
-        while (d = d.parent);
-    };
-}
+    function mouseOveredRadialCircular(active) {
+        return function (event, d) {
+            d3.select(this).classed("label--active", active);
+            d3.select(d.linkExtensionNode).classed("link-extension--active", active).raise();
 
-/**
- * Adds the zoom event for the svg element.
- * @param svg the svg element where the graph will be placed.
- * @param elem the g element containing the zoom area.
- */
-function addRadialCircularZoom(svg, elem) {
-    elem.attr("transform", "translate(" + [width/2 - 100, height/2] + ")")
+            do d3.select(d.linkNode).classed("link--active", active).raise();
+            while (d = d.parent);
+        };
+    }
 
-    const zoom = d3.zoom();
-    const transform = d3.zoomIdentity.translate(width/2 - 100, height/2).scale(1);
+    /********************* Private functions ************************/
 
-    svg
-        .call(zoom.transform, transform)
-        .call(zoom
-            .scaleExtent([0.1, 100])
-            .on("zoom", function (event) {
-                elem.attr("transform", event.transform)
-            }))
-}
+    function addRadialCircularZoom() {
+        const zoom = d3.zoom();
+        const transform = d3.zoomIdentity.translate(canvas.zoom.x, canvas.zoom.y).scale(canvas.zoom.scale);
+
+        graph.element.attr("transform", "translate(" + [canvas.zoom.x, canvas.zoom.y] + ") scale(" + canvas.zoom.scale + ")")
+
+        svg.element
+            .call(zoom.transform, transform)
+            .call(zoom
+                .scaleExtent([0.1, 100])
+                .on("zoom", function (event) {
+                    canvas.zoom.x = event.transform.x
+                    canvas.zoom.y = event.transform.y
+                    canvas.zoom.scale = event.transform.k
+
+                    graph.element.attr("transform", event.transform)
+                }))
+    }
+
+    return {context, build, draw }
+}()
+

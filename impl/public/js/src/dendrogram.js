@@ -113,15 +113,8 @@ const dendrogram = function () {
         let nodes = tree.descendants()
         let links = tree.descendants().slice(1)
 
-        graph.links = graph.element.selectAll('.link')
-            .data(links, d => d.id).enter()
-            .append('g')
-        graph.nodes = graph.element.selectAll('.node')
-            .data(nodes).enter()
-            .append('g')
-
-        linksAttr(graph.links)
-        nodesAttrs(graph.nodes)
+        graph.links = linksAttr(graph.element.selectAll('.link').data(links, d => d.id).enter())
+        graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
 
         addLeafLabels()
     }
@@ -153,7 +146,10 @@ const dendrogram = function () {
         collapseAux(children)
 
         graph.element.select(`#node${parent.data.id}`).remove()
-        nodesAttrs(graph.element.data(parent).append('g'))
+        nodesAttrs(graph.element.data(parent))
+            .append('polygon')
+            .attr('points', d => `0,0 50,20 50,-20}`) // todo triangle size
+            .style('fill', 'black')
     }
 
     function collapseAux(children) {
@@ -174,7 +170,7 @@ const dendrogram = function () {
         expandAux(children)
 
         graph.element.select(`#node${parent.data.id}`).remove()
-        nodesAttrs(graph.element.data(parent).append('g'))
+        nodesAttrs(graph.element.data(parent))
     }
 
     function expandAux(children) {
@@ -182,12 +178,13 @@ const dendrogram = function () {
             let child = children[i]
             if (child.visibility === undefined)
                 child.visibility = true
+
             if (child.visibility && child.children) {
                 expandAux(child.children)
             }
 
-            linksAttr(graph.element.data(child).append('g'))
-            nodesAttrs(graph.element.data(child).append('g'))
+            linksAttr(graph.element.data(child))
+            nodesAttrs(graph.element.data(child))
         }
     }
 
@@ -210,25 +207,40 @@ const dendrogram = function () {
 
     /********************* Style functions *********************/
 
+    /**
+     * Nodes representations
+     * @param nodes
+     * @returns the d3 representation for the node container
+     */
     function nodesAttrs(nodes) {
-        nodes
+        let container = nodes.append('g')
+        container
             .attr("id", d => 'node' + d.data.id)
             .attr("class", d => "node" + (!d.children ?
                 " node--leaf" : " node--internal") + (d.parent ? " node--norm" : " node--root"))
             .attr("transform", d => "translate(" + [d.y, d.x] + ")")
             .on("click", click)
+        container
             .append("circle")
             .attr("r", 3)
+        return container
     }
 
+    /**
+     * Links representations
+     * @param links
+     * @returns the d3 representation for the link container
+     */
     function linksAttr(links) {
-        links
-            .append('path')
-            .attr("class", "link")
+        let container = links.append('g')
+        container
             .attr('id', d => 'link' + d.data.id)
+        container.append('path')
+            .attr("class", "link")
             .attr("d", d => `M${[d.parent.y, d.parent.x]} V${d.x} H${d.y}`)
             .on("mouseover", mouseOveredDendrogram(true))
             .on("mouseout", mouseOveredDendrogram(false))
+        return container
     }
 
     /**
@@ -299,6 +311,7 @@ const dendrogram = function () {
      * Adds labels to the leaf nodes.
      */
     function addLeafLabels() {
+        graph.element.selectAll(".node--leaf text").remove();
         graph.element
             .selectAll(".node--leaf")
             .append("text")
@@ -311,7 +324,9 @@ const dendrogram = function () {
             .on("mouseout", mouseOveredDendrogram(false));
     }
 
-    // todo align nodes
+    /**
+     * Aligns nodes by depth or by link weight
+     */
     function alignNodes() {
         graph.align = !graph.align
         if (graph.align) data.root.eachBefore(d => {
@@ -331,17 +346,9 @@ const dendrogram = function () {
 
     /********************* Graph Scaling functions ************************/
 
-    // function applyScale(func) {
-    //     data.tree.eachBefore(d => {
-    //         d.x = d.x * func(graph.scale.vertical.value)
-    //         if (d.parent) {
-    //             let horizontal = graph.scale.horizontal
-    //             if (!graph.align) {
-    //                 d.y = func(horizontal.value * d.data.data.value * horizontal.scalingFactor) + d.parent.y
-    //             }
-    //         }
-    //     })
-    // }
+    /**
+     * Applies the scale to the coordinates of the tree
+     */
     function applyScale() {
         data.tree.eachBefore(d => {
             d.x = d.x * graph.scale.vertical.value
@@ -354,6 +361,9 @@ const dendrogram = function () {
         })
     }
 
+    /**
+     * Changes the scaling of the graph to linear scale
+     */
     function applyLinearScale() {
         graph.scale = linearScale()
         applyScale()
@@ -361,6 +371,9 @@ const dendrogram = function () {
         update(data.root)
     }
 
+    /**
+     * Changes the scaling of the graph to logarithmic scale
+     */
     function applyLogScale() {
         graph.scale = logScale()
         applyScale()
@@ -368,6 +381,13 @@ const dendrogram = function () {
         update(data.root)
     }
 
+    /**
+     * Linear scale representation
+     * @returns {{
+     * horizontal: {scalingFactor: number, step: number, value: number, limits: number[]},
+     * vertical: {scalingFactor: number, step: number, value: number, limits: number[]}
+     * }}
+     */
     function linearScale() {
         const linear = {
             vertical: {
@@ -408,6 +428,13 @@ const dendrogram = function () {
         return linear
     }
 
+    /**
+     * Logarithmic scale representation
+     * @returns {{
+     * horizontal: {scalingFactor: number, step: number, value: number, limits: number[]},
+     * vertical: {scalingFactor: number, step: number, value: number, limits: number[]}
+     * }}
+     */
     function logScale() {
         let value = 1.1
 
@@ -457,6 +484,10 @@ const dendrogram = function () {
 
     /********************* Rescale Graph functions ************************/
 
+    /**
+     * Rescales the graph vertically according to the applied scale
+     * @param increment - true to increment - false to decrement
+     */
     function verticalRescale(increment) {
         if (increment) {
             if (graph.scale.vertical.value > graph.scale.vertical.limits[0]) {
@@ -473,6 +504,10 @@ const dendrogram = function () {
         }
     }
 
+    /**
+     * Rescales the graph horizontally according to the applied scale
+     * @param increment - true to increment - false to decrement
+     */
     function horizontalRescale(increment) {
         if (increment) {
             if (graph.scale.horizontal.value < graph.scale.horizontal.limits[1]) {
@@ -489,37 +524,10 @@ const dendrogram = function () {
         }
     }
 
-    // function setNewXPositions(last) {
-    //     data.root.eachBefore(d => {
-    //         d.x = d.x / graph.scale.func(last)
-    //         d.x = d.x * graph.scale.func(graph.scale.vertical.value)
-    //
-    //         document.getElementById('node' + d.data.id)
-    //             .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
-    //         if (d.parent) {
-    //             document.getElementById('link' + d.data.id)
-    //                 .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
-    //         }
-    //     })
-    // }
-    //
-    // function setNewYPositions() {
-    //     data.root.eachBefore(d => {
-    //         if (d.parent) {
-    //             let horizontal = graph.scale.horizontal
-    //             if (!graph.align)
-    //                 d.y = graph.scale.func(horizontal.value * d.data.data.value * horizontal.scalingFactor) + d.parent.y
-    //             else
-    //                 d.y = d.depth * horizontal.scalingFactor * graph.scale.func(horizontal.value)
-    //
-    //             document.getElementById('node' + d.data.id)
-    //                 .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
-    //             document.getElementById('link' + d.data.id)
-    //                 .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
-    //         }
-    //     })
-    // }
-    //
+    /**
+     * Applies the scale to the X axis
+     * @param last - last scale value
+     */
     function setNewXPositions(last) {
         data.root.eachBefore(d => {
             d.x = d.x / last
@@ -529,11 +537,15 @@ const dendrogram = function () {
                 .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
             if (d.parent) {
                 document.getElementById('link' + d.data.id)
+                    .querySelector('.link')
                     .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
             }
         })
     }
 
+    /**
+     * Applies the scale to the Y axis
+     */
     function setNewYPositions() {
         data.root.eachBefore(d => {
             if (d.parent) {
@@ -546,6 +558,7 @@ const dendrogram = function () {
                 document.getElementById('node' + d.data.id)
                     .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
                 document.getElementById('link' + d.data.id)
+                    .querySelector('.link')
                     .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
             }
         })
@@ -554,7 +567,10 @@ const dendrogram = function () {
 
     /********************* Scale Line functions ************************/
 
-    /** Adds a horizontal scale. */
+    /**
+     * Adds a horizontal scale.
+     * A line to measure the link value and the text with the value
+     */
     function horizontalScale() {
         if (ruler.container) ruler.container.remove()
         ruler.container = svg.element
@@ -580,33 +596,8 @@ const dendrogram = function () {
     }
 
     /**
-     * Adds the text to be append in the horizontal scale.
-     * @param scaleText the place to put the text.
-     * @param scale the current scale value.
+     * Applies the value of line to the text
      */
-    function applyText(scaleText, scale) {
-        if (data.tree.children) {
-            let children = data.tree.children || [];
-            let length = 0;
-            let offset = 0;
-
-            for (let i = 0; i < children.length; i++) {
-                length = getLength(children[i]);
-                offset = children[i].x;
-                if (offset < 1) {
-                    offset = children[i].y / 10;
-                }
-                const test_length = length.toFixed(3);
-                if (parseFloat(test_length) !== 0 && offset !== 0) {
-                    break;
-                }
-            }
-
-            let text = (((ruler.width / offset) * length) / scale).toFixed(2);
-            scaleText.text(text);
-        }
-    }
-
     function applyScaleText() { // todo
         if (data.tree.children) {
             const root = data.tree.y
@@ -621,43 +612,13 @@ const dendrogram = function () {
         }
     }
 
-    // function applyScaleText(scaleText, scale) {
-    //     if (tree.children) {
-    //         let children = getChildren(tree);
-    //         let length = 0;
-    //         let offset = 0;
-    //
-    //         for (let i = 0; i < children.length; i++) {
-    //             length = getLength(children[i]);
-    //             offset = children[i].x;
-    //             if (offset < 1) {
-    //                 offset = children[i].y // 10;
-    //             }
-    //             const test_length = length.toFixed(3);
-    //             if (parseFloat(test_length) !== 0 && offset !== 0) {
-    //                 break;
-    //             }
-    //         }
-    //
-    //         let text = (((scaleLineWidth / offset) * length) / scale).toFixed(2);
-    //         scaleText.text(text);
-    //     }
-    // }
-
-    /**
-     * Returns the length of a node.
-     * @param d the node to search the length.
-     * @returns {number|*} the length of the node or zero if the
-     * node does not have a length.
-     */
-    function getLength(d) {
-        if (d.parent) return d.data.data.value + getLength(d.parent);
-        else return 0;
-    }
-
 
     /********************* Private functions ************************/
 
+    /**
+     * Builds the tree into a dendrogram
+     * @returns {function} building function
+     */
     function clusterTree() {
         function leafLeft(node) {
             var children;
@@ -742,7 +703,7 @@ const dendrogram = function () {
     }
 
     /**
-     *
+     * Makes a node active
      * @param active
      * @returns {(function(*, *): void)|*}
      */

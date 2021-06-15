@@ -7,6 +7,7 @@ let is_table_isolate_create = false
 async function load() {
     setupRepresentationButtons()
     setupGraphConfiguration()
+    setupTabs()
     await setupData()
 }
 
@@ -14,7 +15,7 @@ async function load() {
 
 function setupTabs() {
     document.getElementById('profile-tab').addEventListener('click', () => {
-        if(!is_table_profile_create){
+        if (!is_table_profile_create) {
             create_table_profile(data)
             is_table_profile_create = true
             console.log('create table profile')
@@ -22,7 +23,7 @@ function setupTabs() {
     })
 
     document.getElementById('isolate-tab').addEventListener('click', () => {
-        if(!is_table_isolate_create){
+        if (!is_table_isolate_create) {
             console.log('create table isolate')
             create_table_isolate(data)
             is_table_isolate_create = true
@@ -68,9 +69,9 @@ async function setupData() {
     document.getElementById('idPrfBt').addEventListener('click', sendProfileData)
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
-    let resp = await fetch('http://localhost:8000/api/data')
-    if (resp.status !== 200) alertMsg(resp.statusText)
-    else data = await resp.json()
+    // let resp = await fetch('http://localhost:8000/api/data')
+    // if (resp.status !== 200) alertMsg(resp.statusText)
+    // else data = await resp.json()
 }
 
 function setupGraphConfiguration() {
@@ -99,14 +100,17 @@ function setupGraphConfiguration() {
 
         function events() {
             let id
+
             function mDown() {
                 func()
                 id = setInterval(func, 100);
             }
+
             function mUp() {
                 clearInterval(id);
             }
-            return { mDown, mUp }
+
+            return {mDown, mUp}
         }
     }
 }
@@ -137,6 +141,7 @@ function hideDataPart() {
 /** Tables **/
 
 function create_table_profile(data) {
+    console.log(data)
     console.log('create table')
     const div = document.getElementById('profileContent')
     /** Table **/
@@ -156,14 +161,16 @@ function create_table_profile(data) {
 
     /** body **/
     const body = table.createTBody()
-    data.nodes.forEach( node => {
-        const body_row = body.insertRow()
-        const cell_node_name = body_row.insertCell()
-        cell_node_name.textContent = node.key
-        const b_cells = node.profile.forEach(profile => {
-            const cell = body_row.insertCell()
-            cell.textContent = profile
-        })
+    data.nodes.forEach(node => {
+        if(node.profile !== undefined) {
+            const body_row = body.insertRow()
+            // const cell_node_name = body_row.insertCell()
+            // cell_node_name.textContent = node.key
+            const b_cells = node.profile.forEach(profile => {
+                const cell = body_row.insertCell()
+                cell.textContent = profile
+            })
+        }
     })
 
     /** Append table  **/
@@ -190,7 +197,7 @@ function create_table_isolate(data) {
 
     /** body **/
     const body = table.createTBody()
-    data.nodes.forEach( node => {
+    data.nodes.forEach(node => {
         const body_row = body.insertRow()
         const b_cells = node.isolates[0].forEach(profile => {
             const cell = body_row.insertCell()
@@ -203,25 +210,26 @@ function create_table_isolate(data) {
 }
 
 
-
 /********************* API data functions *********************/
 
 function sendNewickData() {
     let headers = {'Content-Type': 'application/json'}
     let nwk = document.getElementById('formFileNw').files[0]
     nwk.text().then(newick => {
-        console.log(newick)
         let body = JSON.stringify({data: newick})
-        fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
+        console.log('fetch ')
+        return fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
             .then(() => {
-                fetch('/api/data', {method: 'post', body: body, headers: headers})
+                console.log('fetch 2')
+                return fetch('/api/data', {headers: headers})
                     .then(async res => {
                         if (res.status === 500) alertMsg('error')
                         data = await res.json()
+                        console.log(data)
                     })
                     .catch(err => alertMsg(err))
             })
-            .catch()
+            .catch(err => alertMsg(err))
     })
 
     //todo
@@ -233,9 +241,16 @@ function sendProfileData() {
     let headers = {'Content-Type': 'application/json'}
     let profile = document.getElementById('formFilePro').files[0]
     profile.text().then(prof => {
-        console.log(prof)
         let body = JSON.stringify({data: prof})
-        fetch('/api/update/newick', {method: 'post', body: body, headers: headers}).catch()
+        fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).then(() => {
+            fetch('/api/data', {headers: headers})
+                .then(async res => {
+                    if (res.status === 500) alertMsg('error')
+                    data = await res.json()
+                    console.log(data)
+                })
+                .catch(err => alertMsg(err))
+        }).catch(err => alertMsg(err))
     })
     //todo
     document.getElementById('formFileIso').style.display = "block";
@@ -246,9 +261,17 @@ function sendIsolateData() {
     let headers = {'Content-Type': 'application/json'}
     let isolate = document.getElementById('formFileIso').files[0]
     isolate.text().then(iso => {
-        console.log(iso)
+
         let body = JSON.stringify({data: iso})
-        fetch('/api/update/newick', {method: 'post', body: body, headers: headers}).catch()
+        fetch('/api/update/isolates', {method: 'post', body: body, headers: headers}).then(() => {
+            fetch('/api/data', {headers: headers})
+                .then(async res => {
+                    if (res.status === 500) alertMsg('error')
+                    data = await res.json()
+                    console.log(data)
+                })
+                .catch(err => alertMsg(err))
+        }).catch(err => alertMsg(err))
     })
 }
 
@@ -272,8 +295,7 @@ function alertMsg(message, kind) {
     if (!kind) kind = 'danger'
     document
         .querySelector('.messages')
-        .innerHTML =
-        `<div class="alert alert-${kind} alert-dismissible" role="alert">
+        .innerHTML = `<div class="alert alert-${kind} alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -318,15 +340,15 @@ function download(filename, text) {
     document.body.removeChild(element);
 }
 
-document.getHTML= function(who, deep){
-    if(!who || !who.tagName) return '';
-    var txt, ax, el= document.createElement("div");
+document.getHTML = function (who, deep) {
+    if (!who || !who.tagName) return '';
+    var txt, ax, el = document.createElement("div");
     el.appendChild(who.cloneNode(false));
-    txt= el.innerHTML;
-    if(deep){
-        ax= txt.indexOf('>')+1;
-        txt= txt.substring(0, ax)+who.innerHTML+ txt.substring(ax);
+    txt = el.innerHTML;
+    if (deep) {
+        ax = txt.indexOf('>') + 1;
+        txt = txt.substring(0, ax) + who.innerHTML + txt.substring(ax);
     }
-    el= null;
+    el = null;
     return txt;
 }

@@ -63,14 +63,15 @@ const dendrogram = function () {
      * @param align if the nodes are align.
      */
     function build(input) {
+        console.log({log:':log', input})
         const strat = d3.stratify()
             .id(d => d.target)
             .parentId(d => d.source)(input.links);
         data.root = d3.hierarchy(strat, d => d.children)
         context.build = clusterTree()
-            .size([300, 400]) // todo calculate initial value for size
-        //.nodeSize([1, 1])
-        //.separation((a, b) => graph.scale.vertical)
+            // .size([300, 400])
+            .nodeSize([15, 1])
+        // .separation((a, b) => graph.scale.vertical.value)
 
         data.tree = context.build(data.root)
 
@@ -148,7 +149,7 @@ const dendrogram = function () {
         graph.element.select(`#node${parent.data.id}`).remove()
         nodesAttrs(graph.element.data(parent))
             .append('polygon')
-            .attr('points', d => `0,0 50,20 50,-20}`) // todo triangle size
+            .attr('points', d => `0,0 50,20 50,-20`) // todo triangle size
             .style('fill', 'black')
     }
 
@@ -184,7 +185,13 @@ const dendrogram = function () {
             }
 
             linksAttr(graph.element.data(child))
-            nodesAttrs(graph.element.data(child))
+            let nodeContainer = nodesAttrs(graph.element.data(child))
+            if (!child.visibility) {
+                nodeContainer
+                    .append('polygon')
+                    .attr('points', d => `0,0 50,20 50,-20`) // todo triangle size
+                    .style('fill', 'black')
+            }
         }
     }
 
@@ -692,11 +699,15 @@ const dendrogram = function () {
         };
 
         cluster.size = function (x) {
-            return arguments.length ? (nodeSize = false, dx = +x[0], dy = +x[1], cluster) : (nodeSize ? null : [dx, dy]);
+            return arguments.length ?
+                (nodeSize = false, dx = +x[0], dy = +x[1], cluster) :
+                (nodeSize ? null : [dx, dy]);
         };
 
         cluster.nodeSize = function (x) {
-            return arguments.length ? (nodeSize = true, dx = +x[0], dy = +x[1], cluster) : (nodeSize ? [dx, dy] : null);
+            return arguments.length ?
+                (nodeSize = true, dx = +x[0], dy = +x[1], cluster) :
+                (nodeSize ? [dx, dy] : null);
         };
 
         return cluster;

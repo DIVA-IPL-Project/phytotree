@@ -11,9 +11,7 @@ const parse = s => {
     let tree = {
     }
     const tokens = s.split(/\s*([;(),])\s*/)
-    console.log(tokens)
     let subtree
-    //(a:1,b:2)c:3;
     for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i]
         switch (token) {
@@ -47,22 +45,6 @@ const parse = s => {
                 map = new Map()
                 return { links, nodes }
             default:
-                // const x = tokens[i - 1]
-                // if (x === ')' || x === '(' || x === ',') {
-                //     console.log({token, x})
-                //     tree.name = token // todo empty_node_idx
-                //     if(tree.children){
-                //         for (let j = 0; j < tree.children.length; j++) {
-                //             links.push({
-                //                 source: token,
-                //                 target: tree.children[j].name,
-                //                 value: tree.children[j].length
-                //             })
-                //         }
-                //     }
-                // } else if (x === ':') {
-                //     tree.length = parseFloat(token)
-                // }
                 let node = token.split(':')
                 const name = validName(node[0])
                 tree.name = name

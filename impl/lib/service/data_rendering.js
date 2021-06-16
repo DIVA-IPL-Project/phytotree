@@ -105,9 +105,9 @@ function get_first_column_name() {
 function get_determined_profile(id) {
     if (profiles_data !== undefined) {
         let curr
+
         for (let i = 0; i < profiles_data.length; i++) {
             curr = profiles_data[i]
-            console.log(`curr : ${curr[0]}, id : ${id}`)
             if (curr[0] === id) return Promise.resolve(curr)
         }
         return Promise.reject(new Error(`Profile with id ${id} not exist`))
@@ -184,13 +184,15 @@ function get_determined_isolate(id) {
     if (isolates_data !== undefined) {
         const idx = isolates_id.indexOf(first_column_name)
         let curr
+        const toReturn = []
         for (let i = 0; i < isolates_data.length; i++) {
             curr = isolates_data[i]
             if (curr[idx] === id) {
-                return Promise.resolve(curr[idx])
+                toReturn.push(curr)
             }
         }
-        return Promise.reject(new Error(`Isolate with id ${id} not exist`))
+        return Promise.resolve(toReturn)
+        //return Promise.reject(new Error(`Isolate with id ${id} not exist`))
     }
     return Promise.reject(new Error('Isolates data must be set first'))
 }
@@ -216,7 +218,6 @@ let data = {
 }
 
 async function getRenderData() {
-    console.log("RENDER DATAAAAAA")
     //todo(check if variable was change)
     //if (tree_data_change) {
     if (tree_data === undefined) return Promise.reject(new Error('Tree data must be set first'))
@@ -232,7 +233,7 @@ async function getRenderData() {
         data.schemeGenes = profiles_id
         for (const node of data.nodes) {
             const aux = node.key.split('_')
-            if(aux[0] !== 'unnamed' && aux[1] !== 'node') {
+            if (aux[0] !== 'unnamed' && aux[1] !== 'node') {
                 const data = await get_determined_profile(node.key)
                 node.profile = data
             }
@@ -244,9 +245,12 @@ async function getRenderData() {
         data.metadata = isolates_id
         for (const node of data.nodes) {
             const aux = node.key.split('_')
-            if(aux[0] === 'unnamed' && aux[1] === 'node') break
-            const data = await get_determined_isolate(node.key)
-            node.isolates = data
+            if (aux[0] !== 'unnamed' && aux[1] !== 'node') {
+                const data = await get_determined_isolate(node.key)
+                if(data !== []){
+                    node.isolates = data
+                }
+            }
         }
         //todo
     }

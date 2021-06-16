@@ -433,7 +433,12 @@ function sendNwkData() {
     fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
         .then(async res => {
             if (res.status === 500) alertMsg('error')
-            data = await res.json()
+            fetch('/api/data', {headers: headers})
+                .then(async res => {
+                    if (res.status === 500) alertMsg('error')
+                    data = await res.json()
+                })
+                .catch(err => alertMsg(err))
         })
         .catch(err => alertMsg(err))
 }

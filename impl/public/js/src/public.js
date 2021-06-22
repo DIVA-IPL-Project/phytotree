@@ -152,9 +152,9 @@ function create_table_profile(data) {
         const cell = head_row.insertCell()
         cell.textContent = row
         cell.setAttribute('class', 'prof')
-        cell.setAttribute('id', row+'_profile')
+        cell.setAttribute('id', row + '_profile')
         cell.setAttribute('scope', 'col')
-        cell.setAttribute('style',"cursor: pointer")
+        cell.setAttribute('style', "cursor: pointer")
     })
 
     /** body **/
@@ -166,7 +166,7 @@ function create_table_profile(data) {
             const b_cells = node.profile.forEach(profile => {
                 const cell = body_row.insertCell()
                 cell.textContent = profile
-                cell.setAttribute('style',"cursor: pointer")
+                cell.setAttribute('style', "cursor: pointer")
             })
         }
     })
@@ -190,9 +190,9 @@ function create_table_isolate(data) {
         const cell = head_row.insertCell()
         cell.textContent = row
         cell.setAttribute('class', 'iso')
-        cell.setAttribute('id', row+'_isolate')
+        cell.setAttribute('id', row + '_isolate')
         cell.setAttribute('scope', 'col')
-        cell.setAttribute('style',"cursor: pointer")
+        cell.setAttribute('style', "cursor: pointer")
     })
 
     /** body **/
@@ -205,7 +205,7 @@ function create_table_isolate(data) {
                 isolate.forEach(iso => {
                     const cell = body_row.insertCell()
                     cell.textContent = iso
-                    cell.setAttribute('style',"cursor: pointer")
+                    cell.setAttribute('style', "cursor: pointer")
                 })
             })
         }
@@ -221,47 +221,77 @@ function addListenersToTables() {
         document.querySelectorAll('.prof').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem, '#svg_profile'))
+            elem.addEventListener('click', () => clickHeader(elem, '#svg_profile', categories.categoriesProfile))
         })
     }
     if (document.querySelector('.iso') !== null) {
         document.querySelectorAll('.iso').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem, '#svg_isolate'))
+            elem.addEventListener('click', () => clickHeader(elem, '#svg_isolate', categories.categoriesIsolate))
         })
     }
 }
 
 
-function clickHeader(header, id) {
+const categories = {
+    categoriesProfile: new Map(),
+    categoriesIsolate: new Map()
+}
+
+/**
+ *
+ * @param id {string}
+ * @param map {Map}
+ * @returns {*}
+ */
+function contains(id, map) {
+    return map.has(id)
+}
+
+/**
+ *
+ * @param header {}
+ * @param id {string}
+ * @param categories {Map}
+ */
+function clickHeader(header, id, categories) {
     const HeaderId = header.parentNode.getElementsByTagName('td')[header.id].cellIndex
+    console.log(HeaderId)
     const headerName = header.parentNode.getElementsByTagName('td')[header.id].innerHTML
     const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
-    const categories = []
+    console.log(tdElements[0].cellIndex )
 
-    for (let i = 0; i < tdElements.length; i++) {
-        if (tdElements[i].cellIndex === HeaderId) {
-            tdElements[i].style.backgroundColor = '#cfcfcf'
-            categories.push({
-                profile: tdElements[i].parentNode.cells[0].innerText,
-                isolate: tdElements[i].innerText
-            })
-        } else {
-            tdElements[i].style.backgroundColor = '#FFFFFF'
+
+    // Check and remove the map
+    if (categories.has(HeaderId.toString())) {
+        console.log('remove')
+        categories.delete(HeaderId.toString())
+        //remove column color
+        removeColumn(tdElements, HeaderId, categories)
+    } else {
+        // Put in map for the first time
+        if (tdElements.length > 0) {
+            categories.set(HeaderId.toString(), [])
+            const array = categories.get(HeaderId.toString())
+            addColumn(tdElements, HeaderId, array, categories)
         }
     }
 
     let counts = [];
-    categories.forEach(function (d) {
-        let item = {}
-        if (!counts.find(i => i.name === d.isolate)) {
-            item.name = d.isolate
-            item.value = 0;
-            counts.push(item)
-        }
-        counts.find(i => i.name === d.isolate).value++
-    });
+
+    categories.forEach((value, key) => {
+        value.forEach((val) => {
+            let item = {}
+            if (!counts.find(i => i.name === val.isolate)) {
+                item.name = val.isolate
+                item.value = 0;
+                counts.push(item)
+            }
+            counts.find(i => i.name === val.isolate).value++
+        })
+    })
+
     const totalLength = counts.length
     if (counts.length > 20) {
         counts = counts.slice(0, 19)
@@ -269,6 +299,34 @@ function clickHeader(header, id) {
     }
     constructPieChart(counts, headerName, id)
 }
+
+function addColumn(tdElements, HeaderId, array, categories){
+    for (let i = 0; i < tdElements.length; i++) {
+        if (tdElements[i].cellIndex === HeaderId || contains(tdElements[i].cellIndex.toString(), categories)) {
+            if (tdElements[i].cellIndex === HeaderId) {
+                array.push({
+                    profile: tdElements[i].parentNode.cells[0].innerText,
+                    isolate: tdElements[i].innerText
+                })
+            }
+            console.log(tdElements[i].cellIndex)
+            tdElements[i].style.backgroundColor = '#cfcfcf'
+        } else {
+            tdElements[i].style.backgroundColor = '#FFFFFF'
+        }
+    }
+}
+
+function removeColumn(tdElements, HeaderId, categories){
+    for (let i = 0; i < tdElements.length; i++) {
+        if (tdElements[i].cellIndex === HeaderId || !contains(tdElements[i].cellIndex.toString(), categories)) {
+            tdElements[i].style.backgroundColor = '#FFFFFF'
+        } else {
+            tdElements[i].style.backgroundColor = '#cfcfcf'
+        }
+    }
+}
+
 
 const colorsRange = [
     "#1b70fc", "#33f0ff", "#718a90", "#b21bff", "#fe6616",
@@ -290,6 +348,10 @@ function constructPieChart(data, headerName, id) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
     }
+
+    //remove and return if data equals empty
+    if(data.length === 0) return
+
     const g = d3.select(id).append('g').attr("transform", `translate(550, 150)`).attr('id', 'pieChart')
 
     const pie = d3.pie().value(d => d.value)
@@ -354,7 +416,6 @@ function constructPieChart(data, headerName, id) {
 
     colors = []
 }
-
 
 /********************* API data functions *********************/
 

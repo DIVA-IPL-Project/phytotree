@@ -221,20 +221,20 @@ function addListenersToTables() {
         document.querySelectorAll('.prof').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem))
+            elem.addEventListener('click', () => clickHeader(elem, '#svg_profile'))
         })
     }
     if (document.querySelector('.iso') !== null) {
         document.querySelectorAll('.iso').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem))
+            elem.addEventListener('click', () => clickHeader(elem, '#svg_isolate'))
         })
     }
 }
 
 
-function clickHeader(header) {
+function clickHeader(header, id) {
     const HeaderId = header.parentNode.getElementsByTagName('td')[header.id].cellIndex
     const headerName = header.parentNode.getElementsByTagName('td')[header.id].innerHTML
     const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
@@ -267,9 +267,7 @@ function clickHeader(header) {
         counts = counts.slice(0, 19)
         counts.push({name: 'Others', value: totalLength - 20})
     }
-    console.log(counts)
-    console.log(headerName)
-    constructPieChart(counts, headerName)
+    constructPieChart(counts, headerName, id)
 }
 
 const colorsRange = [
@@ -288,12 +286,11 @@ const colorsRange = [
     "#cf7c97", "#8b900a", "#d47270",
 ]
 
-function constructPieChart(data, headerName) {
-    if (!d3.select('svg').selectAll('g').empty()) {
-        d3.select('svg').selectAll('g').remove()
+function constructPieChart(data, headerName, id) {
+    if (!d3.select(id).selectAll('g').empty()) {
+        d3.select(id).selectAll('g').remove()
     }
-    const g = d3.select('svg').append('g').attr("transform", `translate(550, 150)`).attr('id', 'pieChart')
-    console.log(g)
+    const g = d3.select(id).append('g').attr("transform", `translate(550, 150)`).attr('id', 'pieChart')
 
     const pie = d3.pie().value(d => d.value)
 
@@ -315,17 +312,12 @@ function constructPieChart(data, headerName) {
         .attr('id', d => d.data.name)
 
     let colors = []
-    let labels = []
 
     document.querySelectorAll('.arc').forEach(item => {
         colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
     })
 
-    document.querySelectorAll('.arc').forEach(item => {
-        labels.push(item.getElementsByTagName('path')[0].attributes['id'].nodeValue)
-    })
-
-    const pieChart = d3.select('svg').append('g')
+    const pieChart = d3.select(id).append('g')
 
     let position = 30
     data.forEach((item, i) => {
@@ -338,7 +330,7 @@ function constructPieChart(data, headerName) {
         pieChart.append('text')
             .attr('y', position)
             .attr('x', 770)
-            .text(labels[i])
+            .text(item.name)
             .style("font-size", "15px")
             .attr("alignment-baseline", "middle")
 
@@ -361,7 +353,6 @@ function constructPieChart(data, headerName) {
         .attr("alignment-baseline", "middle")
 
     colors = []
-    labels = []
 }
 
 
@@ -384,7 +375,6 @@ function sendNewickData() {
             .catch(err => alertMsg(err))
     })
 
-    //todo
     document.getElementById('idPrfBt').style.display = "block";
     document.getElementById('formFilePro').style.display = "block";
 }

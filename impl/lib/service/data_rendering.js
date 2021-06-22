@@ -203,12 +203,7 @@ function set_isolates_variables() {
     idx_line_isolate = 0
 }
 
-// const representation_data = {
-//     schemeGenes: [],
-//     nodes: [],
-//     links: [],
-//     metadata: []
-// }
+
 /* Json Part */
 let data = {
     schemeGenes: [],

@@ -239,6 +239,8 @@ const categories = {
     categoriesIsolate: new Map()
 }
 
+const names = []
+
 /**
  *
  * @param id {string}
@@ -257,35 +259,35 @@ function contains(id, map) {
  */
 function clickHeader(header, id, categories) {
     const HeaderId = header.parentNode.getElementsByTagName('td')[header.id].cellIndex
-    console.log(HeaderId)
     const headerName = header.parentNode.getElementsByTagName('td')[header.id].innerHTML
     const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
-    console.log(tdElements[0].cellIndex )
-
 
     // Check and remove the map
     if (categories.has(HeaderId.toString())) {
-        console.log('remove')
+
         categories.delete(HeaderId.toString())
         //remove column color
         removeColumn(tdElements, HeaderId, categories)
+        removeColumnName(headerName)
     } else {
         // Put in map for the first time
         if (tdElements.length > 0) {
             categories.set(HeaderId.toString(), [])
             const array = categories.get(HeaderId.toString())
             addColumn(tdElements, HeaderId, array, categories)
+            addColumnName(headerName)
         }
     }
 
-    let counts = [];
+    let counts = []
+
 
     categories.forEach((value, key) => {
         value.forEach((val) => {
             let item = {}
             if (!counts.find(i => i.name === val.isolate)) {
                 item.name = val.isolate
-                item.value = 0;
+                item.value = 0
                 counts.push(item)
             }
             counts.find(i => i.name === val.isolate).value++
@@ -297,7 +299,7 @@ function clickHeader(header, id, categories) {
         counts = counts.slice(0, 19)
         counts.push({name: 'Others', value: totalLength - 20})
     }
-    constructPieChart(counts, headerName, id)
+    constructPieChart(counts, names, id)
 }
 
 function addColumn(tdElements, HeaderId, array, categories){
@@ -309,7 +311,6 @@ function addColumn(tdElements, HeaderId, array, categories){
                     isolate: tdElements[i].innerText
                 })
             }
-            console.log(tdElements[i].cellIndex)
             tdElements[i].style.backgroundColor = '#cfcfcf'
         } else {
             tdElements[i].style.backgroundColor = '#FFFFFF'
@@ -326,7 +327,17 @@ function removeColumn(tdElements, HeaderId, categories){
         }
     }
 }
+function addColumnName(name){
+    names.push(name)
+}
 
+function removeColumnName(name){
+    for (let i = 0; i < names.length; i++) {
+        if(names[i] === name){
+            names.splice(i, 1)
+        }
+    }
+}
 
 const colorsRange = [
     "#1b70fc", "#33f0ff", "#718a90", "#b21bff", "#fe6616",
@@ -344,7 +355,7 @@ const colorsRange = [
     "#cf7c97", "#8b900a", "#d47270",
 ]
 
-function constructPieChart(data, headerName, id) {
+function constructPieChart(data, names, id) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
     }
@@ -403,7 +414,7 @@ function constructPieChart(data, headerName, id) {
     legend.append('text')
         .attr('y', 350)
         .attr('x', 525)
-        .text(headerName)
+        .text(formatArray(names))
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
 
@@ -415,6 +426,14 @@ function constructPieChart(data, headerName, id) {
         .attr("alignment-baseline", "middle")
 
     colors = []
+}
+
+function formatArray(names){
+    let toReturn = ''
+    names.forEach(name => {
+        toReturn += `${name}, `
+    })
+    return toReturn.slice(0, toReturn.length - 2)
 }
 
 /********************* API data functions *********************/

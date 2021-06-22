@@ -352,10 +352,13 @@ const radial = function () {
 
         function radial(root) {
             root.eachAfter(d => {
-                if (!d.children) d.leafcount = 0;
-                else d.leafcount = d.children.reduce((acc, curr) => {
-                    return acc + (curr.leafcount === 0 ? 1 : curr.leafcount)
-                }, 0);
+                if (!d.children)
+                    d.leafcount = 1;
+                else
+                    d.leafcount = d.children.reduce(
+                        (acc, curr) => acc + (curr.leafcount === 0 ? 1 : curr.leafcount),
+                        0
+                    );
             });
 
             //spreadFirst(root)
@@ -368,22 +371,20 @@ const radial = function () {
             root.y = 0;
             while (queue.length !== 0) {
                 let parent = queue.shift();
-                let rightBorder = parent.rightBorder;
                 if (parent.children) {
-
                     // separation
                     parent.children.sort((a, b) => a.spread - b.spread)
 
                     parent.children.forEach(child => {
                         queue.push(child);
-                        child.rightBorder = rightBorder;
+                        child.rightBorder = parent.rightBorder;
 
                         child.wedgeSize = (2 * pi * child.leafcount) / root.leafcount
 
                         let alpha = child.rightBorder + (child.wedgeSize / 2);
                         child.x = parent.x + Math.cos(alpha) * child.data.data.value * graph.scale.value;
                         child.y = parent.y + Math.sin(alpha) * child.data.data.value * graph.scale.value;
-                        rightBorder = rightBorder + child.wedgeSize;
+                        parent.rightBorder = parent.rightBorder + child.wedgeSize;
                     })
                 }
             }
@@ -392,7 +393,7 @@ const radial = function () {
 
         radial.spread = function (spreadValue) {
             delta = spreadValue;
-            return radialTest
+            return radial
         };
 
         return radial;
@@ -428,5 +429,5 @@ const radial = function () {
                 }))
     }
 
-    return { context, build, draw, rescale }
+    return {context, build, draw, rescale}
 }()

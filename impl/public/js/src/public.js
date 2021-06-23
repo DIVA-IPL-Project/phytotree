@@ -54,10 +54,153 @@ function setupRepresentationButtons() {
         //const svg = document.getHTML(dendrogram.context.svg.element.node(), true)
         //download("dendro.svg", svg)
 
-        // todo review
-        //dendrogram.addNodeStyle()
-        //dendrogram.addLinkStyle()
+
+        dendrogram.addNodeStyle()
+        dendrogram.addLinkStyle()
+
+        changeNodeColor()
+        changeNodeSize()
+        changeLinkSize()
+        changeLabelsSize()
     })
+}
+
+function changeNodeColor() {
+    if (document.querySelector(".color") == null) {
+        const colorDiv = document.createElement("div");
+        colorDiv.setAttribute("class", "color justify-content-center");
+
+        const title = document.createElement("p");
+        title.setAttribute("class", "text-center");
+        const text = document.createTextNode("Node color");
+        title.appendChild(text);
+
+        const inputColor = document.createElement("input");
+        inputColor.setAttribute("type", "color");
+        inputColor.style.opacity = "0";
+        inputColor.style.position = "absolute"
+        inputColor.style.top = "10px"
+        inputColor.style.left = "10px"
+        inputColor.style.width = "100px"
+        inputColor.setAttribute("class", "colorInput");
+
+        const button = document.createElement("button")
+        button.style.position = "relative"
+        button.style.bottom = "-10px"
+        button.setAttribute("class", "selectColorButton btn btn-light")
+        button.appendChild(document.createTextNode("Select the color"))
+
+        const selectNode = document.createElement("select");
+        selectNode.setAttribute("class", "form-select")
+
+        const firstOption = document.createElement("option");
+        firstOption.setAttribute("selected", "true");
+        firstOption.setAttribute("disabled", "disabled");
+        firstOption.innerHTML = "Select the node";
+        selectNode.appendChild(firstOption);
+
+        dendrogram.getNodes().forEach(node => {
+            const htmlOptionElement = document.createElement("option");
+            htmlOptionElement.setAttribute("value", node);
+            htmlOptionElement.innerHTML = node;
+            selectNode.appendChild(htmlOptionElement);
+        })
+
+        let node, color
+        selectNode.addEventListener("change", (event) => node = event.target.value)
+
+        colorDiv.appendChild(title);
+        colorDiv.appendChild(selectNode);
+        colorDiv.appendChild(button);
+        button.appendChild(inputColor);
+
+        document.getElementById("graphConfig").appendChild(colorDiv);
+
+        inputColor.addEventListener("change", (event) => {
+            color = event.target.value
+            if (node && color) dendrogram.changeNodeColor(node, color)
+            node = null
+            color = null
+        });
+    }
+}
+
+function changeNodeSize() {
+    if (document.querySelector(".nodeSize") == null) {
+        const nodeSizeDiv = document.createElement("div");
+        nodeSizeDiv.setAttribute("class", "nodeSize justify-content-center mt-4");
+
+        const title = document.createElement("p");
+        title.setAttribute("class", "text-center");
+        const text = document.createTextNode("Node size");
+        title.appendChild(text);
+
+        const rangeInput = document.createElement("input");
+        rangeInput.setAttribute("type", "range");
+        rangeInput.setAttribute("class", "form-range");
+        rangeInput.setAttribute("min", "1");
+        rangeInput.setAttribute("max", "15");
+        rangeInput.setAttribute("value", "3");
+
+        rangeInput.addEventListener("change", (event) => dendrogram.changeNodeSize(event.target.value))
+
+        nodeSizeDiv.appendChild(title);
+        nodeSizeDiv.appendChild(rangeInput);
+
+        document.getElementById("graphConfig").appendChild(nodeSizeDiv);
+    }
+}
+
+function changeLinkSize() {
+    if (document.querySelector(".linkSize") == null) {
+        const linkSizeDiv = document.createElement("div");
+        linkSizeDiv.setAttribute("class", "linkSize justify-content-center mt-4");
+
+        const title = document.createElement("p");
+        title.setAttribute("class", "text-center");
+        const text = document.createTextNode("Link Thickness");
+        title.appendChild(text);
+
+        const rangeInput = document.createElement("input");
+        rangeInput.setAttribute("type", "range");
+        rangeInput.setAttribute("class", "form-range");
+        rangeInput.setAttribute("min", "1");
+        rangeInput.setAttribute("max", "15");
+        rangeInput.setAttribute("value", "2");
+
+        rangeInput.addEventListener("change", (event) => dendrogram.changeLinkSize(event.target.value))
+
+        linkSizeDiv.appendChild(title);
+        linkSizeDiv.appendChild(rangeInput);
+
+        document.getElementById("graphConfig").appendChild(linkSizeDiv);
+    }
+}
+
+function changeLabelsSize() {
+    if (document.querySelector(".labelsSize") == null) {
+        const labelsSize = document.createElement("div");
+        labelsSize.setAttribute("class", "labelsSize justify-content-center mt-4");
+
+        const title = document.createElement("p");
+        title.setAttribute("class", "text-center");
+        const text = document.createTextNode("Labels Size");
+        title.appendChild(text);
+
+        const rangeInput = document.createElement("input");
+        rangeInput.setAttribute("type", "range");
+        rangeInput.setAttribute("class", "form-range");
+        rangeInput.setAttribute("min", "5");
+        rangeInput.setAttribute("max", "35");
+        rangeInput.setAttribute("value", "12");
+
+        rangeInput.addEventListener("change", (event) => dendrogram.changeLabelsSize(event.target.value))
+
+        labelsSize.appendChild(title);
+        labelsSize.appendChild(rangeInput);
+
+        document.getElementById("graphConfig").appendChild(labelsSize);
+    }
 }
 
 async function setupData() {

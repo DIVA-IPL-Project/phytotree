@@ -29,7 +29,9 @@ const dendrogram = function () {
         style: {
             linkLabels: false,
             parentLabels: false,
-            labels_size: 12
+            labels_size: 12,
+            links_size: 2,
+            nodes_size: 3
         },
         scale: linearScale()
     }
@@ -276,7 +278,7 @@ const dendrogram = function () {
                 if (d.data.color) return d.data.color
                 else return '#000000'
             })
-            .style("stroke-width", "3px");
+            .attr("r", `${graph.style.nodes_size}px`);
     }
 
     /**
@@ -284,6 +286,8 @@ const dendrogram = function () {
      * @param value the new size.
      */
     function changeNodeSize(value) {
+       graph.style.nodes_size = value
+
         graph.element
             .selectAll("circle")
             .attr("r", value);
@@ -297,8 +301,8 @@ const dendrogram = function () {
             .selectAll(".link")
             .style("fill", "none")
             .style("stroke", "darkgrey")
-            .style("stroke-width", "2px")
-            .style("font", "14px sans-serif");
+            .style("stroke-width", `${graph.style.links_size}px`)
+            .style("font", `${graph.style.labels_size}px sans-serif`);
     }
 
     /**
@@ -306,6 +310,8 @@ const dendrogram = function () {
      * @param value the new size.
      */
     function changeLinkSize(value) {
+        graph.style.links_size = value
+
         graph.element
             .selectAll(".link")
             .style("stroke-width", value)

@@ -33,7 +33,8 @@ const dendrogram = function () {
             links_size: 2,
             nodes_size: 3
         },
-        scale: linearScale()
+        scale: linearScale(),
+        nodeSize: [15, 1]
     }
     const ruler = {
         container: null,
@@ -57,6 +58,50 @@ const dendrogram = function () {
         svg: svg
     }
 
+    const css =
+        `.link {
+            fill: none;
+            stroke: #808080;
+            stroke-width: 2px;
+        }
+        
+        .nodeRadial {
+            fill: #808080;
+        }
+        
+        .btn {
+            color: grey;
+        }
+        
+        .link--active {
+            stroke: blue !important;
+            stroke-width: 3px;
+        }
+        
+        .link-circular {
+            fill: none;
+            stroke: black;
+            stroke-width: 2px;
+        }
+        
+        .link-extension {
+            fill: none;
+            stroke: black;
+            stroke-opacity: 0.25;
+            stroke-width: 2px;
+        }
+        
+        .label--active {
+            fill: blue;
+            font-weight: bold;
+            stroke: blue;
+        }
+        
+        .text-label {
+            stroke: black;
+            font-size: 12px;
+            fill: black;
+        }`
 
     /********************* Main functions *********************/
 
@@ -65,20 +110,33 @@ const dendrogram = function () {
      * @param input the JSON data.
      */
     function build(input) {
-        console.log({log:':log', input})
         const strat = d3.stratify()
             .id(d => d.target)
             .parentId(d => d.source)(input.links);
+
+        // Build Tree
         data.root = d3.hierarchy(strat, d => d.children)
         context.build = clusterTree()
-            // .size([300, 400])
-            .nodeSize([15, 1])
-        // .separation((a, b) => graph.scale.vertical.value)
-
+            .nodeSize(graph.nodeSize)
         data.tree = context.build(data.root)
 
-        // apply scale
-        applyScale()
+        // Calculate leaves for each node
+        data.tree.eachAfter(d => {
+            if (!d.children)
+                d.leaves = [d];
+            else {
+                d.leaves = []
+                d.children.forEach(child => {
+                    if (!child.children)
+                        d.leaves.push(child.data.id)
+                    else
+                        d.leaves.push(...child.leaves)
+                })
+            }
+        });
+
+        // Apply scale
+        applyScale(data.tree)
 
         return data
     }
@@ -94,6 +152,11 @@ const dendrogram = function () {
                 .attr("width", canvas.width + canvas.margin.left + canvas.margin.right)
                 .attr("height", canvas.height + canvas.margin.top + canvas.margin.bottom)
         }
+
+        // apply css
+        svg.element.append("style").text(css);
+        // apply xmlns
+        svg.element.attr('xmlns', 'http://www.w3.org/2000/svg')
 
         graph.element = svg.element
             .append("g")
@@ -122,38 +185,38 @@ const dendrogram = function () {
         addLeafLabels()
     }
 
-    // /********************* IDK functions *********************/ //todo
-    // function search(root, id) {
-    //     if (root.data.id === id) {
-    //         return root.data
-    //     }
-    //     return searchInChildren(root.data.children, id)
-    // }
-    // function searchInChildren(children, id) {
-    //     if (children.children) {
-    //         for (let i = 0; i < children.children.length; i++) {
-    //             let child = children.children[i]
-    //             if (child.data.id === id) {
-    //                 return child.data
-    //             }
-    //             return searchInChildren(child.children, id)
-    //         }
-    //     }
-    // }
-
-
     /********************* Collapse functions *********************/
+
+    function log(base, number) {
+        return Math.log(number) / Math.log(base);
+    }
+
+    function getTriangle(node) {
+        let length = node.leaves.length - 1
+        let point = length / 2 * graph.nodeSize[0],
+            label = node.leaves[0] + '...' + node.leaves[length]
+        let base = 1.1
+        point = log(base, point / (node.depth || 1))
+
+        return { point, label }
+    }
 
     function collapse(parent, children) {
         parent.visibility = false
         if (!children) return
         collapseAux(children)
 
+        let {point, label} = getTriangle(parent)
+
         graph.element.select(`#node${parent.data.id}`).remove()
-        nodesAttrs(graph.element.data(parent))
-            .append('polygon')
-            .attr('points', d => `0,0 50,20 50,-20`) // todo triangle size
+        let node = nodesAttrs(graph.element.data(parent))
+        node.append('polygon')
+            .attr('points', d => `0,0 100,${point} 100,${-point}`)
             .style('fill', 'black')
+        node.append('text')
+            .text(label)
+            .attr('dx', '105')
+            .attr('dy', '3')
     }
 
     function collapseAux(children) {
@@ -173,6 +236,7 @@ const dendrogram = function () {
     function expand(parent, children) {
         parent.visibility = true
         if (!children) return
+
         expandAux(children)
 
         graph.element.select(`#node${parent.data.id}`).remove()
@@ -195,21 +259,28 @@ const dendrogram = function () {
 
             const linkContainer = linksAttr(graph.element.data(child))
             const nodeContainer = nodesAttrs(graph.element.data(child))
+
             addNodeStyle()
             addLinkStyle()
             if (graph.style.linkLabels) addLinkLabelsSAfterUpdate(linkContainer)
             if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
 
             if (!child.visibility) {
+                let {point, label} = getTriangle(child)
                 nodeContainer
                     .append('polygon')
-                    .attr('points', d => `0,0 50,20 50,-20`) // todo triangle size
+                    .attr('points', d => `0,0 100,${point} 100,${-point}`)
                     .style('fill', 'black')
+                nodeContainer.append('text')
+                    .text(label)
+                    .attr('dx', '105')
+                    .attr('dy', '3')
             }
         }
     }
 
     function click(event, d) {
+        console.log(d)
         if (d.visibility !== null) {
             if (d.visibility === false) {
                 d.visibility = true
@@ -286,7 +357,7 @@ const dendrogram = function () {
      * @param value the new size.
      */
     function changeNodeSize(value) {
-       graph.style.nodes_size = value
+        graph.style.nodes_size = value
 
         graph.element
             .selectAll("circle")
@@ -477,10 +548,10 @@ const dendrogram = function () {
         graph.nodes
             .selectAll("circle")
             .each(function (d) {
-               if (d.data.id === node) {
-                   d.data.color = color;
-                   addNodeStyle();
-               }
+                if (d.data.id === node) {
+                    d.data.color = color;
+                    addNodeStyle();
+                }
             });
     }
 
@@ -489,8 +560,9 @@ const dendrogram = function () {
     /**
      * Applies the scale to the coordinates of the tree
      */
-    function applyScale() {
-        data.tree.eachBefore(d => {
+    function applyScale(tree) {
+        tree.eachBefore(d => {
+            if (tree.data.id === d.data.id) return
             d.x = d.x * graph.scale.vertical.value
             if (d.parent) {
                 let horizontal = graph.scale.horizontal
@@ -512,7 +584,7 @@ const dendrogram = function () {
         graph.element.selectAll('g').remove()
 
         graph.scale = linearScale()
-        applyScale()
+        applyScale(data.tree)
         applyScaleText()
         update(data.root)
         addNodeStyle()
@@ -530,7 +602,7 @@ const dendrogram = function () {
         graph.element.selectAll('g').remove()
 
         graph.scale = logScale()
-        applyScale()
+        applyScale(data.tree)
         applyScaleText()
         update(data.root)
         addNodeStyle()
@@ -690,8 +762,9 @@ const dendrogram = function () {
             d.x = d.x / last
             d.x = d.x * graph.scale.vertical.value
 
-            document.getElementById('node' + d.data.id)
-                .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
+            let element = document.getElementById('node' + d.data.id)
+            if (!element) return
+            element.setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
             if (d.parent) {
                 document.getElementById('link' + d.data.id)
                     .querySelector('path')
@@ -719,8 +792,9 @@ const dendrogram = function () {
                 else
                     d.y = d.depth * horizontal.scalingFactor * horizontal.value
 
-                document.getElementById('node' + d.data.id)
-                    .setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
+                let element = document.getElementById('node' + d.data.id)
+                if (!element) return
+                element.setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
 
                 if (d.parent) {
                     document.getElementById('link' + d.data.id)
@@ -739,7 +813,7 @@ const dendrogram = function () {
     }
 
 
-    /********************* Scale Line functions ************************/
+    /********************* Ruler functions ************************/
 
     /**
      * Adds a horizontal scale.

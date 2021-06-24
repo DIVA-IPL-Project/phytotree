@@ -20,17 +20,20 @@
 <body>
 <ul class="nav nav-tabs justify-content-center navbar-dark bg-dark" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active link-light" id="home-tab" data-bs-toggle="tab" data-bs-target="#treeContent" type="button"
+        <button class="nav-link active link-light" id="home-tab" data-bs-toggle="tab" data-bs-target="#treeContent"
+                type="button"
                 role="tab" aria-controls="tree" aria-selected="true">Tree
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link link-light" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profileContent" type="button"
+        <button class="nav-link link-light" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profileContent"
+                type="button"
                 role="tab" aria-controls="profile" aria-selected="false">Primary Data
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link link-light" id="isolate-tab" data-bs-toggle="tab" data-bs-target="#isolateContent" type="button"
+        <button class="nav-link link-light" id="isolate-tab" data-bs-toggle="tab" data-bs-target="#isolateContent"
+                type="button"
                 role="tab" aria-controls="isolate" aria-selected="false">Auxiliary Data
         </button>
     </li>
@@ -41,9 +44,13 @@
             <!-- Sidebar -->
             <nav class="sidenav">
                 <p class="messages" id="messages"></p>
+
+                <!-- Title -->
                 <div class="sidebar-header text-center mt-md-3">
                     <h3>Visualization</h3>
                 </div>
+
+                <!-- Views Buttons -->
                 <div class="btn-group-vertical d-grid justify-content-center">
                     <button type="button" class="radial-btn btn btn btn-light mt-1" id="">Circular Radial</button>
                     <button type="button" class="radialTree-btn btn btn btn-light mt-1" id="radButton">Radial</button>
@@ -118,21 +125,30 @@
                     </div>
                     <div class="d-grid justify-content-center">
                         <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt" style="display: none">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt"
+                                style="display: none">
                             Send profiles file
                         </button>
                     </div>
                     <div class="d-grid justify-content-center">
                         <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">
-                        <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt" style="display: none">
+                        <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt"
+                                style="display: none">
                             Send isolate file
                         </button>
                     </div>
 
                     <div class="d-grid gap-2 mt-2">
-                        <label for="nwk"></label><textarea id="nwk" rows="4" cols="25" name="newick">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
+                        <label for="nwk"></label>
+                        <textarea id="nwk" rows="4" cols="25" name="newick">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
                         <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm">Send
                             data
+                        </button>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-2">
+                        <button id="downloadSVG" type="button" class="btn btn-outline-secondary btn-sm">
+                            Download as SVG
                         </button>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ window.onload = load
 let data
 let is_table_profile_create = false
 let is_table_isolate_create = false
+let view
 
 async function load() {
     setupRepresentationButtons()
@@ -32,14 +33,16 @@ function setupTabs() {
 function setupRepresentationButtons() {
     const circularRadialButton = document.querySelector('.radial-btn')
     circularRadialButton.addEventListener('click', () => {
-        hideGraphConfig();
+        //hideGraphConfig();
+        view = circularRadial
         let graph = circularRadial.build(data)
         circularRadial.draw('#container', graph.root)
     })
 
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
-        hideGraphConfig();
+        //hideGraphConfig();
+        view = radial
         let graph = radial.build(data)
         radial.draw('#container', graph.root)
     })
@@ -47,13 +50,9 @@ function setupRepresentationButtons() {
     const dendrogramButton = document.querySelector('.dendro-btn')
     dendrogramButton.addEventListener('click', () => {
         showGraphConfig()
+        view = dendrogram
         let graph = dendrogram.build(data)
         dendrogram.draw('#container', graph.root)
-
-        // todo download svg file
-        //const svg = document.getHTML(dendrogram.context.svg.element.node(), true)
-        //download("dendro.svg", svg)
-
 
         dendrogram.addNodeStyle()
         dendrogram.addLinkStyle()
@@ -210,6 +209,8 @@ async function setupData() {
     document.getElementById('idPrfBt').addEventListener('click', sendProfileData)
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
+    document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
+
     // let resp = await fetch('http://localhost:8000/api/data')
     // if (resp.status !== 200) alertMsg(resp.statusText)
     // else data = await resp.json()
@@ -238,6 +239,7 @@ function setupGraphConfiguration() {
         let event = events()
         elem.addEventListener('mousedown', event.mDown)
         elem.addEventListener('mouseup', event.mUp)
+        elem.addEventListener('mouseleave', event.mUp)
 
         function events() {
             let id
@@ -470,6 +472,7 @@ function removeColumn(tdElements, HeaderId, categories){
         }
     }
 }
+
 function addColumnName(name){
     names.push(name)
 }
@@ -654,6 +657,12 @@ function sendNwkData() {
                 .catch(err => alertMsg(err))
         })
         .catch(err => alertMsg(err))
+}
+
+function downloadSVG() {
+    console.log(dendrogram.context)
+    const svg = document.getHTML(view.context.svg.element.node(), true)
+    download("view.svg", svg)
 }
 
 

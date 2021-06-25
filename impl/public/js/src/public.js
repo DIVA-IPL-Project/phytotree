@@ -423,11 +423,19 @@ function create_table_isolate(data) {
         cell.setAttribute('style', "cursor: pointer")
     })
 
+    const id = data.schemeGenes[0]
+    const metadataID = data.metadata.indexOf(id)
+
+
+
     /** body **/
     const body = table.createTBody()
     data.nodes.forEach(node => {
         if (node.isolates !== undefined) {
             const b_cells = node.isolates.forEach(isolate => {
+                //
+                filterTables.column.push(isolate[metadataID])
+                //
                 const body_row = body.insertRow()
                 body_row.setAttribute('class', "text-center")
                 isolate.forEach(iso => {
@@ -442,6 +450,8 @@ function create_table_isolate(data) {
     table.setAttribute('class', 'table table-bordered table-hover table-responsive')
     table.setAttribute('height', '450')
     addListenersToTables()
+
+
 }
 
 function addListenersToTables() {
@@ -449,14 +459,14 @@ function addListenersToTables() {
         document.querySelectorAll('.prof').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem, '#svg_profile', categories.categoriesProfile))
+            elem.addEventListener('click', () => clickHeader(elem, '#svg_profile', categories.categoriesProfile, false))
         })
     }
     if (document.querySelector('.iso') !== null) {
         document.querySelectorAll('.iso').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem, '#svg_isolate', categories.categoriesIsolate))
+            elem.addEventListener('click', () => clickHeader(elem, '#svg_isolate', categories.categoriesIsolate, true))
         })
     }
 }
@@ -465,6 +475,13 @@ function addListenersToTables() {
 const categories = {
     categoriesProfile: new Map(),
     categoriesIsolate: new Map()
+}
+
+const filterTables = {
+    name : 'Bar chart',
+    line: [],
+    column : [],
+    transform : () => {}
 }
 
 const names = []
@@ -485,27 +502,39 @@ function contains(id, map) {
  * @param id {string}
  * @param categories {Map}
  */
-function clickHeader(header, id, categories) {
+function clickHeader(header, id, categories, isolate) {
     const HeaderId = header.parentNode.getElementsByTagName('td')[header.id].cellIndex
     const headerName = header.parentNode.getElementsByTagName('td')[header.id].innerHTML
     const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
 
     // Check and remove the map
     if (categories.has(HeaderId.toString())) {
-
         categories.delete(HeaderId.toString())
         //remove column color
         removeColumn(tdElements, HeaderId, categories)
         removeColumnName(headerName)
+
+        if(isolate) {
+            for (let i = 0; i < filterTables.line.length; i++) {
+                if (filterTables.line[i] === HeaderId) {
+                    filterTables.line.splice(i, 1)
+                }
+            }
+        }
     } else {
         // Put in map for the first time
         if (tdElements.length > 0) {
+            if (isolate) {
+                filterTables.line.push(HeaderId)
+            }
             categories.set(HeaderId.toString(), [])
             const array = categories.get(HeaderId.toString())
             addColumn(tdElements, HeaderId, array, categories)
             addColumnName(headerName)
         }
     }
+
+    console.log(filterTables)
 
     let counts = []
 

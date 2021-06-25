@@ -28,12 +28,7 @@ const radial = function () {
             linkLabels: false,
             parentLabels: false
         },
-        scale: {
-            type: 'linear',
-            // todo func: linearScale,
-            value: 500,
-            limits: [20, 2000],
-        }
+        scale: linearScale()
     }
     const svg = {
         element: null,
@@ -54,13 +49,14 @@ const radial = function () {
 
         data.tree = context.build(data.root)
 
+        console.log(data.tree)
+
         return data;
     }
 
     function draw(container, tree) {
         canvas.container = d3.select(container)
         svg.element = canvas.container.select('svg')
-
         if (!svg.element.empty()) {
             svg.element.select('#graph').remove();
         } else {
@@ -73,7 +69,7 @@ const radial = function () {
         graph.element = svg.element
             .append("g")
             .attr("id", "graph")
-            .attr("transform", "translate(" + [canvas.zoom.x, canvas.zoom.y] + ")") // [margin.left, margin.top]
+            .attr("transform", "translate(" + [canvas.zoom.x, canvas.zoom.y] + ")")
 
         update(tree)
         addRadialZoom()
@@ -83,58 +79,42 @@ const radial = function () {
         if (graph.nodes && !graph.nodes.empty()) graph.nodes.remove()
         if (graph.links && !graph.links.empty()) graph.links.remove()
 
+        graph.links = graph.element.append('g').attr('id', 'linksContainer')
+        graph.nodes = graph.element.append('g').attr('id', 'nodesContainer')
+
         let nodes = tree.descendants()
         let links = tree.descendants().slice(1)
 
-        graph.links = graph.element.selectAll('.link')
-            .data(links, d => d.data.id).enter()
-            .append('g')
-        graph.nodes = graph.element.selectAll('.node')
-            .data(nodes).enter()
-            .append('g')
+        nodesAttrs(graph.nodes.selectAll('.node').data(nodes).enter())
+        linksAttr(graph.links.selectAll('.link').data(links).enter())
 
-        linksAttr(graph.links)
-        nodesAttrs(graph.nodes)
-
-        graph.element
-            .selectAll(".node--leaf")
-            .append("text")
-            .attr("dx", d => d.x < Math.PI ? 10 : -10)
-            .attr("dy", ".31em")
-            .style("text-anchor", "start")
-            .style("font", "12px sans-serif")
-            .text(d => d.data.id)
+        addLeafLabels()
     }
 
     /********************* Collapse functions *********************/
 
     function collapse(parent, children) {
         parent.visibility = false
+        if (!children) return
         collapseAux(children)
-
-        graph.element.select(`#node${parent.data.id}`).remove()
-        nodesAttrs(graph.element.data(parent).append('g'))
     }
 
     function collapseAux(children) {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
             let id = child.data.id !== undefined ? child.data.id : child.id
-            //child.visibility = false
-            graph.element.select(`#node${id}`).remove()
-            graph.element.select(`#link${id}`).remove()
+            graph.nodes.select(`#node${id}`).remove()
+            graph.links.select(`#link${id}`).remove()
             if (child.children) {
                 collapseAux(child.children)
             }
+            if (graph.style.linkLabels) graph.element.select(`#label${id}`).remove();
         }
     }
 
     function expand(parent, children) {
         parent.visibility = true
         expandAux(children)
-
-        graph.element.select(`#node${parent.data.id}`).remove()
-        nodesAttrs(graph.element.data(parent).append('g'))
     }
 
     function expandAux(children) {
@@ -146,8 +126,8 @@ const radial = function () {
                 expandAux(child.children)
             }
 
-            linksAttr(graph.element.data(child).append('g'))
-            nodesAttrs(graph.element.data(child).append('g'))
+            linksAttr(graph.links.data(child))
+            nodesAttrs(graph.nodes.data(child))
         }
     }
 
@@ -170,35 +150,158 @@ const radial = function () {
 
     /********************* Rescale Graph functions ************************/
 
+    /**
+     * Applies the scale to the coordinates of the tree
+     */
+    function applyScale(tree, last) {
+        tree.eachBefore(d => {
+            d.x = (d.x/ last) * graph.scale.value
+            d.y = (d.y/ last) * graph.scale.value
+        })
+    }
+
+    /**
+     * Linear scale representation
+     * @returns {{
+     *  scalingFactor: number,
+     *  step: number,
+     *  value: number,
+     *  limits: number[],
+     *  decrement: function,
+     *  increment: function
+     * }}
+     */
+    function linearScale() {
+        const linear = {
+            value: 500,
+            limits: [50, 2000],
+            scalingFactor: 1,
+            step: 25,
+            decrement: decrement,
+            increment: increment
+        }
+
+        function increment() {
+            linear.value += linear.step
+        }
+
+        function decrement() {
+            linear.value -= linear.step
+        }
+
+        return linear
+    }
+
+    /**
+     * Logarithmic scale representation
+     * @returns {{
+     *  scalingFactor: number,
+     *  step: number,
+     *  value: number,
+     *  limits: number[],
+     *  decrement: function,
+     *  increment: function
+     * }}
+     */
+    function logScale() {
+        let value = 1.1
+        const log = {
+            value: 500,
+            limits: [61, 2000],
+            scalingFactor: 0.5,
+            step: 40,
+            decrement: decrement,
+            increment: increment
+        }
+
+        function increment() {
+            log.step *= value
+            log.value += log.step
+        }
+
+        function decrement() {
+            log.value -= log.step
+            log.step /= value
+        }
+
+        return log
+    }
+
+    /**
+     * Changes the scaling of the graph to linear scale
+     */
+    function applyLinearScale() {
+        graph.element.selectAll('.linkLabel').remove()
+        graph.element.selectAll('.link').remove()
+        graph.element.selectAll('.node').remove()
+        graph.element.selectAll('g').remove()
+
+        const last = graph.scale.value
+        graph.scale = linearScale()
+        applyScale(data.tree, last)
+        update(data.root)
+        addNodeStyle()
+        addLinkStyle()
+    }
+
+    /**
+     * Changes the scaling of the graph to logarithmic scale
+     */
+    function applyLogScale() {
+        graph.element.selectAll('.linkLabel').remove()
+        graph.links.selectAll('.link').remove()
+        graph.nodes.selectAll('.node').remove()
+        // graph.element.selectAll('g').remove()
+
+        const last = graph.scale.value
+        graph.scale = logScale()
+        applyScale(data.tree, last)
+        update(data.root)
+        addNodeStyle()
+        addLinkStyle()
+    }
+
     function rescale(increment) {
-        console.log(graph.scale.value)
         if (increment) {
             if (graph.scale.value > graph.scale.limits[0]) {
-                graph.scale.value -= 100
-                setNewPositions()
+                let last = graph.scale.value
+                graph.scale.decrement()
+                setNewPositions(last)
             }
         } else {
             if (graph.scale.value < graph.scale.limits[1]) {
-                graph.scale.value += 100
-                setNewPositions()
+                let last = graph.scale.value
+                graph.scale.increment()
+                setNewPositions(last)
             }
         }
     }
 
-    function setNewPositions() {
+    function setNewPositions(last) {
         data.root.eachBefore(d => {
             if (d.parent) {
-                let alpha = d.rightBorder + (d.wedgeSize / 2);
-                d.x = d.parent.x + Math.cos(alpha) * d.data.data.value * graph.scale.value;
-                d.y = d.parent.y + Math.sin(alpha) * d.data.data.value * graph.scale.value;
+                d.x = (d.x / last) * graph.scale.value
+                d.y = (d.y / last) * graph.scale.value
 
-                document.getElementById('node' + d.data.id)
-                    .setAttribute('transform', 'translate(' + [d.x, d.y] + ')')
+                const node = document.getElementById('node' + d.data.id)
+                if (!node) return
+
+                node.setAttribute('transform', 'translate(' + [d.x, d.y] + ')')
+
                 const link = document.getElementById('link' + d.data.id)
-                link.setAttribute('x1', d.parent.x)
-                link.setAttribute('y1', d.parent.y)
-                link.setAttribute('x2', d.x)
-                link.setAttribute('y2', d.y)
+                const line = link.querySelector('line')
+                line.setAttribute('x1', d.parent.x)
+                line.setAttribute('y1', d.parent.y)
+                line.setAttribute('x2', d.x)
+                line.setAttribute('y2', d.y)
+
+                if (graph.style.linkLabels) {
+                    const label = link.querySelector('text')
+                    if (label) {
+                        label.setAttribute('x', ((d.parent.x + d.x) / 2 - 15).toString())
+                        label.setAttribute('y', ((d.parent.y + d.y) / 2 - 15).toString())
+                    }
+                }
             }
         })
     }
@@ -207,28 +310,33 @@ const radial = function () {
     /********************* Style functions *********************/
 
     function nodesAttrs(nodes) {
-        nodes
+        const container = nodes.append('g')
+        container
+            .attr("id", d => 'node' + d.data.id)
             .attr("class", d => "node" + (!d.children ?
                 " node--leaf" : " node--internal") + (d.parent ? " node--norm" : " node--root"))
             .attr("transform", d => `translate(${[d.x, d.y]})`)
-            .attr("id", d => 'node' + d.data.id)
             .on("click", click)
-            .append("circle")
-            .attr("r", 5)
+        container.append("circle")
+            .attr("r", graph.style.nodes_size || 3)
+        return container
     }
 
     function linksAttr(links) {
-        links
+        const container = links.append('g')
+        container
             .attr('id', d => 'link' + d.data.id)
+            .attr('class', 'gLink')
+        container
             .append("line")
             .attr("class", "link")
-
             .attr("x1", d => d.parent.x)
             .attr("y1", d => d.parent.y)
             .attr("x2", d => d.x)
             .attr("y2", d => d.y)
             .on("mouseover", mouseOveredRadial(true))
             .on("mouseout", mouseOveredRadial(false))
+        return container
     }
 
     /**
@@ -236,22 +344,69 @@ const radial = function () {
      */
     function addNodeStyle() {
         graph.nodes
-            .select(".node circle")
-            .style("fill", '#000000')
-            .style("stroke", '#000000')
-            .style("stroke-width", "10px");
+            .selectAll("circle")
+            .style("fill", d => d.data.color || '#000000')
+            .style("stroke", d => d.data.color || '#000000')
+    }
+
+    /**
+     * Changes the color of an node.
+     * @param nodeId the node to change the color
+     * @param color the color to apply to the node
+     */
+    function changeNodeColor(nodeId, color) {
+        graph.nodes
+            .select('#node' + nodeId)
+            .select("circle")
+            .each(d => d.data.color = color)
+            .style("fill", d => d.data.color || '#000000')
+            .style("stroke", d => d.data.color || '#000000')
+    }
+
+    /**
+     * Changes the size of the nodes.
+     * @param value the new size.
+     */
+    function changeNodeSize(value) {
+        graph.style.nodes_size = value
+        graph.nodes
+            .selectAll("circle")
+            .attr("r", value);
+    }
+
+    /**
+     * Changes the size of the links.
+     * @param value the new size.
+     */
+    function changeLinkSize(value) {
+        graph.style.links_size = value
+        graph.links
+            .selectAll(".link")
+            .style("stroke-width", value)
+    }
+
+    /**
+     * Changes the size of the labels.
+     * @param value the new size.
+     */
+    function changeLabelsSize(value) {
+        graph.style.labels_size = value
+
+        graph.element
+            .selectAll(".label")
+            .style("font", `${value}px sans-serif`)
     }
 
     /**
      * Adds custom style to the links.
      */
     function addLinkStyle() {
-        graph.element
+        graph.links
             .selectAll(".link")
             .style("fill", "none")
             .style("stroke", "darkgrey")
             .style("stroke-width", "2px")
-            .style("font", "14px sans-serif");
+            .style("font", `${graph.style.labels_size}px sans-serif`);
     }
 
     /**
@@ -259,16 +414,17 @@ const radial = function () {
      */
     function addInternalLabels() {
         if (graph.style.parentLabels) {
-            canvas.container.select('svg').select('#graph').selectAll(".node--internal text").remove();
+            graph.nodes.selectAll(".node--internal text").remove();
             graph.style.parentLabels = false;
         } else {
-            canvas.container.select('svg').select('#graph')
+            graph.nodes
                 .selectAll(".node--internal")
                 .append("text")
-                .attr("dy", 20)
+                .attr('class', 'label')
                 .attr("x", -13)
+                .attr("y", 13)
                 .style("text-anchor", "end")
-                .style("font", "12px sans-serif")
+                .style("font", `${graph.style.labels_size}px sans-serif`)
                 .text(d => d.data.id);
 
             graph.style.parentLabels = true;
@@ -280,15 +436,17 @@ const radial = function () {
      */
     function addLinkLabels() {
         if (graph.style.linkLabels) {
-            graph.links.select("text").remove();
+            graph.links.selectAll('.gLink text').remove();
             graph.style.linkLabels = false;
         } else {
             graph.links
+                .selectAll('.gLink')
                 .append("text")
-                .attr("x", d => (d.parent.y + d.y) / 2)
-                .attr("y", d => d.x - 5)
+                .attr('class', 'label')
+                .attr("x", d => (d.parent.x + d.x) / 2 - 15)
+                .attr("y", d => (d.parent.y + d.y) / 2 - 15)
                 .attr("text-anchor", "middle")
-                .style("font", "12px sans-serif")
+                .style("font", `${graph.style.labels_size}px sans-serif`)
                 .text(d => d.data.data.value);
 
             graph.style.linkLabels = true;
@@ -299,13 +457,15 @@ const radial = function () {
      * Adds labels to the leaf nodes.
      */
     function addLeafLabels() {
-        graph.element
+        graph.nodes.selectAll(".node--leaf text").remove();
+        graph.nodes
             .selectAll(".node--leaf")
             .append("text")
+            .attr('class', 'label')
             .attr("dx", d => d.x < Math.PI ? 10 : -10)
             .attr("dy", ".31em")
             .style("text-anchor", "start")
-            .style("font", "12px sans-serif")
+            .style("font", `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
     }
 
@@ -429,5 +589,39 @@ const radial = function () {
                 }))
     }
 
-    return {context, build, draw, rescale}
+
+    /**
+     * Returns the nodes names.
+     * @returns {*[]} array with nodes names
+     */
+    function getNodes() {
+        const nodes = []
+        data.tree.each(d => nodes.push(d.data.id))
+        return nodes
+    }
+
+    return {
+        type: 'radial',
+        context,
+        build,
+        draw,
+
+        addNodeStyle,
+        addLinkStyle,
+        changeNodeColor,
+        changeNodeSize,
+        changeLinkSize,
+        changeLabelsSize,
+
+        addInternalLabels,
+        // alignNodes,
+        addLinkLabels,
+
+        applyLinearScale,
+        applyLogScale,
+
+        rescale,
+
+        getNodes
+    }
 }()

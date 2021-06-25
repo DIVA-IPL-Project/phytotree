@@ -5,9 +5,10 @@ let is_table_profile_create = false
 let is_table_isolate_create = false
 let view
 
+/********************* Load Page *********************/
+
 async function load() {
     setupRepresentationButtons()
-    setupGraphConfiguration()
     setupTabs()
     await setupData()
 }
@@ -33,7 +34,7 @@ function setupTabs() {
 function setupRepresentationButtons() {
     const circularRadialButton = document.querySelector('.radial-btn')
     circularRadialButton.addEventListener('click', () => {
-        //hideGraphConfig();
+        hideGraphConfig()
         view = circularRadial
         let graph = circularRadial.build(data)
         circularRadial.draw('#container', graph.root)
@@ -41,15 +42,20 @@ function setupRepresentationButtons() {
 
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
-        //hideGraphConfig();
+        setupRadialGraphConfiguration()
         view = radial
         let graph = radial.build(data)
         radial.draw('#container', graph.root)
+
+        changeNodeColor(radial)
+        changeNodeSize(radial)
+        changeLinkSize(radial)
+        changeLabelsSize(radial)
     })
 
     const dendrogramButton = document.querySelector('.dendro-btn')
     dendrogramButton.addEventListener('click', () => {
-        showGraphConfig()
+        setupDendrogramGraphConfiguration()
         view = dendrogram
         let graph = dendrogram.build(data)
         dendrogram.draw('#container', graph.root)
@@ -57,14 +63,121 @@ function setupRepresentationButtons() {
         dendrogram.addNodeStyle()
         dendrogram.addLinkStyle()
 
-        changeNodeColor()
-        changeNodeSize()
-        changeLinkSize()
-        changeLabelsSize()
+        changeNodeColor(dendrogram)
+        changeNodeSize(dendrogram)
+        changeLinkSize(dendrogram)
+        changeLabelsSize(dendrogram)
     })
 }
 
-function changeNodeColor() {
+async function setupData() {
+    document.getElementById('nwkBtn').addEventListener('click', sendNwkData)
+
+    document.getElementById('idNwkBt').addEventListener('click', sendNewickData)
+    document.getElementById('idPrfBt').addEventListener('click', sendProfileData)
+    document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
+
+    document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
+
+    // let resp = await fetch('http://localhost:8000/api/data')
+    // if (resp.status !== 200) alertMsg(resp.statusText)
+    // else data = await resp.json()
+}
+
+/********************* Setup Navbar UI *********************/
+
+/**
+ * Adds buttons only applied for dendrogram.
+ */
+function showGraphConfig() {
+    document.getElementById('graphConfig').style.display = "grid";
+}
+
+/**
+ * Removes buttons only applied for dendrogram.
+ */
+function hideGraphConfig() {
+    document.getElementById('graphConfig').style.display = "none";
+
+    if (document.querySelector('.horizontalScale')) {
+        document.querySelector('.horizontalScale').remove();
+    }
+    if (document.querySelector('.scaleText')) {
+        document.querySelector('.scaleText').remove();
+    }
+    //horizontalScaleVisible = false;
+}
+
+function setupDendrogramGraphConfiguration() {
+    showGraphConfig()
+
+    const parentLabels = document.querySelector('.parentLabels'),
+        alignNodes = document.querySelector('.align-nodes'),
+        linkLabels = document.querySelector('.linkLabels'),
+        linearScale = document.querySelector('.linearScale'),
+        logScale = document.querySelector('.logScale')
+
+    parentLabels.addEventListener('click', dendrogram.addInternalLabels)
+    alignNodes.addEventListener('click', dendrogram.alignNodes)
+    linkLabels.addEventListener('click', dendrogram.addLinkLabels)
+
+    parentLabels.style.display = ''
+    alignNodes.style.display = ''
+    linkLabels.style.display = ''
+    linearScale.style.display = ''
+    logScale.style.display = ''
+
+    linearScale.addEventListener('click', dendrogram.applyLinearScale)
+    logScale.addEventListener('click', dendrogram.applyLogScale)
+
+    let up = document.getElementById('upButton')
+    let down = document.getElementById('downButton')
+    let left = document.getElementById('leftButton')
+    let right = document.getElementById('rightButton')
+
+    up.style.display = ''
+    down.style.display = ''
+
+    setupScaleBtn(up, () => dendrogram.verticalRescale(true))
+    setupScaleBtn(down, () => dendrogram.verticalRescale(false))
+    setupScaleBtn(left, () => dendrogram.horizontalRescale(false))
+    setupScaleBtn(right, () => dendrogram.horizontalRescale(true))
+}
+
+function setupRadialGraphConfiguration() {
+    showGraphConfig()
+
+    const parentLabels = document.querySelector('.parentLabels'),
+        alignNodes = document.querySelector('.align-nodes'),
+        linkLabels = document.querySelector('.linkLabels'),
+        linearScale = document.querySelector('.linearScale'),
+        logScale = document.querySelector('.logScale')
+
+    parentLabels.addEventListener('click', radial.addInternalLabels)
+    linkLabels.addEventListener('click', radial.addLinkLabels)
+    linearScale.addEventListener('click', radial.applyLinearScale)
+    logScale.addEventListener('click', radial.applyLogScale)
+
+    parentLabels.style.display = ''
+    alignNodes.style.display = 'none'
+    linkLabels.style.display = ''
+    linearScale.style.display = ''
+    logScale.style.display = ''
+
+    document.getElementById('upButton').style.display = 'none'
+    document.getElementById('downButton').style.display = 'none'
+    let left = document.getElementById('leftButton')
+    let right = document.getElementById('rightButton')
+
+    setupScaleBtn(left, () => radial.rescale(true))
+    setupScaleBtn(right, () => radial.rescale(false))
+
+}
+
+
+/********************* Graph Style Aux *********************/
+
+function changeNodeColor(view) {
     if (document.querySelector(".color") == null) {
         const colorDiv = document.createElement("div");
         colorDiv.setAttribute("class", "color justify-content-center");
@@ -98,7 +211,7 @@ function changeNodeColor() {
         firstOption.innerHTML = "Select the node";
         selectNode.appendChild(firstOption);
 
-        dendrogram.getNodes().forEach(node => {
+        view.getNodes().forEach(node => {
             const htmlOptionElement = document.createElement("option");
             htmlOptionElement.setAttribute("value", node);
             htmlOptionElement.innerHTML = node;
@@ -117,14 +230,14 @@ function changeNodeColor() {
 
         inputColor.addEventListener("change", (event) => {
             color = event.target.value
-            if (node && color) dendrogram.changeNodeColor(node, color)
+            if (node && color) view.changeNodeColor(node, color)
             node = null
             color = null
         });
     }
 }
 
-function changeNodeSize() {
+function changeNodeSize(view) {
     if (document.querySelector(".nodeSize") == null) {
         const nodeSizeDiv = document.createElement("div");
         nodeSizeDiv.setAttribute("class", "nodeSize justify-content-center mt-4");
@@ -141,7 +254,7 @@ function changeNodeSize() {
         rangeInput.setAttribute("max", "15");
         rangeInput.setAttribute("value", "3");
 
-        rangeInput.addEventListener("change", (event) => dendrogram.changeNodeSize(event.target.value))
+        rangeInput.addEventListener("change", (event) => view.changeNodeSize(event.target.value))
 
         nodeSizeDiv.appendChild(title);
         nodeSizeDiv.appendChild(rangeInput);
@@ -150,7 +263,7 @@ function changeNodeSize() {
     }
 }
 
-function changeLinkSize() {
+function changeLinkSize(view) {
     if (document.querySelector(".linkSize") == null) {
         const linkSizeDiv = document.createElement("div");
         linkSizeDiv.setAttribute("class", "linkSize justify-content-center mt-4");
@@ -167,7 +280,7 @@ function changeLinkSize() {
         rangeInput.setAttribute("max", "15");
         rangeInput.setAttribute("value", "2");
 
-        rangeInput.addEventListener("change", (event) => dendrogram.changeLinkSize(event.target.value))
+        rangeInput.addEventListener("change", (event) => view.changeLinkSize(event.target.value))
 
         linkSizeDiv.appendChild(title);
         linkSizeDiv.appendChild(rangeInput);
@@ -176,7 +289,7 @@ function changeLinkSize() {
     }
 }
 
-function changeLabelsSize() {
+function changeLabelsSize(view) {
     if (document.querySelector(".labelsSize") == null) {
         const labelsSize = document.createElement("div");
         labelsSize.setAttribute("class", "labelsSize justify-content-center mt-4");
@@ -193,7 +306,7 @@ function changeLabelsSize() {
         rangeInput.setAttribute("max", "35");
         rangeInput.setAttribute("value", "12");
 
-        rangeInput.addEventListener("change", (event) => dendrogram.changeLabelsSize(event.target.value))
+        rangeInput.addEventListener("change", (event) => view.changeLabelsSize(event.target.value))
 
         labelsSize.appendChild(title);
         labelsSize.appendChild(rangeInput);
@@ -202,64 +315,33 @@ function changeLabelsSize() {
     }
 }
 
-async function setupData() {
-    document.getElementById('nwkBtn').addEventListener('click', sendNwkData)
 
-    document.getElementById('idNwkBt').addEventListener('click', sendNewickData)
-    document.getElementById('idPrfBt').addEventListener('click', sendProfileData)
-    document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
+/********************* Navbar UI Aux *********************/
 
-    document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
+function setupScaleBtn(elem, func) {
+    let event = events()
+    elem.addEventListener('mousedown', event.mDown)
+    elem.addEventListener('mouseup', event.mUp)
+    elem.addEventListener('mouseleave', event.mUp)
 
-    // let resp = await fetch('http://localhost:8000/api/data')
-    // if (resp.status !== 200) alertMsg(resp.statusText)
-    // else data = await resp.json()
-}
+    function events() {
+        let id
 
-function setupGraphConfiguration() {
-    document.querySelector('.parentLabels').addEventListener('click', dendrogram.addInternalLabels)
-    document.querySelector('.align-nodes').addEventListener('click', dendrogram.alignNodes)
-    document.querySelector('.linkLabels').addEventListener('click', dendrogram.addLinkLabels)
-
-    document.querySelector('.linearScale').addEventListener('click', dendrogram.applyLinearScale)
-    document.querySelector('.logScale').addEventListener('click', dendrogram.applyLogScale)
-
-
-    let up = document.getElementById('upButton')
-    let down = document.getElementById('downButton')
-    let left = document.getElementById('leftButton')
-    let right = document.getElementById('rightButton')
-
-    setupScaleBtn(up, () => dendrogram.verticalRescale(true))
-    setupScaleBtn(down, () => dendrogram.verticalRescale(false))
-    setupScaleBtn(left, () => dendrogram.horizontalRescale(false))
-    setupScaleBtn(right, () => dendrogram.horizontalRescale(true))
-
-    function setupScaleBtn(elem, func) {
-        let event = events()
-        elem.addEventListener('mousedown', event.mDown)
-        elem.addEventListener('mouseup', event.mUp)
-        elem.addEventListener('mouseleave', event.mUp)
-
-        function events() {
-            let id
-
-            function mDown() {
-                func()
-                id = setInterval(func, 100);
-            }
-
-            function mUp() {
-                clearInterval(id);
-            }
-
-            return {mDown, mUp}
+        function mDown() {
+            func()
+            id = setInterval(func, 100);
         }
+
+        function mUp() {
+            clearInterval(id);
+        }
+
+        return {mDown, mUp}
     }
 }
 
 
-/** Visualizations **/
+/********************* Data UI *********************/
 
 function showDataPart() {
     document.getElementById('formFileNw').style.display = "block";
@@ -281,7 +363,8 @@ function hideDataPart() {
     document.getElementById('textData').style.display = "none";
 }
 
-/** Tables **/
+
+/********************* Tables *********************/
 
 function create_table_profile(data) {
     const table = document.getElementById('table_profile')
@@ -678,28 +761,6 @@ function alertMsg(message, kind) {
                 </button>
                 ${message}
             </div>`
-}
-
-/**
- * Adds buttons only applied for dendrogram.
- */
-function showGraphConfig() {
-    document.getElementById('graphConfig').style.display = "grid";
-}
-
-/**
- * Removes buttons only applied for dendrogram.
- */
-function hideGraphConfig() {
-    document.getElementById('graphConfig').style.display = "none";
-
-    if (document.querySelector('.horizontalScale')) {
-        document.querySelector('.horizontalScale').remove();
-    }
-    if (document.querySelector('.scaleText')) {
-        document.querySelector('.scaleText').remove();
-    }
-    //horizontalScaleVisible = false;
 }
 
 

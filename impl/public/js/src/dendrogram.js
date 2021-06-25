@@ -25,8 +25,8 @@ const dendrogram = function () {
         element: null,
         nodes: null,
         links: null,
-        align: false,
         style: {
+            align: false,
             linkLabels: false,
             parentLabels: false,
             labels_size: 12,
@@ -120,21 +120,6 @@ const dendrogram = function () {
             .nodeSize(graph.nodeSize)
         data.tree = context.build(data.root)
 
-        // Calculate leaves for each node
-        data.tree.eachAfter(d => {
-            if (!d.children)
-                d.leaves = [d];
-            else {
-                d.leaves = []
-                d.children.forEach(child => {
-                    if (!child.children)
-                        d.leaves.push(child.data.id)
-                    else
-                        d.leaves.push(...child.leaves)
-                })
-            }
-        });
-
         // Apply scale
         applyScale(data.tree)
 
@@ -179,7 +164,7 @@ const dendrogram = function () {
         let nodes = tree.descendants()
         let links = tree.descendants().slice(1)
 
-        graph.links = linksAttr(graph.element.selectAll('.link').data(links, d => d.id).enter())
+        graph.links = linksAttr(graph.element.selectAll('.link').data(links, d => d.data.id).enter())
         graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
 
         addLeafLabels()
@@ -210,6 +195,7 @@ const dendrogram = function () {
 
         graph.element.select(`#node${parent.data.id}`).remove()
         let node = nodesAttrs(graph.element.data(parent))
+
         node.append('polygon')
             .attr('points', d => `0,0 100,${point} 100,${-point}`)
             .style('fill', 'black')
@@ -223,7 +209,6 @@ const dendrogram = function () {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
             let id = child.data.id !== undefined ? child.data.id : child.id
-            //child.visibility = false
             graph.element.select(`#node${id}`).remove()
             graph.element.select(`#link${id}`).remove()
             if (child.children) {
@@ -280,7 +265,6 @@ const dendrogram = function () {
     }
 
     function click(event, d) {
-        console.log(d)
         if (d.visibility !== null) {
             if (d.visibility === false) {
                 d.visibility = true
@@ -501,9 +485,9 @@ const dendrogram = function () {
         graph.element.selectAll('.node').remove()
         graph.element.selectAll('g').remove()
 
-        graph.align = !graph.align
+        graph.style.align = !graph.style.align
 
-        if (graph.align) data.root.eachBefore(d => {
+        if (graph.style.align) data.root.eachBefore(d => {
             let horizontal = graph.scale.horizontal
             d.y = d.depth * (horizontal.value * horizontal.scalingFactor)
 
@@ -566,7 +550,7 @@ const dendrogram = function () {
             d.x = d.x * graph.scale.vertical.value
             if (d.parent) {
                 let horizontal = graph.scale.horizontal
-                if (!graph.align) {
+                if (!graph.style.align) {
                     d.y = horizontal.value * d.data.data.value * horizontal.scalingFactor + d.parent.y
                 } else d.y = d.depth * horizontal.scalingFactor * horizontal.value
                 if (graph.style.linkLabels) addLinkLabelsSAfterUpdate(graph.element.data(d))
@@ -787,7 +771,7 @@ const dendrogram = function () {
         data.root.eachBefore(d => {
             if (d.parent) {
                 let horizontal = graph.scale.horizontal
-                if (!graph.align)
+                if (!graph.style.align)
                     d.y = horizontal.value * d.data.data.value * horizontal.scalingFactor + d.parent.y
                 else
                     d.y = d.depth * horizontal.scalingFactor * horizontal.value
@@ -928,6 +912,18 @@ const dendrogram = function () {
                 function (node) {
                     node.x = (node.x - root.x) * dx;
                     node.y = (root.y - node.y) * dy;
+
+                    if (!node.children)
+                        node.leaves = [node];
+                    else {
+                        node.leaves = []
+                        node.children.forEach(child => {
+                            if (!child.children)
+                                node.leaves.push(child.data.id)
+                            else
+                                node.leaves.push(...child.leaves)
+                        })
+                    }
                 } :
                 function (node) {
                     node.x = (node.x - x0) / (x1 - x0) * dx;
@@ -1005,22 +1001,28 @@ const dendrogram = function () {
     }
 
     return {
+        type: 'dendrogram',
         context,
         build,
         draw,
+
         addNodeStyle,
         addLinkStyle,
-        addInternalLabels,
-        alignNodes,
-        addLinkLabels,
-        applyLinearScale,
-        applyLogScale,
-        horizontalRescale,
-        verticalRescale,
-        getNodes,
         changeNodeColor,
         changeNodeSize,
         changeLinkSize,
-        changeLabelsSize
+        changeLabelsSize,
+
+        addInternalLabels,
+        alignNodes,
+        addLinkLabels,
+
+        applyLinearScale,
+        applyLogScale,
+
+        horizontalRescale,
+        verticalRescale,
+
+        getNodes
     }
 }()

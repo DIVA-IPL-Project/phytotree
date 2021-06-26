@@ -19,7 +19,8 @@ const dendrogram = function () {
     }
     const data = {
         root: null,
-        tree: null
+        tree: null,
+        input: null
     }
     const graph = {
         element: null,
@@ -110,6 +111,7 @@ const dendrogram = function () {
      * @param input the JSON data.
      */
     function build(input) {
+        data.input = input
         const strat = d3.stratify()
             .id(d => d.target)
             .parentId(d => d.source)(input.links);
@@ -464,16 +466,26 @@ const dendrogram = function () {
      */
     function addLeafLabels() {
         graph.element.selectAll(".node--leaf text").remove();
-        graph.element
-            .selectAll(".node--leaf")
+
+        graph.element.selectAll(".isolates")
             .append("text")
             .attr("dy", 5)
-            .attr("x", graph.barChart ? 160 : 13)
+            .attr("x", 100)
             .style("text-anchor", "start")
             .style("font", `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
             .on("mouseover", mouseOveredDendrogram(true))
-            .on("mouseout", mouseOveredDendrogram(false));
+            .on("mouseout", mouseOveredDendrogram(false))
+
+        graph.element.selectAll(".node--leaf:not(.isolates)")
+            .append("text")
+            .attr("dy", 5)
+            .attr("x", 13)
+            .style("text-anchor", "start")
+            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .text(d => d.data.id)
+            .on("mouseover", mouseOveredDendrogram(true))
+            .on("mouseout", mouseOveredDendrogram(false))
     }
 
     /**
@@ -1000,6 +1012,166 @@ const dendrogram = function () {
                 }))
     }
 
+    const colors = {
+        'Portugal,UL': 'blue',
+        'Australia,QIMR': 'red',
+        'Other,NYMC': 'green',
+        'USA,NYMC': 'orange',
+        'UL,Portugal': 'blue',
+        'QIMR,Australia': 'red',
+        'NYMC,Other': 'green',
+        'NTMC,USA': 'orange'
+    }
+
+    const colors1 = {
+        'Portugal': 'blue',
+        'Australia': 'red',
+        'USA': 'green',
+        'Other': 'orange'
+    }
+
+    const colors2 = {
+        'China': 'blue',
+        'United-Kingdom': 'red',
+    }
+
+    function buildBarChart(name, lines, columns, colors) {
+        graph.barChart = true
+        const profilesId = lines[0]
+        const columns_data = []
+
+        const stack = d3.stack()
+            .keys(["isolates"])
+            .order(d3.stackOrderNone)
+            .offset(d3.stackOffsetNone)
+
+        const getColor = (name) => {
+            for (let i = 0; i < colors.length; i++) {
+                if (colors[i].name === name) {
+                    console.log(colors[i].color)
+                    return colors[i].color
+                }
+            }
+        }
+
+        columns.forEach(col => {
+            data.input.nodes.forEach(node => {
+                if (node.isolates && node.isolates.length > 0) {
+                    const currClass = document.getElementById('node' + node.key)
+                        .getAttribute("class")
+                    document.getElementById('node' + node.key)
+                        .setAttribute("class", `${currClass} isolates`)
+
+                    node.isolates.forEach(iso => {
+                        columns_data.push({
+                            'category': data.input.metadata[col],
+                            'isolates': iso[col],
+                            'profiles': iso[profilesId]
+                        })
+                    })
+                } else {
+                    const currClass = document.getElementById('node' + node.key).getAttribute("class")
+                    document.getElementById('node' + node.key)
+                        .setAttribute("class", `${currClass} not-isolates`)
+                }
+            })
+        })
+
+        const order_data = []
+        graph.element.selectAll(".isolates").each(d => {
+            columns_data.forEach(item => {
+                if (d.data.id === item.profiles) order_data.push(item)
+            })
+        })
+
+        const map = new Map()
+
+        if (name === "&") {
+            stack(order_data)[0].forEach(d => {
+                if (map.has(d.data.profiles)) {
+                    map.get(d.data.profiles).forEach((item) => {
+                        const curr = item.category.split(',')
+                        if (curr.includes(d.data.category)) {
+                            const rest = Array.from(item)
+                            d.data.numberOfIsolates = 1
+                            rest.push(d.data)
+                            map.set(d.data.profiles, rest)
+                        } else {
+                            const data = {
+                                'category': item.category + ',' + d.data.category,
+                                'isolates': item.isolates + ',' + d.data.isolates,
+                                'profiles': item.profiles,
+                                'numberOfIsolates': item.numberOfIsolates
+                            }
+                            map.set(d.data.profiles, [data])
+                        }
+                    })
+                } else {
+                    d.data.numberOfIsolates = 1
+                    map.set(d.data.profiles, [d.data])
+                }
+            })
+        } else {
+            stack(order_data)[0].forEach(d => {
+                if (map.has(d.data.profiles)) {
+                    const existing = map.get(d.data.profiles)
+                    existing.forEach((item, i) => {
+                        if (item.isolates === d.data.isolates) {
+                            existing[i].numberOfIsolates = existing[i].numberOfIsolates + 1
+                            const data = Array.from(existing)
+                            map.set(d.data.profiles, data)
+                        } else {
+                            const data = Array.from(existing)
+                            d.data.numberOfIsolates = 1
+                            data.push(d.data)
+                            map.set(d.data.profiles, data)
+                        }
+                    })
+                } else {
+                    d.data.numberOfIsolates = 1
+                    const data = Array.of(d.data)
+                    map.set(d.data.profiles, data)
+                }
+            })
+        }
+
+        console.log(map)
+
+        graph.element
+            .selectAll(".isolates")
+            .append("g")
+            .each(function (d) {
+                d3.select(this)
+                    .selectAll("rect")
+                    .data(map)
+            })
+
+        let w = 25, lastX = 5, lastWidth = 0, maxWidth = 90
+        map.forEach((isolate, profile) => {
+            const node = document.getElementById('node' + profile).querySelector("g")
+            isolate.forEach(item => {
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+                rect.setAttribute("y", "-5")
+                rect.setAttribute("height", "11")
+
+                //if (name === "&")
+                lastX = lastX + 10
+                rect.setAttribute("x", lastX.toString())
+
+                lastWidth = (w * item.numberOfIsolates) > maxWidth ? maxWidth : (w * item.numberOfIsolates)
+                if (isolate.length === 1) lastWidth = 90
+                rect.setAttribute("width", lastWidth.toString())
+
+                rect.setAttribute("class", "barChart")
+                rect.setAttribute("fill", getColor(item.isolates))
+                node.appendChild(rect)
+            })
+            lastX = 5
+            lastWidth = 25
+        })
+
+    }
+
     return {
         type: 'dendrogram',
         context,
@@ -1023,6 +1195,8 @@ const dendrogram = function () {
         horizontalRescale,
         verticalRescale,
 
-        getNodes
+        getNodes,
+
+        buildBarChart
     }
 }()

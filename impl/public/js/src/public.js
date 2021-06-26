@@ -366,6 +366,13 @@ function hideDataPart() {
 
 /********************* Tables *********************/
 
+const filterTables = {
+    name : 'Bar chart',
+    line: [],
+    column : [],
+    transform : () => {}//dendrogram.buildBarChart
+}
+
 function create_table_profile(data) {
     const table = document.getElementById('table_profile')
     table.setAttribute('class', 'table table-bordered table-hover')
@@ -425,17 +432,18 @@ function create_table_isolate(data) {
 
     const id = data.schemeGenes[0]
     const metadataID = data.metadata.indexOf(id)
+    //
+    filterTables.line.push(metadataID)
+    //
 
 
 
     /** body **/
     const body = table.createTBody()
-    data.nodes.forEach(node => {
+    data.nodes.forEach((node, i) => {
         if (node.isolates !== undefined) {
             const b_cells = node.isolates.forEach(isolate => {
-                //
-                filterTables.column.push(isolate[metadataID])
-                //
+
                 const body_row = body.insertRow()
                 body_row.setAttribute('class', "text-center")
                 isolate.forEach(iso => {
@@ -477,13 +485,6 @@ const categories = {
     categoriesIsolate: new Map()
 }
 
-const filterTables = {
-    name : 'Bar chart',
-    line: [],
-    column : [],
-    transform : () => {}
-}
-
 const names = []
 
 /**
@@ -515,9 +516,9 @@ function clickHeader(header, id, categories, isolate) {
         removeColumnName(headerName)
 
         if(isolate) {
-            for (let i = 0; i < filterTables.line.length; i++) {
-                if (filterTables.line[i] === HeaderId) {
-                    filterTables.line.splice(i, 1)
+            for (let i = 0; i < filterTables.column.length; i++) {
+                if (filterTables.column[i] === HeaderId) {
+                    filterTables.column.splice(i, 1)
                 }
             }
         }
@@ -525,7 +526,7 @@ function clickHeader(header, id, categories, isolate) {
         // Put in map for the first time
         if (tdElements.length > 0) {
             if (isolate) {
-                filterTables.line.push(HeaderId)
+                filterTables.column.push(HeaderId)
             }
             categories.set(HeaderId.toString(), [])
             const array = categories.get(HeaderId.toString())
@@ -613,6 +614,8 @@ const colorsRange = [
     "#cf7c97", "#8b900a", "#d47270",
 ]
 
+const categories_colors = []
+
 function constructPieChart(data, names, id) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
@@ -665,6 +668,11 @@ function constructPieChart(data, names, id) {
             .style("font-size", "15px")
             .attr("alignment-baseline", "middle")
 
+        categories_colors.push({
+            name: item.name,
+            color: colors[i]
+        })
+
         position += 20
     })
 
@@ -684,6 +692,7 @@ function constructPieChart(data, names, id) {
         .attr("alignment-baseline", "middle")
 
     colors = []
+    console.log(categories_colors)
 }
 
 function formatArray(names){

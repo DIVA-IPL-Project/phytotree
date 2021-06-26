@@ -41,6 +41,37 @@ const circularRadial = function () {
         svg: svg
     }
 
+    const css =
+        `.link {
+            fill: none;
+            stroke: #808080;
+            stroke-width: 2px;
+        }
+        
+        .link--active {
+            stroke: blue !important;
+            stroke-width: 3px;
+        }
+        
+        .link-circular {
+            fill: none;
+            stroke: black;
+            stroke-width: 2px;
+        }
+        
+        .link-extension {
+            fill: none;
+            stroke: black;
+            stroke-opacity: 0.25;
+            stroke-width: 2px;
+        }
+        
+        .label--active {
+            fill: blue;
+            font-weight: bold;
+            stroke: blue;
+        }`
+
     const color = d3.scaleOrdinal()
         .domain(["Bacteria", "Eukaryota", "Archaea"])
         .range(d3.schemeCategory10)
@@ -79,6 +110,12 @@ const circularRadial = function () {
                 .attr("width", canvas.width + margin.left + margin.right)
                 .attr("height", canvas.height + margin.top + margin.bottom)
         }
+
+        // apply css
+        svg.element.select('#css').remove()
+        svg.element.append("style").attr('id', 'css').text(css);
+        // apply xmlns
+        svg.element.attr('xmlns', 'http://www.w3.org/2000/svg')
 
         graph.element = svg.element
             .append("g")

@@ -47,10 +47,10 @@ function setupRepresentationButtons() {
         let graph = radial.build(data)
         radial.draw('#container', graph.root)
 
-        changeNodeColor(radial)
-        changeNodeSize(radial)
-        changeLinkSize(radial)
-        changeLabelsSize(radial)
+        changeNodeColor(radial.changeNodeColor, radial.getNodes())
+        changeNodeSize(radial.changeNodeSize)
+        changeLinkSize(radial.changeLinkSize)
+        changeLabelsSize(radial.changeLabelsSize)
     })
 
     const dendrogramButton = document.querySelector('.dendro-btn')
@@ -63,10 +63,10 @@ function setupRepresentationButtons() {
         dendrogram.addNodeStyle()
         dendrogram.addLinkStyle()
 
-        changeNodeColor(dendrogram)
-        changeNodeSize(dendrogram)
-        changeLinkSize(dendrogram)
-        changeLabelsSize(dendrogram)
+        changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
+        changeNodeSize(dendrogram.changeNodeSize)
+        changeLinkSize(dendrogram.changeLinkSize)
+        changeLabelsSize(dendrogram.changeLabelsSize)
     })
 }
 
@@ -177,142 +177,155 @@ function setupRadialGraphConfiguration() {
 
 /********************* Graph Style Aux *********************/
 
-function changeNodeColor(view) {
-    if (document.querySelector(".color") == null) {
-        const colorDiv = document.createElement("div");
-        colorDiv.setAttribute("class", "color justify-content-center");
-
-        const title = document.createElement("p");
-        title.setAttribute("class", "text-center");
-        const text = document.createTextNode("Node color");
-        title.appendChild(text);
-
-        const inputColor = document.createElement("input");
-        inputColor.setAttribute("type", "color");
-        inputColor.style.opacity = "0";
-        inputColor.style.position = "absolute"
-        inputColor.style.top = "10px"
-        inputColor.style.left = "10px"
-        inputColor.style.width = "100px"
-        inputColor.setAttribute("class", "colorInput");
-
-        const button = document.createElement("button")
-        button.style.position = "relative"
-        button.style.bottom = "-10px"
-        button.setAttribute("class", "selectColorButton btn btn-light")
-        button.appendChild(document.createTextNode("Select the color"))
-
-        const selectNode = document.createElement("select");
-        selectNode.setAttribute("class", "form-select")
-
-        const firstOption = document.createElement("option");
-        firstOption.setAttribute("selected", "true");
-        firstOption.setAttribute("disabled", "disabled");
-        firstOption.innerHTML = "Select the node";
-        selectNode.appendChild(firstOption);
-
-        view.getNodes().forEach(node => {
-            const htmlOptionElement = document.createElement("option");
-            htmlOptionElement.setAttribute("value", node);
-            htmlOptionElement.innerHTML = node;
-            selectNode.appendChild(htmlOptionElement);
-        })
-
-        let node, color
-        selectNode.addEventListener("change", (event) => node = event.target.value)
-
-        colorDiv.appendChild(title);
-        colorDiv.appendChild(selectNode);
-        colorDiv.appendChild(button);
-        button.appendChild(inputColor);
-
-        document.getElementById("graphConfig").appendChild(colorDiv);
-
-        inputColor.addEventListener("change", (event) => {
-            color = event.target.value
-            if (node && color) view.changeNodeColor(node, color)
-            node = null
-            color = null
-        });
+function changeNodeColor(func, nodes) {
+    if (document.querySelector(".color") != null) {
+        document.querySelector(".color").remove()
     }
+
+    // Create Container and title
+    const colorDiv = document.createElement("div");
+    colorDiv.setAttribute("class", "color justify-content-center");
+    const title = document.createElement("p");
+    title.setAttribute("class", "text-center");
+    const text = document.createTextNode("Node color");
+    title.appendChild(text);
+
+    // Create Color Picker
+    const inputColor = document.createElement("input");
+    inputColor.setAttribute("class", "colorInput");
+    inputColor.setAttribute("type", "color");
+    inputColor.style.opacity = "0";
+    inputColor.style.position = "absolute"
+    inputColor.style.top = "10px"
+    inputColor.style.left = "10px"
+    inputColor.style.width = "100px"
+
+
+    const button = document.createElement("button")
+    button.style.position = "relative"
+    button.style.bottom = "-10px"
+    button.setAttribute("class", "selectColorButton btn btn-light")
+    button.appendChild(document.createTextNode("Select the color"))
+
+    // Create Node Selector
+    const selectNode = document.createElement("select");
+    selectNode.setAttribute("class", "selectNode form-select")
+    const firstOption = document.createElement("option");
+    firstOption.setAttribute("selected", "true");
+    firstOption.setAttribute("disabled", "disabled");
+    firstOption.innerHTML = "Select the node";
+    selectNode.appendChild(firstOption);
+
+    // Add All Nodes to Selector
+    nodes.forEach(node => {
+        const htmlOptionElement = document.createElement("option");
+        htmlOptionElement.setAttribute("value", node);
+        htmlOptionElement.innerHTML = node;
+        selectNode.appendChild(htmlOptionElement);
+    })
+
+    let node, color
+    selectNode.addEventListener("change", (event) => node = event.target.value)
+
+    colorDiv.appendChild(title);
+    colorDiv.appendChild(selectNode);
+    colorDiv.appendChild(button);
+    button.appendChild(inputColor);
+
+    document.getElementById("graphConfig").appendChild(colorDiv);
+
+    inputColor.addEventListener("change", (event) => {
+        color = event.target.value
+        if (node && color) func(node, color)
+        node = null
+        color = null
+    });
+
 }
 
-function changeNodeSize(view) {
-    if (document.querySelector(".nodeSize") == null) {
-        const nodeSizeDiv = document.createElement("div");
-        nodeSizeDiv.setAttribute("class", "nodeSize justify-content-center mt-4");
-
-        const title = document.createElement("p");
-        title.setAttribute("class", "text-center");
-        const text = document.createTextNode("Node size");
-        title.appendChild(text);
-
-        const rangeInput = document.createElement("input");
-        rangeInput.setAttribute("type", "range");
-        rangeInput.setAttribute("class", "form-range");
-        rangeInput.setAttribute("min", "1");
-        rangeInput.setAttribute("max", "15");
-        rangeInput.setAttribute("value", "3");
-
-        rangeInput.addEventListener("change", (event) => view.changeNodeSize(event.target.value))
-
-        nodeSizeDiv.appendChild(title);
-        nodeSizeDiv.appendChild(rangeInput);
-
-        document.getElementById("graphConfig").appendChild(nodeSizeDiv);
+function changeNodeSize(func) {
+    if (document.querySelector(".nodeSize") != null) {
+        document.querySelector(".nodeSize").remove()
     }
+
+    const nodeSizeDiv = document.createElement("div");
+    nodeSizeDiv.setAttribute("class", "nodeSize justify-content-center mt-4");
+
+    const title = document.createElement("p");
+    title.setAttribute("class", "text-center");
+    const text = document.createTextNode("Node size");
+    title.appendChild(text);
+
+    const rangeInput = document.createElement("input");
+    rangeInput.setAttribute("type", "range");
+    rangeInput.setAttribute("class", "form-range");
+    rangeInput.setAttribute("min", "1");
+    rangeInput.setAttribute("max", "15");
+    rangeInput.setAttribute("value", "3");
+
+    rangeInput.addEventListener("change", (event) => func(event.target.value))
+
+    nodeSizeDiv.appendChild(title);
+    nodeSizeDiv.appendChild(rangeInput);
+
+    document.getElementById("graphConfig").appendChild(nodeSizeDiv);
+
 }
 
-function changeLinkSize(view) {
-    if (document.querySelector(".linkSize") == null) {
-        const linkSizeDiv = document.createElement("div");
-        linkSizeDiv.setAttribute("class", "linkSize justify-content-center mt-4");
-
-        const title = document.createElement("p");
-        title.setAttribute("class", "text-center");
-        const text = document.createTextNode("Link Thickness");
-        title.appendChild(text);
-
-        const rangeInput = document.createElement("input");
-        rangeInput.setAttribute("type", "range");
-        rangeInput.setAttribute("class", "form-range");
-        rangeInput.setAttribute("min", "1");
-        rangeInput.setAttribute("max", "15");
-        rangeInput.setAttribute("value", "2");
-
-        rangeInput.addEventListener("change", (event) => view.changeLinkSize(event.target.value))
-
-        linkSizeDiv.appendChild(title);
-        linkSizeDiv.appendChild(rangeInput);
-
-        document.getElementById("graphConfig").appendChild(linkSizeDiv);
+function changeLinkSize(func) {
+    if (document.querySelector(".linkSize") != null) {
+        document.querySelector(".linkSize").remove()
     }
+    const linkSizeDiv = document.createElement("div");
+    linkSizeDiv.setAttribute("class", "linkSize justify-content-center mt-4");
+
+    const title = document.createElement("p");
+    title.setAttribute("class", "text-center");
+    const text = document.createTextNode("Link Thickness");
+    title.appendChild(text);
+
+    const rangeInput = document.createElement("input");
+    rangeInput.setAttribute("type", "range");
+    rangeInput.setAttribute("class", "form-range");
+    rangeInput.setAttribute("min", "1");
+    rangeInput.setAttribute("max", "15");
+    rangeInput.setAttribute("value", "2");
+
+    rangeInput.addEventListener("change", (event) => func(event.target.value))
+
+    linkSizeDiv.appendChild(title);
+    linkSizeDiv.appendChild(rangeInput);
+
+    document.getElementById("graphConfig").appendChild(linkSizeDiv);
+
 }
 
-function changeLabelsSize(view) {
-    if (document.querySelector(".labelsSize") == null) {
-        const labelsSize = document.createElement("div");
-        labelsSize.setAttribute("class", "labelsSize justify-content-center mt-4");
-
-        const title = document.createElement("p");
-        title.setAttribute("class", "text-center");
-        const text = document.createTextNode("Labels Size");
-        title.appendChild(text);
-
-        const rangeInput = document.createElement("input");
-        rangeInput.setAttribute("type", "range");
-        rangeInput.setAttribute("class", "form-range");
-        rangeInput.setAttribute("min", "5");
-        rangeInput.setAttribute("max", "35");
-        rangeInput.setAttribute("value", "12");
-
-        rangeInput.addEventListener("change", (event) => view.changeLabelsSize(event.target.value))
-
-        labelsSize.appendChild(title);
-        labelsSize.appendChild(rangeInput);
-
-        document.getElementById("graphConfig").appendChild(labelsSize);
+function changeLabelsSize(func) {
+    if (document.querySelector(".labelsSize") != null) {
+        document.querySelector(".labelsSize").remove()
     }
+    const labelsSize = document.createElement("div");
+    labelsSize.setAttribute("class", "labelsSize justify-content-center mt-4");
+
+    const title = document.createElement("p");
+    title.setAttribute("class", "text-center");
+    const text = document.createTextNode("Labels Size");
+    title.appendChild(text);
+
+    const rangeInput = document.createElement("input");
+    rangeInput.setAttribute("type", "range");
+    rangeInput.setAttribute("class", "form-range");
+    rangeInput.setAttribute("min", "5");
+    rangeInput.setAttribute("max", "35");
+    rangeInput.setAttribute("value", "12");
+
+    rangeInput.addEventListener("change", (event) => func(event.target.value))
+
+    labelsSize.appendChild(title);
+    labelsSize.appendChild(rangeInput);
+
+    document.getElementById("graphConfig").appendChild(labelsSize);
+
 }
 
 

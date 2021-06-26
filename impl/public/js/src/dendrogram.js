@@ -66,30 +66,9 @@ const dendrogram = function () {
             stroke-width: 2px;
         }
         
-        .nodeRadial {
-            fill: #808080;
-        }
-        
-        .btn {
-            color: grey;
-        }
-        
         .link--active {
             stroke: blue !important;
             stroke-width: 3px;
-        }
-        
-        .link-circular {
-            fill: none;
-            stroke: black;
-            stroke-width: 2px;
-        }
-        
-        .link-extension {
-            fill: none;
-            stroke: black;
-            stroke-opacity: 0.25;
-            stroke-width: 2px;
         }
         
         .label--active {
@@ -141,7 +120,8 @@ const dendrogram = function () {
         }
 
         // apply css
-        svg.element.append("style").text(css);
+        svg.element.select('#css').remove()
+        svg.element.append("style").attr('id', 'css').text(css);
         // apply xmlns
         svg.element.attr('xmlns', 'http://www.w3.org/2000/svg')
 
@@ -816,6 +796,7 @@ const dendrogram = function () {
      * A line to measure the link value and the text with the value
      */
     function horizontalScale() {
+        if (svg.element.select('.horizontalScale')) svg.element.select('.horizontalScale').remove()
         if (ruler.container) ruler.container.remove()
         ruler.container = svg.element
             .append("g")

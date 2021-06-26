@@ -1,3 +1,5 @@
+
+
 const radial = function () {
     const margin = {
         top: 20,
@@ -30,6 +32,15 @@ const radial = function () {
         },
         scale: linearScale()
     }
+    const ruler = {
+        container: null,
+        element: null,
+        visible: false,
+        width: canvas.width * 0.15,
+        x: canvas.height - 50,
+        y: 100,
+        padding: 10,
+    }
     const svg = {
         element: null,
         graph: graph,
@@ -41,6 +52,30 @@ const radial = function () {
         data: data,
         svg: svg
     }
+
+    const css =
+        `.link {
+            fill: none;
+            stroke: #808080;
+            stroke-width: 2px;
+        }
+        
+        .link--active {
+            stroke: blue !important;
+            stroke-width: 3px;
+        }
+        
+        .label--active {
+            fill: blue;
+            font-weight: bold;
+            stroke: blue;
+        }
+        
+        .text-label {
+            stroke: black;
+            font-size: 12px;
+            fill: black;
+        }`
 
     function build(input) {
         const strat = d3.stratify().id((d) => d.target).parentId((d) => d.source)(input.links);
@@ -66,13 +101,24 @@ const radial = function () {
                 .attr("height", canvas.height + canvas.margin.top + canvas.margin.bottom)
         }
 
+        // apply css
+        svg.element.select('#css').remove()
+        svg.element.append("style").attr('id', 'css').text(css);
+        // apply xmlns
+        svg.element.attr('xmlns', 'http://www.w3.org/2000/svg')
+
         graph.element = svg.element
             .append("g")
             .attr("id", "graph")
             .attr("transform", "translate(" + [canvas.zoom.x, canvas.zoom.y] + ")")
 
         update(tree)
+
         addRadialZoom()
+
+        horizontalScale()
+        ruler.visible = true
+        applyScaleText()
     }
 
     function update(tree) {
@@ -90,6 +136,7 @@ const radial = function () {
 
         addLeafLabels()
     }
+
 
     /********************* Collapse functions *********************/
 
@@ -155,8 +202,8 @@ const radial = function () {
      */
     function applyScale(tree, last) {
         tree.eachBefore(d => {
-            d.x = (d.x/ last) * graph.scale.value
-            d.y = (d.y/ last) * graph.scale.value
+            d.x = (d.x / last) * graph.scale.value
+            d.y = (d.y / last) * graph.scale.value
         })
     }
 
@@ -239,6 +286,7 @@ const radial = function () {
         const last = graph.scale.value
         graph.scale = linearScale()
         applyScale(data.tree, last)
+        applyScaleText()
         update(data.root)
         addNodeStyle()
         addLinkStyle()
@@ -256,6 +304,7 @@ const radial = function () {
         const last = graph.scale.value
         graph.scale = logScale()
         applyScale(data.tree, last)
+        applyScaleText()
         update(data.root)
         addNodeStyle()
         addLinkStyle()
@@ -267,12 +316,14 @@ const radial = function () {
                 let last = graph.scale.value
                 graph.scale.decrement()
                 setNewPositions(last)
+                applyScaleText()
             }
         } else {
             if (graph.scale.value < graph.scale.limits[1]) {
                 let last = graph.scale.value
                 graph.scale.increment()
                 setNewPositions(last)
+                applyScaleText()
             }
         }
     }
@@ -319,6 +370,8 @@ const radial = function () {
             .on("click", click)
         container.append("circle")
             .attr("r", graph.style.nodes_size || 3)
+            .style("fill", d => d.data.color || '#000000')
+            .style("stroke", d => d.data.color || '#000000')
         return container
     }
 
@@ -334,6 +387,7 @@ const radial = function () {
             .attr("y1", d => d.parent.y)
             .attr("x2", d => d.x)
             .attr("y2", d => d.y)
+            .style("stroke-width", graph.style.links_size)
             .on("mouseover", mouseOveredRadial(true))
             .on("mouseout", mouseOveredRadial(false))
         return container
@@ -404,8 +458,7 @@ const radial = function () {
         graph.links
             .selectAll(".link")
             .style("fill", "none")
-            .style("stroke", "darkgrey")
-            .style("stroke-width", "2px")
+            .style("stroke-width", graph.style.links_size)
             .style("font", `${graph.style.labels_size}px sans-serif`);
     }
 
@@ -467,6 +520,69 @@ const radial = function () {
             .style("text-anchor", "start")
             .style("font", `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
+            .on("mouseover", mouseOveredRadial(true))
+            .on("mouseout", mouseOveredRadial(false))
+    }
+
+
+    /********************* Ruler functions ************************/
+
+    /**
+     * Adds a horizontal scale.
+     * A line to measure the link value and the text with the value
+     */
+    function horizontalScale() {
+        if (svg.element.select('.horizontalScale')) svg.element.select('.horizontalScale').remove()
+        if (ruler.container) ruler.container.remove()
+
+        ruler.container = svg.element
+            .append("g")
+            .attr("transform", "translate(" + [ruler.y, ruler.x] + ")")
+            .attr("class", "horizontalScale")
+
+        ruler.container.append("path")
+            .attr("d", d => "M" + ruler.padding + ",10L" + (ruler.width + ruler.padding) + ",10")
+            .attr("stroke-width", 1)
+            .attr("stroke", "#000")
+
+        ruler.element = ruler.container
+            .append("text")
+            .attr("class", "ruler-text")
+            .attr("x", ruler.width / 2 + ruler.padding)
+            .attr("y", 36)
+            .attr("font-family", "sans-serif")
+            .text("")
+            .attr("font-size", "14px")
+            .attr("fill", "#000")
+            .attr("text-anchor", "middle")
+    }
+
+    /**
+     * Applies the value of line to the text
+     */
+    function applyScaleText(scale) {
+        if (data.tree.children) {
+            const root = {
+                x: data.tree.x,
+                y: data.tree.y
+            }
+            const child = {
+                x: data.tree.children[0].x,
+                y: data.tree.children[0].y
+            }
+
+            let a = root.x - child.x;
+            let b = root.y - child.y;
+            const dist = Math.sqrt(a * a + b * b);
+
+            let value = data.tree.children[0].data.data.value
+            const applyScale = scale ? scale : canvas.zoom.scale
+            let text = (ruler.width * value / dist / applyScale).toFixed(2)
+
+            ruler.element.text(text)
+        } else {
+            ruler.element.text(0)
+        }
     }
 
 
@@ -474,7 +590,6 @@ const radial = function () {
 
     function radial() {
         const pi = Math.PI
-        let delta = 0;
 
         function max(input) {
             return Math.max.apply(null, input);
@@ -511,50 +626,49 @@ const radial = function () {
         }
 
         function radial(root) {
-            root.eachAfter(d => {
-                if (!d.children)
-                    d.leafcount = 1;
-                else
-                    d.leafcount = d.children.reduce(
-                        (acc, curr) => acc + (curr.leafcount === 0 ? 1 : curr.leafcount),
-                        0
-                    );
+            //get leaves
+            root.eachAfter(node => {
+                if (!node.children)
+                    node.leaves = [node];
+                else {
+                    node.leaves = []
+                    node.children.forEach(child => {
+                        if (!child.children)
+                            node.leaves.push(child.data.id)
+                        else
+                            node.leaves.push(...child.leaves)
+                    })
+                }
             });
 
             //spreadFirst(root)
             spreadSecond(root)
 
-            let queue = [root];
             root.rightBorder = 0;
             root.wedgeSize = 2 * pi;
             root.x = 0;
             root.y = 0;
-            while (queue.length !== 0) {
-                let parent = queue.shift();
+
+            root.eachBefore(parent => {
                 if (parent.children) {
                     // separation
                     parent.children.sort((a, b) => a.spread - b.spread)
 
                     parent.children.forEach(child => {
-                        queue.push(child);
                         child.rightBorder = parent.rightBorder;
 
-                        child.wedgeSize = (2 * pi * child.leafcount) / root.leafcount
+                        child.wedgeSize = (2 * pi * child.leaves.length) / root.leaves.length
 
                         let alpha = child.rightBorder + (child.wedgeSize / 2);
+
                         child.x = parent.x + Math.cos(alpha) * child.data.data.value * graph.scale.value;
                         child.y = parent.y + Math.sin(alpha) * child.data.data.value * graph.scale.value;
                         parent.rightBorder = parent.rightBorder + child.wedgeSize;
                     })
                 }
-            }
+            })
             return root;
         }
-
-        radial.spread = function (spreadValue) {
-            delta = spreadValue;
-            return radial
-        };
 
         return radial;
     }
@@ -562,8 +676,6 @@ const radial = function () {
     function mouseOveredRadial(active) {
         return function (event, d) {
             d3.select(this).classed("label--active", active);
-
-            d3.select(d.linkExtensionNode).classed("link-extension--active", active).raise();
 
             do d3.select(d.linkNode).classed("link--active", active).raise();
             while (d = d.parent);
@@ -586,6 +698,7 @@ const radial = function () {
                     canvas.zoom.scale = event.transform.k
 
                     graph.element.attr("transform", event.transform)
+                    applyScaleText()
                 }))
     }
 

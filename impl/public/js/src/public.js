@@ -515,19 +515,27 @@ function contains(id, map) {
  * @param header {}
  * @param id {string}
  * @param categories {Map}
+ * @param isolate {boolean}
  */
 function clickHeader(header, id, categories, isolate) {
     const HeaderId = header.parentNode.getElementsByTagName('td')[header.id].cellIndex
     const headerName = header.parentNode.getElementsByTagName('td')[header.id].innerHTML
     const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
 
+    let counts = []
+    let length = -1
+
     // Check and remove the map
     if (categories.has(HeaderId.toString())) {
+        length = categories.get(HeaderId.toString()).length
         categories.delete(HeaderId.toString())
         //remove column color
         removeColumn(tdElements, HeaderId, categories)
         removeColumnName(headerName)
 
+        if(categories.size === 0){
+            length = -1
+        }
         if (isolate) {
             for (let i = 0; i < filterTables.column.length; i++) {
                 if (filterTables.column[i] === HeaderId) {
@@ -543,41 +551,30 @@ function clickHeader(header, id, categories, isolate) {
             }
             categories.set(HeaderId.toString(), [])
             const array = categories.get(HeaderId.toString())
-            addColumn(tdElements, HeaderId, array, categories)
+            length = addColumn(tdElements, HeaderId, array, categories)
             addColumnName(headerName)
         }
     }
 
-    let counts = []
-
-    categories.forEach((value, key) => {
-        if (counts.length === 0) {
-            value.forEach((val) => {
-                if (!counts.find(i => i.name === val.isolate)) {
-                    counts.push({
-                        name: val.isolate,
-                        value: 0
-                    })
+    if (length > 0) {
+        for (let i = 0; i < length; i++) {
+            let str = ''
+            categories.forEach((value, key) => {
+                if (str === '') {
+                    str = str + value[i].isolate
+                } else {
+                    str = str + ',' + value[i].isolate
                 }
-                counts.find(i => i.name === val.isolate).value++
             })
-        } else {
-            const aux = []
-            counts.forEach(item => {
-                value.forEach(str => {
-                    const auxStr = item.name + ',' + str.isolate
-                    if (!aux.find(i => i.name === auxStr)) {
-                        aux.push({
-                            name: auxStr,
-                            value: 0
-                        })
-                    }
-                    aux.find(i => i.name === auxStr).value++
+            if (!counts.find(i => i.name === str)) {
+                counts.push({
+                    name: str,
+                    value: 0
                 })
-            })
-            counts = aux
+            }
+            counts.find(i => i.name === str).value++
         }
-    })
+    }
 
     const totalLength = counts.length
     if (counts.length > 20) {
@@ -601,6 +598,7 @@ function addColumn(tdElements, HeaderId, array, categories) {
             tdElements[i].style.backgroundColor = '#FFFFFF'
         }
     }
+    return array.length
 }
 
 function removeColumn(tdElements, HeaderId, categories) {
@@ -719,7 +717,6 @@ function constructPieChart(data, names, id) {
         .attr("alignment-baseline", "middle")
 
     colors = []
-    console.log(categories_colors)
 }
 
 function formatArray(names) {
@@ -808,7 +805,6 @@ function sendNwkData() {
 }
 
 function downloadSVG() {
-    console.log(dendrogram.context)
     const svg = document.getHTML(view.context.svg.element.node(), true)
     download("view.svg", svg)
 }

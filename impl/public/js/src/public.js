@@ -380,10 +380,11 @@ function hideDataPart() {
 /********************* Tables *********************/
 
 const filterTables = {
-    name : 'Bar chart',
+    name: 'Bar chart',
     line: [],
-    column : [],
-    transform : () => {}//dendrogram.buildBarChart
+    column: [],
+    transform: () => {
+    }//dendrogram.buildBarChart
 }
 
 function create_table_profile(data) {
@@ -448,7 +449,6 @@ function create_table_isolate(data) {
     //
     filterTables.line.push(metadataID)
     //
-
 
 
     /** body **/
@@ -528,7 +528,7 @@ function clickHeader(header, id, categories, isolate) {
         removeColumn(tdElements, HeaderId, categories)
         removeColumnName(headerName)
 
-        if(isolate) {
+        if (isolate) {
             for (let i = 0; i < filterTables.column.length; i++) {
                 if (filterTables.column[i] === HeaderId) {
                     filterTables.column.splice(i, 1)
@@ -548,21 +548,35 @@ function clickHeader(header, id, categories, isolate) {
         }
     }
 
-    console.log(filterTables)
-
     let counts = []
 
-
     categories.forEach((value, key) => {
-        value.forEach((val) => {
-            let item = {}
-            if (!counts.find(i => i.name === val.isolate)) {
-                item.name = val.isolate
-                item.value = 0
-                counts.push(item)
-            }
-            counts.find(i => i.name === val.isolate).value++
-        })
+        if (counts.length === 0) {
+            value.forEach((val) => {
+                if (!counts.find(i => i.name === val.isolate)) {
+                    counts.push({
+                        name: val.isolate,
+                        value: 0
+                    })
+                }
+                counts.find(i => i.name === val.isolate).value++
+            })
+        } else {
+            const aux = []
+            counts.forEach(item => {
+                value.forEach(str => {
+                    const auxStr = item.name + ',' + str.isolate
+                    if (!aux.find(i => i.name === auxStr)) {
+                        aux.push({
+                            name: auxStr,
+                            value: 0
+                        })
+                    }
+                    aux.find(i => i.name === auxStr).value++
+                })
+            })
+            counts = aux
+        }
     })
 
     const totalLength = counts.length
@@ -573,7 +587,7 @@ function clickHeader(header, id, categories, isolate) {
     constructPieChart(counts, names, id)
 }
 
-function addColumn(tdElements, HeaderId, array, categories){
+function addColumn(tdElements, HeaderId, array, categories) {
     for (let i = 0; i < tdElements.length; i++) {
         if (tdElements[i].cellIndex === HeaderId || contains(tdElements[i].cellIndex.toString(), categories)) {
             if (tdElements[i].cellIndex === HeaderId) {
@@ -589,7 +603,7 @@ function addColumn(tdElements, HeaderId, array, categories){
     }
 }
 
-function removeColumn(tdElements, HeaderId, categories){
+function removeColumn(tdElements, HeaderId, categories) {
     for (let i = 0; i < tdElements.length; i++) {
         if (tdElements[i].cellIndex === HeaderId || !contains(tdElements[i].cellIndex.toString(), categories)) {
             tdElements[i].style.backgroundColor = '#FFFFFF'
@@ -599,13 +613,13 @@ function removeColumn(tdElements, HeaderId, categories){
     }
 }
 
-function addColumnName(name){
+function addColumnName(name) {
     names.push(name)
 }
 
-function removeColumnName(name){
+function removeColumnName(name) {
     for (let i = 0; i < names.length; i++) {
-        if(names[i] === name){
+        if (names[i] === name) {
             names.splice(i, 1)
         }
     }
@@ -635,7 +649,7 @@ function constructPieChart(data, names, id) {
     }
 
     //remove and return if data equals empty
-    if(data.length === 0) return
+    if (data.length === 0) return
 
     const g = d3.select(id).append('g').attr("transform", `translate(550, 150)`).attr('id', 'pieChart')
 
@@ -708,7 +722,7 @@ function constructPieChart(data, names, id) {
     console.log(categories_colors)
 }
 
-function formatArray(names){
+function formatArray(names) {
     let toReturn = ''
     names.forEach(name => {
         toReturn += `${name}, `

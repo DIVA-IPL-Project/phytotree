@@ -450,7 +450,7 @@ const dendrogram = function () {
         graph.element.selectAll(".isolates")
             .append("text")
             .attr("dy", 5)
-            .attr("x", 100)
+            .attr("x", 130)
             .style("text-anchor", "start")
             .style("font", `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
@@ -993,29 +993,6 @@ const dendrogram = function () {
                 }))
     }
 
-    const colors = {
-        'Portugal,UL': 'blue',
-        'Australia,QIMR': 'red',
-        'Other,NYMC': 'green',
-        'USA,NYMC': 'orange',
-        'UL,Portugal': 'blue',
-        'QIMR,Australia': 'red',
-        'NYMC,Other': 'green',
-        'NTMC,USA': 'orange'
-    }
-
-    const colors1 = {
-        'Portugal': 'blue',
-        'Australia': 'red',
-        'USA': 'green',
-        'Other': 'orange'
-    }
-
-    const colors2 = {
-        'China': 'blue',
-        'United-Kingdom': 'red',
-    }
-
     function buildBarChart(name, lines, columns, colors) {
         graph.barChart = true
         const profilesId = lines[0]
@@ -1029,7 +1006,6 @@ const dendrogram = function () {
         const getColor = (name) => {
             for (let i = 0; i < colors.length; i++) {
                 if (colors[i].name === name) {
-                    console.log(colors[i].color)
                     return colors[i].color
                 }
             }
@@ -1116,7 +1092,7 @@ const dendrogram = function () {
             })
         }
 
-        console.log(map)
+        //console.log(map)
 
         graph.element
             .selectAll(".isolates")
@@ -1127,30 +1103,27 @@ const dendrogram = function () {
                     .data(map)
             })
 
-        let w = 25, lastX = 5, lastWidth = 0, maxWidth = 90
+        let w = 35, lastX = 5, lastWidth = 30, maxWidth = 90, totalWidth
         map.forEach((isolate, profile) => {
             const node = document.getElementById('node' + profile).querySelector("g")
             isolate.forEach(item => {
                 const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
                 rect.setAttribute("y", "-5")
                 rect.setAttribute("height", "11")
-
-                //if (name === "&")
-                lastX = lastX + 10
-                rect.setAttribute("x", lastX.toString())
-
-                lastWidth = (w * item.numberOfIsolates) > maxWidth ? maxWidth : (w * item.numberOfIsolates)
-                if (isolate.length === 1) lastWidth = 90
-                rect.setAttribute("width", lastWidth.toString())
-
                 rect.setAttribute("class", "barChart")
                 rect.setAttribute("fill", getColor(item.isolates))
+
+                rect.setAttribute("x", lastX.toString())
+                lastX = lastX + lastWidth
+
+                if (isolate.length === 1) lastWidth = 100
+                rect.setAttribute("width", lastWidth.toString())
+
                 node.appendChild(rect)
             })
             lastX = 5
-            lastWidth = 25
+            lastWidth = 30
         })
-
     }
 
     return {

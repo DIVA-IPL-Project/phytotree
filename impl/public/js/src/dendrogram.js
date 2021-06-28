@@ -993,6 +993,12 @@ const dendrogram = function () {
                 }))
     }
 
+    function applyFilter(filter){
+        console.log(filter)
+        filter.transform(filter.name, filter.line, filter.column, filter.colors)
+    }
+
+
     function buildBarChart(name, lines, columns, colors) {
         graph.barChart = true
         const profilesId = lines[0]
@@ -1151,6 +1157,7 @@ const dendrogram = function () {
 
         getNodes,
 
-        buildBarChart
+        buildBarChart,
+        applyFilter
     }
 }()

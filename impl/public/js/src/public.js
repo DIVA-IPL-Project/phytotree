@@ -10,7 +10,7 @@ let view
 async function load() {
     setupRepresentationButtons()
     setupTabs()
-    await setupData()
+    setupData()
 }
 
 /********************* Setup UI *********************/
@@ -29,6 +29,8 @@ function setupTabs() {
             is_table_isolate_create = true
         }
     })
+
+
 }
 
 function setupRepresentationButtons() {
@@ -70,7 +72,7 @@ function setupRepresentationButtons() {
     })
 }
 
-async function setupData() {
+function setupData() {
     document.getElementById('nwkBtn').addEventListener('click', sendNwkData)
 
     document.getElementById('idNwkBt').addEventListener('click', sendNewickData)
@@ -78,10 +80,6 @@ async function setupData() {
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
     document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
-
-    // let resp = await fetch('http://localhost:8000/api/data')
-    // if (resp.status !== 200) alertMsg(resp.statusText)
-    // else data = await resp.json()
 }
 
 /********************* Setup Navbar UI *********************/
@@ -383,8 +381,6 @@ const filterTables = {
     name: 'Bar chart',
     line: [],
     column: [],
-    transform: () => {
-    }//dendrogram.buildBarChart
 }
 
 function create_table_profile(data) {
@@ -716,7 +712,13 @@ function constructPieChart(data, names, id) {
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
 
-    colors = []
+    document.getElementById('linktreebutton').style.display = 'block'
+    document.getElementById('linktreebutton').addEventListener('click', ()=>{
+        filterTables.colors = categories_colors
+        filterTables.transform = dendrogram.buildBarChart
+        console.log(colors)
+        dendrogram.applyFilter(filterTables)
+    })
 }
 
 function formatArray(names) {

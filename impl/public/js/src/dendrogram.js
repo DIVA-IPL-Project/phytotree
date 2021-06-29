@@ -150,8 +150,6 @@ const dendrogram = function () {
         graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
 
         addLeafLabels()
-        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
-        if (graph.style.linkLabels) addLinkLabelsSAfterUpdate(graph.links)
     }
 
     /********************* Collapse functions *********************/

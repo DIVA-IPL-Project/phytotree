@@ -7,7 +7,7 @@ let view
 
 /********************* Load Page *********************/
 
-async function load() {
+function load() {
     setupRepresentationButtons()
     setupTabs()
     setupData()
@@ -712,11 +712,15 @@ function constructPieChart(data, names, id) {
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
 
+    linkToTree()
+}
+
+function linkToTree() {
     document.getElementById('linktreebutton').style.display = 'block'
-    document.getElementById('linktreebutton').addEventListener('click', ()=>{
+    document.getElementById('linktreebutton').addEventListener('click', () => {
+
         filterTables.colors = categories_colors
         filterTables.transform = dendrogram.buildBarChart
-        console.log(colors)
         dendrogram.applyFilter(filterTables)
     })
 }

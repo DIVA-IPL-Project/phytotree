@@ -150,6 +150,8 @@ const dendrogram = function () {
         graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
 
         addLeafLabels()
+        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+        if (graph.style.linkLabels) addLinkLabelsSAfterUpdate(graph.links)
     }
 
     /********************* Collapse functions *********************/
@@ -994,8 +996,8 @@ const dendrogram = function () {
     }
 
     function applyFilter(filter){
-        console.log(filter)
         filter.transform(filter.name, filter.line, filter.column, filter.colors)
+        addLeafLabels()
     }
 
 

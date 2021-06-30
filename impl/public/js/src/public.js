@@ -468,7 +468,7 @@ function create_table_isolate(data) {
     table.setAttribute('height', '450')
     addListenersToTables()
 
-
+    linkToTree()
 }
 
 function addListenersToTables() {
@@ -544,6 +544,9 @@ function clickHeader(header, id, categories, isolate) {
         if (tdElements.length > 0) {
             if (isolate) {
                 filterTables.column.push(HeaderId)
+                if (filterTables.column.length > 1) {
+                    filterTables.name = "&"
+                }
             }
             categories.set(HeaderId.toString(), [])
             const array = categories.get(HeaderId.toString())
@@ -578,6 +581,7 @@ function clickHeader(header, id, categories, isolate) {
         counts.push({name: 'Others', value: totalLength - 20})
     }
     constructPieChart(counts, names, id)
+    document.getElementById('linktreebutton').style.display = 'block'
 }
 
 function addColumn(tdElements, HeaderId, array, categories) {
@@ -711,12 +715,9 @@ function constructPieChart(data, names, id) {
         .text('Categories: ' + data.length)
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
-
-    linkToTree()
 }
 
 function linkToTree() {
-    document.getElementById('linktreebutton').style.display = 'block'
     document.getElementById('linktreebutton').addEventListener('click', () => {
 
         filterTables.colors = categories_colors

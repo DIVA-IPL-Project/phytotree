@@ -84,8 +84,6 @@ const radial = function () {
 
         data.tree = context.build(data.root)
 
-        console.log(data.tree)
-
         return data;
     }
 
@@ -139,11 +137,53 @@ const radial = function () {
 
 
     /********************* Collapse functions *********************/
+    function log(base, number) {
+        return Math.log(number) / Math.log(base);
+    }
+
+    function angle(node) {
+        let px = (node.parent?.x | 0), py = (node.parent?.y | 0)
+        let y = node.y - py, x = node.x - px
+        let value = radToDeg(Math.atan(y/x))
+        if (node.parent && node.x < node.parent.x) value += 180
+        return value
+    }
+
+    function radToDeg(radian) {
+        let pi = Math.PI;
+        return radian * (180/pi);
+    }
+
+    function getTriangle(node) {
+        let length = node.leaves.length - 1
+        let point = length / 2 * 15,
+            label = node.leaves[0] + '...' + node.leaves[length]
+        let base = 1.1
+        point = log(base, point / (node.depth || 1))
+
+        return { point, label }
+    }
 
     function collapse(parent, children) {
         parent.visibility = false
         if (!children) return
         collapseAux(children)
+
+        let {point, label} = getTriangle(parent)
+
+        graph.element.select(`#node${parent.data.id}`).remove()
+        let node = nodesAttrs(graph.nodes.data(parent))
+        let rot = angle(parent)
+
+        node.append('polygon')
+            .attr('points', d => `0,0 100,${point} 100,${-point}`)
+            .attr('transform', `rotate(${rot})`)
+            .style('fill', 'black')
+        node.append('text')
+            .text(label)
+            .attr('transform', `rotate(${rot})`)
+            .attr('dx', '100')
+            .attr('dy', '3')
     }
 
     function collapseAux(children) {
@@ -162,6 +202,9 @@ const radial = function () {
     function expand(parent, children) {
         parent.visibility = true
         expandAux(children)
+
+        graph.element.select(`#node${parent.data.id}`).remove()
+        nodesAttrs(graph.nodes.data(parent))
     }
 
     function expandAux(children) {
@@ -175,6 +218,24 @@ const radial = function () {
 
             linksAttr(graph.links.data(child))
             nodesAttrs(graph.nodes.data(child))
+
+            if (!child.visibility) {
+                let {point, label} = getTriangle(child)
+
+                graph.element.select(`#node${child.data.id}`).remove()
+                let node = nodesAttrs(graph.nodes.data(child))
+                let rot = angle(child)
+
+                node.append('polygon')
+                    .attr('points', d => `0,0 100,${point} 100,${-point}`)
+                    .attr('transform', `rotate(${rot})`)
+                    .style('fill', 'black')
+                node.append('text')
+                    .text(label)
+                    .attr('transform', `rotate(${rot})`)
+                    .attr('dx', '100')
+                    .attr('dy', '3')
+            }
         }
     }
 
@@ -645,6 +706,7 @@ const radial = function () {
             spreadSecond(root)
 
             root.rightBorder = 0;
+            root.alpha = 0;
             root.wedgeSize = 2 * pi;
             root.x = 0;
             root.y = 0;
@@ -659,10 +721,10 @@ const radial = function () {
 
                         child.wedgeSize = (2 * pi * child.leaves.length) / root.leaves.length
 
-                        let alpha = child.rightBorder + (child.wedgeSize / 2);
+                        child.alpha = child.rightBorder + (child.wedgeSize / 2);
 
-                        child.x = parent.x + Math.cos(alpha) * child.data.data.value * graph.scale.value;
-                        child.y = parent.y + Math.sin(alpha) * child.data.data.value * graph.scale.value;
+                        child.x = parent.x + Math.cos(child.alpha) * child.data.data.value * graph.scale.value;
+                        child.y = parent.y + Math.sin(child.alpha) * child.data.data.value * graph.scale.value;
                         parent.rightBorder = parent.rightBorder + child.wedgeSize;
                     })
                 }

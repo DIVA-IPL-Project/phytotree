@@ -32,11 +32,13 @@ const dendrogram = function () {
             parentLabels: false,
             labels_size: 12,
             links_size: 2,
-            nodes_size: 3
+            nodes_size: 3,
+            barChart: false
         },
         scale: linearScale(),
         nodeSize: [15, 1]
     }
+    let isDraw = false
     const ruler = {
         container: null,
         element: null,
@@ -107,6 +109,11 @@ const dendrogram = function () {
         return data
     }
 
+    /**
+     * Draws the dendrogram
+     * @param container the element to place the dendrogram
+     * @param tree the tree to draw
+     */
     function draw(container, tree) {
         canvas.container = d3.select(container)
         svg.element = canvas.container.select('svg')
@@ -115,6 +122,7 @@ const dendrogram = function () {
         } else {
             svg.element = canvas.container
                 .append("svg")
+                .attr("id", "svg_graph")
                 .attr("width", canvas.width + canvas.margin.left + canvas.margin.right)
                 .attr("height", canvas.height + canvas.margin.top + canvas.margin.bottom)
         }
@@ -137,8 +145,13 @@ const dendrogram = function () {
         horizontalScale();
         ruler.visible = true;
         applyScaleText()
+        isDraw = true
     }
 
+    /**
+     * Redraws the dendrogram after an update
+     * @param tree the tree to draw
+     */
     function update(tree) {
         if (graph.nodes && !graph.nodes.empty()) graph.nodes.remove()
         if (graph.links && !graph.links.empty()) graph.links.remove()
@@ -227,10 +240,13 @@ const dendrogram = function () {
             const linkContainer = linksAttr(graph.element.data(child))
             const nodeContainer = nodesAttrs(graph.element.data(child))
 
+            if (graph.style.barChart) addBarCharts(child)
+
             addNodeStyle()
             addLinkStyle()
-            if (graph.style.linkLabels) addLinkLabelsSAfterUpdate(linkContainer)
+            if (graph.style.linkLabels) addLinkLabelsAfterUpdate(linkContainer)
             if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+            if (graph.style.barChart) addLeafLabelsNotIsolates()
 
             if (!child.visibility) {
                 let {point, label} = getTriangle(child)
@@ -246,6 +262,11 @@ const dendrogram = function () {
         }
     }
 
+    /**
+     * Function to be added to all nodes to collapse them.
+     * @param event the event
+     * @param d the node clicked
+     */
     function click(event, d) {
         if (d.visibility !== null) {
             if (d.visibility === false) {
@@ -259,7 +280,7 @@ const dendrogram = function () {
             d.visibility = false
             collapse(d, d.children)
         }
-        addLeafLabels()
+        if (d.children && !graph.style.barChart) addLeafLabels()
     }
 
 
@@ -420,7 +441,7 @@ const dendrogram = function () {
         } else {
             graph.element
                 .selectAll(".link")
-                .each(d => addLinkLabelsSAfterUpdate(graph.element.data(d)))
+                .each(d => addLinkLabelsAfterUpdate(graph.element.data(d)))
         }
         graph.style.linkLabels = !graph.style.linkLabels;
     }
@@ -429,7 +450,7 @@ const dendrogram = function () {
      * Adds labels to the links, after an update.
      * @param links the links to add the labels.
      */
-    function addLinkLabelsSAfterUpdate(links) {
+    function addLinkLabelsAfterUpdate(links) {
         links
             .append("text")
             .attr("x", d => (d.parent.y + d.y) / 2)
@@ -469,6 +490,23 @@ const dendrogram = function () {
     }
 
     /**
+     * Adds labels to the leaf nodes that dont have bar charts.
+     */
+    function addLeafLabelsNotIsolates() {
+        graph.element.selectAll(".node--leaf:not(.isolates) text").remove()
+
+        graph.element.selectAll(".node--leaf:not(.isolates)")
+            .append("text")
+            .attr("dy", 5)
+            .attr("x", 13)
+            .style("text-anchor", "start")
+            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .text(d => d.data.id)
+            .on("mouseover", mouseOveredDendrogram(true))
+            .on("mouseout", mouseOveredDendrogram(false))
+    }
+
+    /**
      * Aligns nodes by depth or by link weight
      */
     function alignNodes() {
@@ -484,7 +522,7 @@ const dendrogram = function () {
             d.y = d.depth * (horizontal.value * horizontal.scalingFactor)
 
             if (graph.style.linkLabels) {
-                if (d.parent) addLinkLabelsSAfterUpdate(graph.element.data(d))
+                if (d.parent) addLinkLabelsAfterUpdate(graph.element.data(d))
             }
         })
         else data.root.eachBefore(d => {
@@ -492,7 +530,7 @@ const dendrogram = function () {
                 let horizontal = graph.scale.horizontal
                 d.y = (horizontal.value * horizontal.scalingFactor * d.data.data.value) + d.parent.y
 
-                if (graph.style.linkLabels) addLinkLabelsSAfterUpdate(graph.element.data(d))
+                if (graph.style.linkLabels) addLinkLabelsAfterUpdate(graph.element.data(d))
             }
         })
         update(data.tree)
@@ -545,7 +583,7 @@ const dendrogram = function () {
                 if (!graph.style.align) {
                     d.y = horizontal.value * d.data.data.value * horizontal.scalingFactor + d.parent.y
                 } else d.y = d.depth * horizontal.scalingFactor * horizontal.value
-                if (graph.style.linkLabels) addLinkLabelsSAfterUpdate(graph.element.data(d))
+                if (graph.style.linkLabels) addLinkLabelsAfterUpdate(graph.element.data(d))
             }
         })
     }
@@ -563,6 +601,9 @@ const dendrogram = function () {
         applyScale(data.tree)
         applyScaleText()
         update(data.root)
+
+        if (graph.style.barChart) graph.element.selectAll('circle').each(d => addBarCharts(d))
+
         addNodeStyle()
         addLinkStyle()
         if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
@@ -581,6 +622,9 @@ const dendrogram = function () {
         applyScale(data.tree)
         applyScaleText()
         update(data.root)
+
+        if (graph.style.barChart) graph.element.selectAll('circle').each(d => addBarCharts(d))
+
         addNodeStyle()
         addLinkStyle()
         if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
@@ -993,86 +1037,136 @@ const dendrogram = function () {
                 }))
     }
 
+    /**
+     * Applies the filter to add bar charts.
+     * @param filter the filter to be applied
+     */
     function applyFilter(filter){
+        graph.style.barChart.filter = filter
         filter.transform(filter.name, filter.line, filter.column, filter.colors)
-        addLeafLabels()
+        addLeafLabelsNotIsolates()
     }
 
-
+    /**
+     * Builds bar charts to be added to the leaf nodes.
+     * @param name the name of the filter
+     * @param lines the isolates
+     * @param columns the categories to be added to the bar charts
+     * @param colors the colors of the sections
+     */
     function buildBarChart(name, lines, columns, colors) {
-        graph.barChart = true
+        graph.element.selectAll('rect').remove()
+        graph.element.selectAll(".node--leaf text").remove();
+        graph.style.barChart = true
+
         const profilesId = lines[0]
         const columns_data = []
+        const order_data = []
+        const map = new Map()
 
         const stack = d3.stack()
             .keys(["isolates"])
             .order(d3.stackOrderNone)
             .offset(d3.stackOffsetNone)
 
-        const getColor = (name) => {
+        function getColor(name) {
             for (let i = 0; i < colors.length; i++) {
-                if (colors[i].name === name) {
-                    return colors[i].color
-                }
+                if (colors[i].name === name) return colors[i].color
             }
         }
 
-        columns.forEach(col => {
+        if (name === "&") {
+            let columns_names
+            columns.forEach((c, i) => {
+                if (i === 0) columns_names = data.input.metadata[c] + ','
+                else if (i === c.length - 1) columns_names += data.input.metadata[c]
+                else columns_names += data.input.metadata[c] + ','
+            })
+            columns_names = columns_names.slice(0, columns_names.length - 1)
+
             data.input.nodes.forEach(node => {
+                let isolates = [], profiles
                 if (node.isolates && node.isolates.length > 0) {
                     const currClass = document.getElementById('node' + node.key)
                         .getAttribute("class")
                     document.getElementById('node' + node.key)
                         .setAttribute("class", `${currClass} isolates`)
 
-                    node.isolates.forEach(iso => {
-                        columns_data.push({
-                            'category': data.input.metadata[col],
-                            'isolates': iso[col],
-                            'profiles': iso[profilesId]
-                        })
+                    node.isolates.forEach(iso => columns.forEach((c, i) => {
+                        if (i === 0) isolates.push(iso[c] + ',')
+                        else if (i === c.length - 1) isolates.push(iso[c])
+                        else {
+                            const last = isolates.pop()
+                            isolates.push(last + iso[c] + ',')
+                        }
+                    }))
+                    isolates = isolates.map(i => i.slice(0, i.length - 1))
+
+                    node.isolates.forEach(iso => profiles = iso[profilesId])
+
+                    columns_data.push({
+                        'category': columns_names,
+                        'isolates': isolates,
+                        'profiles': profiles
                     })
+
                 } else {
-                    const currClass = document.getElementById('node' + node.key).getAttribute("class")
+                    const currClass = document.getElementById('node' + node.key)
+                        .getAttribute("class")
                     document.getElementById('node' + node.key)
                         .setAttribute("class", `${currClass} not-isolates`)
                 }
             })
-        })
+        } else {
+            columns.forEach(col => {
+                data.input.nodes.forEach(node => {
+                    if (node.isolates && node.isolates.length > 0) {
+                        const currClass = document.getElementById('node' + node.key)
+                            .getAttribute("class")
+                        document.getElementById('node' + node.key)
+                            .setAttribute("class", `${currClass} isolates`)
 
-        const order_data = []
+                        node.isolates.forEach(iso => {
+                            columns_data.push({
+                                'category': data.input.metadata[col],
+                                'isolates': iso[col],
+                                'profiles': iso[profilesId]
+                            })
+                        })
+                    } else {
+                        const currClass = document.getElementById('node' + node.key)
+                            .getAttribute("class")
+                        document.getElementById('node' + node.key)
+                            .setAttribute("class", `${currClass} not-isolates`)
+                    }
+                })
+            })
+        }
+
         graph.element.selectAll(".isolates").each(d => {
             columns_data.forEach(item => {
                 if (d.data.id === item.profiles) order_data.push(item)
             })
         })
 
-        const map = new Map()
-
         if (name === "&") {
             stack(order_data)[0].forEach(d => {
-                if (map.has(d.data.profiles)) {
-                    map.get(d.data.profiles).forEach((item) => {
-                        const curr = item.category.split(',')
-                        if (curr.includes(d.data.category)) {
-                            const rest = Array.from(item)
-                            d.data.numberOfIsolates = 1
-                            rest.push(d.data)
-                            map.set(d.data.profiles, rest)
-                        } else {
-                            const data = {
-                                'category': item.category + ',' + d.data.category,
-                                'isolates': item.isolates + ',' + d.data.isolates,
-                                'profiles': item.profiles,
-                                'numberOfIsolates': item.numberOfIsolates
-                            }
-                            map.set(d.data.profiles, [data])
-                        }
-                    })
-                } else {
-                    d.data.numberOfIsolates = 1
-                    map.set(d.data.profiles, [d.data])
+                const counts = {}
+                d.data.isolates.forEach(x => { counts[x] = (counts[x] || 0) + 1 })
+
+                function valuesToArray(obj) {
+                    const result = []
+                    for (let key in obj) {
+                        if (obj.hasOwnProperty(key)) result.push({ 'isolate': key, 'counter': obj[key] })
+                    }
+                    return result
                 }
+                const data = {
+                    'category': d.data.category,
+                    'isolates': valuesToArray(counts),
+                    'profiles': d.data.profiles
+                }
+                map.set(d.data.profiles, data)
             })
         } else {
             stack(order_data)[0].forEach(d => {
@@ -1098,8 +1192,6 @@ const dendrogram = function () {
             })
         }
 
-        //console.log(map)
-
         graph.element
             .selectAll(".isolates")
             .append("g")
@@ -1109,27 +1201,144 @@ const dendrogram = function () {
                     .data(map)
             })
 
-        let w = 35, lastX = 5, lastWidth = 30, maxWidth = 90, totalWidth
-        map.forEach((isolate, profile) => {
-            const node = document.getElementById('node' + profile).querySelector("g")
-            isolate.forEach(item => {
-                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
-                rect.setAttribute("y", "-5")
-                rect.setAttribute("height", "11")
-                rect.setAttribute("class", "barChart")
-                rect.setAttribute("fill", getColor(item.isolates))
+        let w = 30, lastX = 0, lastWidth = 5, totalW = 0
 
-                rect.setAttribute("x", lastX.toString())
-                lastX = lastX + lastWidth
+        const xScale = d3.scaleLog()
+            .domain([0.5, 50])
+            .range([0, 50])
 
-                if (isolate.length === 1) lastWidth = 100
-                rect.setAttribute("width", lastWidth.toString())
+        const rects = []
 
-                node.appendChild(rect)
+        if (name === "&") {
+            map.forEach((isolate, profile) => {
+                const node = document.getElementById('node' + profile).querySelector("g")
+                lastX = 0
+                lastWidth = 5
+                totalW = 0
+
+                isolate.isolates.forEach(item => {
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+                    rect.setAttribute("y", "-5")
+                    rect.setAttribute("height", "11")
+                    rect.setAttribute("class", "barChart")
+                    rect.setAttribute("fill", getColor(item.isolate))
+
+                    lastX += lastWidth
+                    rect.setAttribute("x", lastX.toString())
+
+                    lastWidth = xScale(item.counter * w)
+                    totalW += lastWidth
+                    rect.setAttribute("width", lastWidth.toString())
+
+                    node.appendChild(rect)
+                    graph.nodes
+                        .selectAll("circle")
+                        .each(function (d) {
+                            if (d.data.id === profile) {
+                                if (d.data.barChart) {
+                                    d.data.barChart.push(rect)
+                                } else {
+                                    d.data.barChart = [rect]
+                                }
+                            }
+                        })
+                })
+
+                d3.select(node)
+                    .append("text")
+                    .attr("dy", 5)
+                    .attr("x", totalW + 10)
+                    .text(d => d.data.id)
+                    .style("text-anchor", "start")
+                    .style("font", `${graph.style.labels_size}px sans-serif`)
+                    .on("mouseover", mouseOveredDendrogram(true))
+                    .on("mouseout", mouseOveredDendrogram(false))
             })
-            lastX = 5
-            lastWidth = 30
-        })
+        } else {
+            map.forEach((isolate, profile) => {
+                const node = document.getElementById('node' + profile).querySelector("g")
+                lastX = 0
+                lastWidth = 5
+                totalW = 0
+
+                isolate.forEach(item => {
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+                    rect.setAttribute("y", "-5")
+                    rect.setAttribute("height", "11")
+                    rect.setAttribute("class", "barChart")
+                    rect.setAttribute("fill", getColor(item.isolates))
+
+                    lastX += lastWidth
+                    rect.setAttribute("x", lastX.toString())
+
+                    lastWidth = xScale(item.numberOfIsolates * w)
+                    totalW += lastWidth
+                    rect.setAttribute("width", lastWidth.toString())
+
+                    node.appendChild(rect)
+                    graph.nodes
+                        .selectAll("circle")
+                        .each(function (d) {
+                            if (d.data.id === profile) {
+                                if (d.data.barChart) {
+                                    d.data.barChart.push(rect)
+                                } else {
+                                    d.data.barChart = [rect]
+                                }
+                            }
+                        })
+                })
+
+              d3.select(node)
+                    .append("text")
+                    .attr("dy", 5)
+                    .attr("x", totalW + 10)
+                    .text(d => d.data.id)
+                    .style("text-anchor", "start")
+                    .style("font", `${graph.style.labels_size}px sans-serif`)
+                    .on("mouseover", mouseOveredDendrogram(true))
+                    .on("mouseout", mouseOveredDendrogram(false))
+            })
+        }
+    }
+
+    /**
+     * Draws the bar charts after an update.
+     * @param node the node to add the bar chart
+     */
+    function addBarCharts(node) {
+        if (!node.children && node.data.barChart) {
+            const nodeElement = graph.element.select(`#node${node.data.id}`)
+                .attr("class", "isolates")
+                .append("g")
+            let totalWidth = 0
+            for (let i = 0; i < node.data.barChart.length; i++) {
+                const rect = node.data.barChart[i]
+                nodeElement
+                    .append("rect")
+                    .attr("width", () => {
+                        totalWidth += Number.parseInt(rect.attributes["width"].nodeValue)
+                        return rect.attributes["width"].nodeValue
+                    })
+                    .attr("fill", rect.attributes["fill"].nodeValue)
+                    .attr("y", rect.attributes["y"].nodeValue)
+                    .attr("height", rect.attributes["height"].nodeValue)
+                    .attr("x", rect.attributes["x"].nodeValue)
+                    .attr("class", "barChart")
+
+                if (i === node.data.barChart.length - 1) {
+                    graph.element.select(`#node${node.data.id}`)
+                        .append("text")
+                        .attr("dy", 5)
+                        .attr("x", totalWidth + 10)
+                        .style("text-anchor", "start")
+                        .style("font", `${graph.style.labels_size}px sans-serif`)
+                        .text(d => node.data.id)
+                        .on("mouseover", mouseOveredDendrogram(true))
+                        .on("mouseout", mouseOveredDendrogram(false))
+                }
+            }
+        }
     }
 
     return {
@@ -1137,6 +1346,7 @@ const dendrogram = function () {
         context,
         build,
         draw,
+        isDraw,
 
         addNodeStyle,
         addLinkStyle,

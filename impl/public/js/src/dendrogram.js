@@ -536,6 +536,11 @@ const dendrogram = function () {
         addNodeStyle()
         addLinkStyle()
         if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+        if (graph.style.barChart) {
+            graph.element.selectAll(".leafLabelIsolates").remove()
+            graph.element.selectAll('circle').each(d => addBarCharts(d))
+            addLeafLabelsNotIsolates()
+        }
     }
 
     /**
@@ -600,6 +605,7 @@ const dendrogram = function () {
         update(data.root)
 
         if (graph.style.barChart) {
+            graph.element.selectAll(".leafLabelIsolates").remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -624,6 +630,7 @@ const dendrogram = function () {
         update(data.root)
 
         if (graph.style.barChart) {
+            graph.element.selectAll(".leafLabelIsolates").remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -1062,6 +1069,7 @@ const dendrogram = function () {
     function buildBarChart(name, lines, columns, colors) {
         graph.element.selectAll('rect').remove()
         graph.element.selectAll(".leafLabel").remove();
+        graph.element.selectAll(".leafLabelIsolates").remove();
         graph.style.barChart = true
 
         const profilesId = lines[0]
@@ -1204,6 +1212,7 @@ const dendrogram = function () {
                 d3.select(this)
                     .selectAll("rect")
                     .data(map)
+                d.data.barChart = null
             })
 
         let w = 30, lastX = 0, lastWidth = 5, totalW = 0
@@ -1246,6 +1255,7 @@ const dendrogram = function () {
 
                 d3.select(node)
                     .append("text")
+                    .attr("class", "leafLabelIsolates")
                     .attr("dy", 5)
                     .attr("x", totalW + 10)
                     .text(d => d.data.id)
@@ -1288,6 +1298,7 @@ const dendrogram = function () {
 
               d3.select(node)
                     .append("text")
+                    .attr("class", "leafLabelIsolates")
                     .attr("dy", 5)
                     .attr("x", totalW + 10)
                     .text(d => d.data.id)
@@ -1304,8 +1315,10 @@ const dendrogram = function () {
      * @param node the node to add the bar chart
      */
     function addBarCharts(node) {
-        graph.element.selectAll(".leafLabel").remove();
         if (!node.children && node.data.barChart) {
+            if (!graph.element.select(`#node${node.data.id}`).selectAll('g').empty()) {
+                graph.element.select(`#node${node.data.id}`).selectAll('g').remove()
+            }
             const nodeElement = graph.element.select(`#node${node.data.id}`)
                 .attr("class", "isolates")
                 .append("g")

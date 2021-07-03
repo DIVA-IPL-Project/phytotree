@@ -374,6 +374,7 @@ const radial = function () {
         update(data.root)
 
         if (graph.style.barChart) {
+            graph.element.selectAll(".leafLabelIsolates").remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -400,6 +401,7 @@ const radial = function () {
         update(data.root)
 
         if (graph.style.barChart) {
+            graph.element.selectAll(".leafLabelIsolates").remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -894,6 +896,7 @@ const radial = function () {
     function buildBarChart(name, lines, columns, colors) {
         graph.element.selectAll('rect').remove()
         graph.element.selectAll(".leafLabel").remove();
+        graph.element.selectAll(".leafLabelIsolates").remove();
         graph.style.barChart = true
 
         const profilesId = lines[0]
@@ -1036,6 +1039,7 @@ const radial = function () {
                 d3.select(this)
                     .selectAll("rect")
                     .data(map)
+                d.data.barChart = null
             })
 
         let w = 30, lastX = 0, lastWidth = 5, totalW = 0, rotate
@@ -1085,7 +1089,7 @@ const radial = function () {
 
                 d3.select(node)
                     .append("text")
-                    .attr('class', 'label')
+                    .attr("class", "leafLabelIsolates")
                     .attr("dx", totalW + 10)
                     .attr("dy", ".31em")
                     .attr('transform', d => `rotate(${angle(d)})`)
@@ -1136,7 +1140,7 @@ const radial = function () {
 
                 d3.select(node)
                     .append("text")
-                    .attr('class', 'label')
+                    .attr('class', 'leafLabelIsolates')
                     .attr("dx", totalW + 10)
                     .attr("dy", ".31em")
                     .attr('transform', d => `rotate(${angle(d)})`)
@@ -1156,6 +1160,9 @@ const radial = function () {
     function addBarCharts(node) {
         graph.element.selectAll(".leafLabel").remove();
         if (!node.children && node.data.barChart) {
+            if (!graph.element.select(`#node${node.data.id}`).selectAll('g').empty()) {
+                graph.element.select(`#node${node.data.id}`).selectAll('g').remove()
+            }
             const nodeElement = graph.element.select(`#node${node.data.id}`)
                 .attr("class", "isolates")
                 .append("g")

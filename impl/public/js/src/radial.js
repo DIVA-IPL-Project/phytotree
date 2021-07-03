@@ -1,5 +1,3 @@
-
-
 const radial = function () {
     const margin = {
         top: 20,
@@ -144,27 +142,31 @@ const radial = function () {
     function angle(node) {
         let px = (node.parent?.x | 0), py = (node.parent?.y | 0)
         let y = node.y - py, x = node.x - px
-        let value = radToDeg(Math.atan(y/x))
-        if (node.parent && node.x < node.parent.x) value += 180
+        let value = radToDeg(Math.atan(y / x))
+        if (node.parent && node.x <= node.parent.x) value += 180
         return value
     }
 
     function radToDeg(radian) {
         let pi = Math.PI;
-        return radian * (180/pi);
+        return radian * (180 / pi);
     }
 
     function getTriangle(node) {
-        let length = node.leaves.length - 1
+        console.log(node)
+        let length = node.leaves.length - 1 || 1
         let point = length / 2 * 15,
-            label = node.leaves[0] + '...' + node.leaves[length]
+            label = node.leaves.length !== 1 ?
+                node.leaves[0] + '...' + node.leaves[length] :
+                '...' + node.leaves[0]
         let base = 1.1
         point = log(base, point / (node.depth || 1))
 
-        return { point, label }
+        return {point, label}
     }
 
     function collapse(parent, children) {
+        console.log(parent)
         parent.visibility = false
         if (!children) return
         collapseAux(children)
@@ -576,8 +578,9 @@ const radial = function () {
             .selectAll(".node--leaf")
             .append("text")
             .attr('class', 'label')
-            .attr("dx", d => d.x < Math.PI ? 10 : -10)
+            .attr("dx", 10)
             .attr("dy", ".31em")
+            .attr('transform', d => `rotate(${angle(d)})`)
             .style("text-anchor", "start")
             .style("font", `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)

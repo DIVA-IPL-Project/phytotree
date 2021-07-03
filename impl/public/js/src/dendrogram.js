@@ -162,7 +162,8 @@ const dendrogram = function () {
         graph.links = linksAttr(graph.element.selectAll('.link').data(links, d => d.data.id).enter())
         graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
 
-        addLeafLabels()
+        if (graph.style.barChart) addLeafLabelsNotIsolates()
+        else addLeafLabels()
     }
 
     /********************* Collapse functions *********************/
@@ -240,13 +241,15 @@ const dendrogram = function () {
             const linkContainer = linksAttr(graph.element.data(child))
             const nodeContainer = nodesAttrs(graph.element.data(child))
 
-            if (graph.style.barChart) addBarCharts(child)
+            if (graph.style.barChart) {
+                addBarCharts(child)
+                addLeafLabelsNotIsolates()
+            }
 
             addNodeStyle()
             addLinkStyle()
             if (graph.style.linkLabels) addLinkLabelsAfterUpdate(linkContainer)
             if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
-            if (graph.style.barChart) addLeafLabelsNotIsolates()
 
             if (!child.visibility) {
                 let {point, label} = getTriangle(child)
@@ -280,7 +283,9 @@ const dendrogram = function () {
             d.visibility = false
             collapse(d, d.children)
         }
-        if (d.children && !graph.style.barChart) addLeafLabels()
+        if (d.children && !graph.style.barChart) {
+            addLeafLabels()
+        }
     }
 
 
@@ -468,18 +473,9 @@ const dendrogram = function () {
     function addLeafLabels() {
         graph.element.selectAll(".node--leaf text").remove();
 
-        graph.element.selectAll(".isolates")
+        graph.element.selectAll(".node--leaf")
             .append("text")
-            .attr("dy", 5)
-            .attr("x", 130)
-            .style("text-anchor", "start")
-            .style("font", `${graph.style.labels_size}px sans-serif`)
-            .text(d => d.data.id)
-            .on("mouseover", mouseOveredDendrogram(true))
-            .on("mouseout", mouseOveredDendrogram(false))
-
-        graph.element.selectAll(".node--leaf:not(.isolates)")
-            .append("text")
+            .attr('class', 'leafLabel')
             .attr("dy", 5)
             .attr("x", 13)
             .style("text-anchor", "start")
@@ -497,6 +493,7 @@ const dendrogram = function () {
 
         graph.element.selectAll(".node--leaf:not(.isolates)")
             .append("text")
+            .attr('class', 'leafLabel')
             .attr("dy", 5)
             .attr("x", 13)
             .style("text-anchor", "start")
@@ -602,7 +599,10 @@ const dendrogram = function () {
         applyScaleText()
         update(data.root)
 
-        if (graph.style.barChart) graph.element.selectAll('circle').each(d => addBarCharts(d))
+        if (graph.style.barChart) {
+            graph.element.selectAll('circle').each(d => addBarCharts(d))
+            addLeafLabelsNotIsolates()
+        }
 
         addNodeStyle()
         addLinkStyle()
@@ -623,7 +623,10 @@ const dendrogram = function () {
         applyScaleText()
         update(data.root)
 
-        if (graph.style.barChart) graph.element.selectAll('circle').each(d => addBarCharts(d))
+        if (graph.style.barChart) {
+            graph.element.selectAll('circle').each(d => addBarCharts(d))
+            addLeafLabelsNotIsolates()
+        }
 
         addNodeStyle()
         addLinkStyle()
@@ -817,9 +820,11 @@ const dendrogram = function () {
                 element.setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
 
                 if (d.parent) {
-                    document.getElementById('link' + d.data.id)
-                        .querySelector('path')
-                        .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
+                    if (document.getElementById('link' + d.data.id).querySelector('path')) {
+                        document.getElementById('link' + d.data.id)
+                            .querySelector('path')
+                            .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
+                    }
 
                     if (graph.style.linkLabels) {
                         if (document.getElementById('label' + d.data.id)) {
@@ -1056,7 +1061,7 @@ const dendrogram = function () {
      */
     function buildBarChart(name, lines, columns, colors) {
         graph.element.selectAll('rect').remove()
-        graph.element.selectAll(".node--leaf text").remove();
+        graph.element.selectAll(".leafLabel").remove();
         graph.style.barChart = true
 
         const profilesId = lines[0]
@@ -1207,8 +1212,6 @@ const dendrogram = function () {
             .domain([0.5, 50])
             .range([0, 50])
 
-        const rects = []
-
         if (name === "&") {
             map.forEach((isolate, profile) => {
                 const node = document.getElementById('node' + profile).querySelector("g")
@@ -1235,11 +1238,8 @@ const dendrogram = function () {
                         .selectAll("circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
-                                if (d.data.barChart) {
-                                    d.data.barChart.push(rect)
-                                } else {
-                                    d.data.barChart = [rect]
-                                }
+                                if (d.data.barChart) d.data.barChart.push(rect)
+                                else d.data.barChart = [rect]
                             }
                         })
                 })
@@ -1280,11 +1280,8 @@ const dendrogram = function () {
                         .selectAll("circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
-                                if (d.data.barChart) {
-                                    d.data.barChart.push(rect)
-                                } else {
-                                    d.data.barChart = [rect]
-                                }
+                                if (d.data.barChart) d.data.barChart.push(rect)
+                                else d.data.barChart = [rect]
                             }
                         })
                 })
@@ -1307,10 +1304,12 @@ const dendrogram = function () {
      * @param node the node to add the bar chart
      */
     function addBarCharts(node) {
+        graph.element.selectAll(".leafLabel").remove();
         if (!node.children && node.data.barChart) {
             const nodeElement = graph.element.select(`#node${node.data.id}`)
                 .attr("class", "isolates")
                 .append("g")
+
             let totalWidth = 0
             for (let i = 0; i < node.data.barChart.length; i++) {
                 const rect = node.data.barChart[i]

@@ -1080,9 +1080,17 @@ function formatArray(names) {
 
 /********************* API data functions *********************/
 
+
 function sendNewickData() {
     let headers = {'Content-Type': 'application/json'}
     let nwk = document.getElementById('formFileNw').files[0]
+
+    const ext = nwk.name.split('.')
+    if(ext[1] !== 'txt') {
+        alertMsg('Extension for tree file must be txt.')
+        return
+    }
+
     nwk.text().then(newick => {
         let body = JSON.stringify({data: newick})
         return fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
@@ -1093,17 +1101,24 @@ function sendNewickData() {
                         data = await res.json()
                     })
                     .catch(err => alertMsg(err))
+            }).then(()=>{
+                document.getElementById('idPrfBt').style.display = "block";
+                document.getElementById('formFilePro').style.display = "block";
             })
             .catch(err => alertMsg(err))
     })
-
-    document.getElementById('idPrfBt').style.display = "block";
-    document.getElementById('formFilePro').style.display = "block";
 }
 
 function sendProfileData() {
     let headers = {'Content-Type': 'application/json'}
     let profile = document.getElementById('formFilePro').files[0]
+
+    const ext = profile.name.split('.')
+    if(ext[1] !== 'tab') {
+        alertMsg('Extension for profile file must be txt.')
+        return
+    }
+
     profile.text().then(prof => {
         let body = JSON.stringify({data: prof})
         fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).then(() => {
@@ -1113,16 +1128,23 @@ function sendProfileData() {
                     data = await res.json()
                 })
                 .catch(err => alertMsg(err))
+        }).then(() =>{
+            document.getElementById('formFileIso').style.display = "block";
+            document.getElementById('idIsoBt').style.display = "block";
         }).catch(err => alertMsg(err))
     })
-    //todo
-    document.getElementById('formFileIso').style.display = "block";
-    document.getElementById('idIsoBt').style.display = "block";
 }
 
 function sendIsolateData() {
     let headers = {'Content-Type': 'application/json'}
     let isolate = document.getElementById('formFileIso').files[0]
+
+    const ext = isolate.name.split('.')
+    if(ext[1] !== 'tab') {
+        alertMsg('Extension for isolate file must be txt.')
+        return
+    }
+
     isolate.text().then(iso => {
 
         let body = JSON.stringify({data: iso})

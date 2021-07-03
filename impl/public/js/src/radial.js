@@ -18,7 +18,8 @@ const radial = function () {
     }
     const data = {
         root: null,
-        tree: null
+        tree: null,
+        input: null
     }
     const graph = {
         element: null,
@@ -26,10 +27,12 @@ const radial = function () {
         links: null,
         style: {
             linkLabels: false,
-            parentLabels: false
+            parentLabels: false,
+            barChart: false
         },
         scale: linearScale()
     }
+    let isDraw = false
     const ruler = {
         container: null,
         element: null,
@@ -76,6 +79,7 @@ const radial = function () {
         }`
 
     function build(input) {
+        data.input = input
         const strat = d3.stratify().id((d) => d.target).parentId((d) => d.source)(input.links);
         data.root = d3.hierarchy(strat, d => d.children);
         context.build = radial()
@@ -93,6 +97,7 @@ const radial = function () {
         } else {
             svg.element = canvas.container
                 .append("svg")
+                .attr("id", "svg_graph")
                 .attr("width", canvas.width + canvas.margin.left + canvas.margin.right)
                 .attr("height", canvas.height + canvas.margin.top + canvas.margin.bottom)
         }
@@ -115,6 +120,7 @@ const radial = function () {
         horizontalScale()
         ruler.visible = true
         applyScaleText()
+        isDraw = true
     }
 
     function update(tree) {
@@ -130,7 +136,8 @@ const radial = function () {
         nodesAttrs(graph.nodes.selectAll('.node').data(nodes).enter())
         linksAttr(graph.links.selectAll('.link').data(links).enter())
 
-        addLeafLabels()
+        if (graph.style.barChart) addLeafLabelsNotIsolates()
+        else addLeafLabels()
     }
 
 
@@ -166,7 +173,6 @@ const radial = function () {
     }
 
     function collapse(parent, children) {
-        console.log(parent)
         parent.visibility = false
         if (!children) return
         collapseAux(children)
@@ -203,10 +209,15 @@ const radial = function () {
 
     function expand(parent, children) {
         parent.visibility = true
+        if (!children) return
         expandAux(children)
 
         graph.element.select(`#node${parent.data.id}`).remove()
         nodesAttrs(graph.nodes.data(parent))
+
+        addNodeStyle()
+        addLinkStyle()
+        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
     }
 
     function expandAux(children) {
@@ -218,21 +229,28 @@ const radial = function () {
                 expandAux(child.children)
             }
 
-            linksAttr(graph.links.data(child))
-            nodesAttrs(graph.nodes.data(child))
+            const linkContainer = linksAttr(graph.links.data(child))
+            const nodeContainer = nodesAttrs(graph.nodes.data(child))
+
+            if (graph.style.barChart) {
+                addBarCharts(child)
+                addLeafLabelsNotIsolates()
+            }
+
+            addNodeStyle()
+            addLinkStyle()
+            if (graph.style.linkLabels) addLinkLabelsAfterUpdate(linkContainer)
+            if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
 
             if (!child.visibility) {
                 let {point, label} = getTriangle(child)
-
-                graph.element.select(`#node${child.data.id}`).remove()
-                let node = nodesAttrs(graph.nodes.data(child))
                 let rot = angle(child)
 
-                node.append('polygon')
+                nodeContainer.append('polygon')
                     .attr('points', d => `0,0 100,${point} 100,${-point}`)
                     .attr('transform', `rotate(${rot})`)
                     .style('fill', 'black')
-                node.append('text')
+                nodeContainer.append('text')
                     .text(label)
                     .attr('transform', `rotate(${rot})`)
                     .attr('dx', '100')
@@ -254,7 +272,7 @@ const radial = function () {
             d.visibility = false
             collapse(d, d.children)
         }
-        addLeafLabels()
+        if (d.children && !graph.style.barChart) addLeafLabels()
     }
 
 
@@ -267,6 +285,9 @@ const radial = function () {
         tree.eachBefore(d => {
             d.x = (d.x / last) * graph.scale.value
             d.y = (d.y / last) * graph.scale.value
+            if (d.parent) {
+                if (graph.style.linkLabels) addLinkLabelsAfterUpdate(graph.element.data(d))
+            }
         })
     }
 
@@ -351,8 +372,16 @@ const radial = function () {
         applyScale(data.tree, last)
         applyScaleText()
         update(data.root)
+
+        if (graph.style.barChart) {
+            graph.element.selectAll('circle').each(d => addBarCharts(d))
+            addLeafLabelsNotIsolates()
+        }
+
         addNodeStyle()
         addLinkStyle()
+
+        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
     }
 
     /**
@@ -362,15 +391,23 @@ const radial = function () {
         graph.element.selectAll('.linkLabel').remove()
         graph.links.selectAll('.link').remove()
         graph.nodes.selectAll('.node').remove()
-        // graph.element.selectAll('g').remove()
+        graph.element.selectAll('g').remove()
 
         const last = graph.scale.value
         graph.scale = logScale()
         applyScale(data.tree, last)
         applyScaleText()
         update(data.root)
+
+        if (graph.style.barChart) {
+            graph.element.selectAll('circle').each(d => addBarCharts(d))
+            addLeafLabelsNotIsolates()
+        }
+
         addNodeStyle()
         addLinkStyle()
+
+        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
     }
 
     function rescale(increment) {
@@ -404,16 +441,19 @@ const radial = function () {
 
                 const link = document.getElementById('link' + d.data.id)
                 const line = link.querySelector('line')
-                line.setAttribute('x1', d.parent.x)
-                line.setAttribute('y1', d.parent.y)
-                line.setAttribute('x2', d.x)
-                line.setAttribute('y2', d.y)
+                if (line) {
+                    line.setAttribute('x1', d.parent.x)
+                    line.setAttribute('y1', d.parent.y)
+                    line.setAttribute('x2', d.x)
+                    line.setAttribute('y2', d.y)
+                }
 
                 if (graph.style.linkLabels) {
-                    const label = link.querySelector('text')
-                    if (label) {
-                        label.setAttribute('x', ((d.parent.x + d.x) / 2 - 15).toString())
-                        label.setAttribute('y', ((d.parent.y + d.y) / 2 - 15).toString())
+                    if (document.getElementById('label' + d.data.id)) {
+                        document.getElementById('label' + d.data.id)
+                            .setAttribute('x', ((d.parent.x + d.x) / 2 - 15).toString())
+                        document.getElementById('label' + d.data.id)
+                            .setAttribute('y', ((d.parent.y + d.y) / 2 - 15).toString())
                     }
                 }
             }
@@ -473,11 +513,13 @@ const radial = function () {
      */
     function changeNodeColor(nodeId, color) {
         graph.nodes
-            .select('#node' + nodeId)
-            .select("circle")
-            .each(d => d.data.color = color)
-            .style("fill", d => d.data.color || '#000000')
-            .style("stroke", d => d.data.color || '#000000')
+            .selectAll("circle")
+            .each(function (d) {
+                if (d.data.id === nodeId) {
+                    d.data.color = color;
+                    addNodeStyle();
+                }
+            });
     }
 
     /**
@@ -530,7 +572,7 @@ const radial = function () {
      */
     function addInternalLabels() {
         if (graph.style.parentLabels) {
-            graph.nodes.selectAll(".node--internal text").remove();
+            canvas.container.select('svg').select('#graph').selectAll(".node--internal text").remove();
             graph.style.parentLabels = false;
         } else {
             graph.nodes
@@ -548,17 +590,35 @@ const radial = function () {
     }
 
     /**
+     * Adds internal labels on the nodes, after an update.
+     */
+    function addInternalLabelsAfterUpdate() {
+        canvas.container.select('svg').select('#graph').selectAll(".node--internal text").remove();
+
+        canvas.container.select('svg').select('#graph')
+            .selectAll(".node--internal")
+            .append("text")
+            .attr('class', 'label')
+            .attr("x", -13)
+            .attr("y", 13)
+            .style("text-anchor", "end")
+            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .text(d => d.data.id);
+    }
+
+    /**
      * Adds labels to the links.
      */
     function addLinkLabels() {
         if (graph.style.linkLabels) {
-            graph.links.selectAll('.gLink text').remove();
+            graph.element.selectAll(".linkLabel").remove();
             graph.style.linkLabels = false;
         } else {
             graph.links
                 .selectAll('.gLink')
                 .append("text")
-                .attr('class', 'label')
+                .attr('class', 'linkLabel')
+                .attr("id", d => "label" + d.data.id)
                 .attr("x", d => (d.parent.x + d.x) / 2 - 15)
                 .attr("y", d => (d.parent.y + d.y) / 2 - 15)
                 .attr("text-anchor", "middle")
@@ -570,14 +630,50 @@ const radial = function () {
     }
 
     /**
+     * Adds labels to the links, after an update.
+     * @param links the links to add the labels.
+     */
+    function addLinkLabelsAfterUpdate(links) {
+        links
+            .append("text")
+            .attr("x", d => (d.parent.x + d.x) / 2 - 15)
+            .attr("y", d => (d.parent.y + d.y) / 2 - 15)
+            .attr("text-anchor", "middle")
+            .attr("class", "linkLabel")
+            .attr("id", d => "label" + d.data.id)
+            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .text(d => d.data.data.value)
+    }
+
+    /**
      * Adds labels to the leaf nodes.
      */
     function addLeafLabels() {
         graph.nodes.selectAll(".node--leaf text").remove();
+
         graph.nodes
             .selectAll(".node--leaf")
             .append("text")
-            .attr('class', 'label')
+            .attr('class', 'leafLabel')
+            .attr("dx", 10)
+            .attr("dy", ".31em")
+            .attr('transform', d => `rotate(${angle(d)})`)
+            .style("text-anchor", "start")
+            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .text(d => d.data.id)
+            .on("mouseover", mouseOveredRadial(true))
+            .on("mouseout", mouseOveredRadial(false))
+    }
+
+    /**
+     * Adds labels to the leaf nodes that dont have bar charts.
+     */
+    function addLeafLabelsNotIsolates() {
+        graph.element.selectAll(".node--leaf:not(.isolates) text").remove()
+
+        graph.element.selectAll(".node--leaf:not(.isolates)")
+            .append("text")
+            .attr('class', 'leafLabel')
             .attr("dx", 10)
             .attr("dy", ".31em")
             .attr('transform', d => `rotate(${angle(d)})`)
@@ -778,6 +874,325 @@ const radial = function () {
         return nodes
     }
 
+    /**
+     * Applies the filter to add bar charts.
+     * @param filter the filter to be applied
+     */
+    function applyFilter(filter){
+        graph.style.barChart.filter = filter
+        filter.transform(filter.name, filter.line, filter.column, filter.colors)
+        addLeafLabelsNotIsolates()
+    }
+
+    /**
+     * Builds bar charts to be added to the leaf nodes.
+     * @param name the name of the filter
+     * @param lines the isolates
+     * @param columns the categories to be added to the bar charts
+     * @param colors the colors of the sections
+     */
+    function buildBarChart(name, lines, columns, colors) {
+        graph.element.selectAll('rect').remove()
+        graph.element.selectAll(".leafLabel").remove();
+        graph.style.barChart = true
+
+        const profilesId = lines[0]
+        const columns_data = []
+        const order_data = []
+        const map = new Map()
+
+        const stack = d3.stack()
+            .keys(["isolates"])
+            .order(d3.stackOrderNone)
+            .offset(d3.stackOffsetNone)
+
+        function getColor(name) {
+            for (let i = 0; i < colors.length; i++) {
+                if (colors[i].name === name) return colors[i].color
+            }
+        }
+
+        if (name === "&") {
+            let columns_names
+            columns.forEach((c, i) => {
+                if (i === 0) columns_names = data.input.metadata[c] + ','
+                else if (i === c.length - 1) columns_names += data.input.metadata[c]
+                else columns_names += data.input.metadata[c] + ','
+            })
+            columns_names = columns_names.slice(0, columns_names.length - 1)
+
+            data.input.nodes.forEach(node => {
+                let isolates = [], profiles
+                if (node.isolates && node.isolates.length > 0) {
+                    const currClass = document.getElementById('node' + node.key)
+                        .getAttribute("class")
+                    document.getElementById('node' + node.key)
+                        .setAttribute("class", `${currClass} isolates`)
+
+                    node.isolates.forEach(iso => columns.forEach((c, i) => {
+                        if (i === 0) isolates.push(iso[c] + ',')
+                        else if (i === c.length - 1) isolates.push(iso[c])
+                        else {
+                            const last = isolates.pop()
+                            isolates.push(last + iso[c] + ',')
+                        }
+                    }))
+                    isolates = isolates.map(i => i.slice(0, i.length - 1))
+
+                    node.isolates.forEach(iso => profiles = iso[profilesId])
+
+                    columns_data.push({
+                        'category': columns_names,
+                        'isolates': isolates,
+                        'profiles': profiles
+                    })
+
+                } else {
+                    const currClass = document.getElementById('node' + node.key)
+                        .getAttribute("class")
+                    document.getElementById('node' + node.key)
+                        .setAttribute("class", `${currClass} not-isolates`)
+                }
+            })
+        } else {
+            columns.forEach(col => {
+                data.input.nodes.forEach(node => {
+                    if (node.isolates && node.isolates.length > 0) {
+                        const currClass = document.getElementById('node' + node.key)
+                            .getAttribute("class")
+                        document.getElementById('node' + node.key)
+                            .setAttribute("class", `${currClass} isolates`)
+
+                        node.isolates.forEach(iso => {
+                            columns_data.push({
+                                'category': data.input.metadata[col],
+                                'isolates': iso[col],
+                                'profiles': iso[profilesId]
+                            })
+                        })
+                    } else {
+                        const currClass = document.getElementById('node' + node.key)
+                            .getAttribute("class")
+                        document.getElementById('node' + node.key)
+                            .setAttribute("class", `${currClass} not-isolates`)
+                    }
+                })
+            })
+        }
+
+        graph.element.selectAll(".isolates").each(d => {
+            columns_data.forEach(item => {
+                if (d.data.id === item.profiles) order_data.push(item)
+            })
+        })
+
+        if (name === "&") {
+            stack(order_data)[0].forEach(d => {
+                const counts = {}
+                d.data.isolates.forEach(x => { counts[x] = (counts[x] || 0) + 1 })
+
+                function valuesToArray(obj) {
+                    const result = []
+                    for (let key in obj) {
+                        if (obj.hasOwnProperty(key)) result.push({ 'isolate': key, 'counter': obj[key] })
+                    }
+                    return result
+                }
+                const data = {
+                    'category': d.data.category,
+                    'isolates': valuesToArray(counts),
+                    'profiles': d.data.profiles
+                }
+                map.set(d.data.profiles, data)
+            })
+        } else {
+            stack(order_data)[0].forEach(d => {
+                if (map.has(d.data.profiles)) {
+                    const existing = map.get(d.data.profiles)
+                    existing.forEach((item, i) => {
+                        if (item.isolates === d.data.isolates) {
+                            existing[i].numberOfIsolates = existing[i].numberOfIsolates + 1
+                            const data = Array.from(existing)
+                            map.set(d.data.profiles, data)
+                        } else {
+                            const data = Array.from(existing)
+                            d.data.numberOfIsolates = 1
+                            data.push(d.data)
+                            map.set(d.data.profiles, data)
+                        }
+                    })
+                } else {
+                    d.data.numberOfIsolates = 1
+                    const data = Array.of(d.data)
+                    map.set(d.data.profiles, data)
+                }
+            })
+        }
+
+        graph.element
+            .selectAll(".isolates")
+            .append("g")
+            .each(function (d) {
+                d3.select(this)
+                    .selectAll("rect")
+                    .data(map)
+            })
+
+        let w = 30, lastX = 0, lastWidth = 5, totalW = 0, rotate
+
+        const xScale = d3.scaleLog()
+            .domain([0.5, 50])
+            .range([0, 50])
+
+        if (name === "&") {
+            map.forEach((isolate, profile) => {
+                const node = document.getElementById('node' + profile).querySelector("g")
+                lastX = 0
+                lastWidth = 5
+                totalW = 0
+
+                graph.nodes
+                    .selectAll("circle")
+                    .each(function (d) {
+                        if (d.data.id === profile) rotate = angle(d)
+                    })
+
+                isolate.isolates.forEach(item => {
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+                    rect.setAttribute("y", "-5")
+                    rect.setAttribute("height", "11")
+                    rect.setAttribute("class", "barChart")
+                    rect.setAttribute('transform', `rotate(${rotate})`)
+                    rect.setAttribute("fill", getColor(item.isolate))
+
+                    lastX += lastWidth
+                    rect.setAttribute("x", lastX.toString())
+
+                    lastWidth = xScale(item.counter * w)
+                    totalW += lastWidth
+                    rect.setAttribute("width", lastWidth.toString())
+
+                    node.appendChild(rect)
+                    graph.nodes
+                        .selectAll("circle")
+                        .each(function (d) {
+                            if (d.data.id === profile) {
+                                if (d.data.barChart) d.data.barChart.push(rect)
+                                else d.data.barChart = [rect]
+                            }
+                        })
+                })
+
+                d3.select(node)
+                    .append("text")
+                    .attr('class', 'label')
+                    .attr("dx", totalW + 10)
+                    .attr("dy", ".31em")
+                    .attr('transform', d => `rotate(${angle(d)})`)
+                    .style("text-anchor", "start")
+                    .style("font", `${graph.style.labels_size}px sans-serif`)
+                    .text(d => d.data.id)
+                    .on("mouseover", mouseOveredRadial(true))
+                    .on("mouseout", mouseOveredRadial(false))
+            })
+        } else {
+            map.forEach((isolate, profile) => {
+                const node = document.getElementById('node' + profile).querySelector("g")
+                lastX = 0
+                lastWidth = 5
+                totalW = 0
+
+                graph.nodes
+                    .selectAll("circle")
+                    .each(function (d) {
+                        if (d.data.id === profile) rotate = angle(d)
+                    })
+
+                isolate.forEach(item => {
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+                    rect.setAttribute("y", "-5")
+                    rect.setAttribute("height", "11")
+                    rect.setAttribute("class", "barChart")
+                    rect.setAttribute('transform', `rotate(${rotate})`)
+                    rect.setAttribute("fill", getColor(item.isolates))
+
+                    lastX += lastWidth
+                    rect.setAttribute("x", lastX.toString())
+
+                    lastWidth = xScale(item.numberOfIsolates * w)
+                    totalW += lastWidth
+                    rect.setAttribute("width", lastWidth.toString())
+
+                    node.appendChild(rect)
+                    graph.nodes
+                        .selectAll("circle")
+                        .each(function (d) {
+                            if (d.data.id === profile) {
+                                if (d.data.barChart) d.data.barChart.push(rect)
+                                else d.data.barChart = [rect]
+                            }
+                        })
+                })
+
+                d3.select(node)
+                    .append("text")
+                    .attr('class', 'label')
+                    .attr("dx", totalW + 10)
+                    .attr("dy", ".31em")
+                    .attr('transform', d => `rotate(${angle(d)})`)
+                    .style("text-anchor", "start")
+                    .style("font", `${graph.style.labels_size}px sans-serif`)
+                    .text(d => d.data.id)
+                    .on("mouseover", mouseOveredRadial(true))
+                    .on("mouseout", mouseOveredRadial(false))
+            })
+        }
+    }
+
+    /**
+     * Draws the bar charts after an update.
+     * @param node the node to add the bar chart
+     */
+    function addBarCharts(node) {
+        graph.element.selectAll(".leafLabel").remove();
+        if (!node.children && node.data.barChart) {
+            const nodeElement = graph.element.select(`#node${node.data.id}`)
+                .attr("class", "isolates")
+                .append("g")
+
+            let totalWidth = 0
+            for (let i = 0; i < node.data.barChart.length; i++) {
+                const rect = node.data.barChart[i]
+                nodeElement
+                    .append("rect")
+                    .attr("width", () => {
+                        totalWidth += Number.parseInt(rect.attributes["width"].nodeValue)
+                        return rect.attributes["width"].nodeValue
+                    })
+                    .attr("fill", rect.attributes["fill"].nodeValue)
+                    .attr("y", rect.attributes["y"].nodeValue)
+                    .attr("height", rect.attributes["height"].nodeValue)
+                    .attr("x", rect.attributes["x"].nodeValue)
+                    .attr('transform', rect.attributes["transform"].nodeValue)
+                    .attr("class", "barChart")
+
+                if (i === node.data.barChart.length - 1) {
+                    graph.element.select(`#node${node.data.id}`)
+                        .append("text")
+                        .attr('class', 'label')
+                        .attr("dx", totalWidth + 10)
+                        .attr("dy", ".31em")
+                        .attr('transform', d => `rotate(${angle(d)})`)
+                        .style("text-anchor", "start")
+                        .style("font", `${graph.style.labels_size}px sans-serif`)
+                        .text(d => d.data.id)
+                        .on("mouseover", mouseOveredRadial(true))
+                        .on("mouseout", mouseOveredRadial(false))
+                }
+            }
+        }
+    }
+
     return {
         type: 'radial',
         context,
@@ -792,7 +1207,6 @@ const radial = function () {
         changeLabelsSize,
 
         addInternalLabels,
-        // alignNodes,
         addLinkLabels,
 
         applyLinearScale,
@@ -800,6 +1214,9 @@ const radial = function () {
 
         rescale,
 
-        getNodes
+        getNodes,
+        buildBarChart,
+        applyFilter,
+        isDraw
     }
 }()

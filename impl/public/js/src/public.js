@@ -332,7 +332,7 @@ function changePieColor() {
 
     // Create Container and title
     const colorDiv = document.createElement("div");
-    colorDiv.setAttribute("class", "pieColor justify-content-center mt-4");
+    colorDiv.setAttribute("class", "pieColor justify-content-center mt-5");
     const title = document.createElement("p");
     title.setAttribute("class", "text-center");
     const text = document.createTextNode("Pie color");
@@ -390,7 +390,23 @@ function changePieColor() {
                     item.color = color
                 }
             })
-            changePieChartColor(sections, names, "pieChart")
+
+            const pieChartTransform = "translate(1000, 500) scale(0.7)"
+            const legendTransform = "translate(790, 390) scale(0.7)"
+            changePieChartColor(sections, names, pieChartTransform, "#tree_pieChart", legendTransform)
+
+            const pieChartIsolatesTransform = "translate(340, 170)"
+            changePieChartColor(sections, names, pieChartIsolatesTransform, "#svg_isolate")
+
+            filterTables.colors = categories_colors
+
+            if (view === dendrogram) {
+                filterTables.transform = dendrogram.buildBarChart
+                dendrogram.applyFilter(filterTables)
+            } else {
+                filterTables.transform = radial.buildBarChart
+                radial.applyFilter(filterTables)
+            }
         }
         node = null
         color = null
@@ -718,54 +734,52 @@ const colorsRange = [
 
 const categories_colors = []
 
-//TODO
-function changePieChartColor(data, names, id) {
+function changePieChartColor(data, names, transform, id, legendTransform) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
     }
 
-    const g = d3.select(id)
+    const g = d3.select(id).append('g').attr("transform", `${transform}`).attr('id', 'pieChart')
     const pie = d3.pie().value(d => d.value)
     const path = d3.arc().outerRadius(150).innerRadius(30)
 
-    // if (data.length > 20) {
-    //     const piesInvisible = g.selectAll('.arc')
-    //         .data(pie(data))
-    //         .enter()
-    //         .append('g')
-    //         .classed('arc', true)
-    //         .style('display', 'none')
-    //         .attr('class', 'pieChartInvisible')
-    //
-    //     piesInvisible.append('path')
-    //         .attr('d', d => path(d))
-    //         .attr('fill', d => {
-    //             console.log(d)
-    //             //return categories_colors[d.name]
-    //         })
-    //         .attr('id', d => d.data.name)
-    //         .style('display', 'none')
-    // }
+    function color(name) {
+        for (let i = 0; i < categories_colors.length; i++) {
+            if (categories_colors[i].name === name) return categories_colors[i].color
+        }
+    }
+
+    if (data.length > 20) {
+        const piesInvisible = g.selectAll('.arc')
+            .data(pie(data))
+            .enter()
+            .append('g')
+            .classed('arc', true)
+            .style('display', 'none')
+            .attr('class', 'pieChartInvisible')
+
+        piesInvisible.append('path')
+            .attr('d', d => path(d))
+            .attr('fill', d => color(d.data.name))
+            .attr('id', d => d.data.name)
+            .style('display', 'none')
+    }
 
     const pies = g.selectAll('.arc')
         .data(pie(data.slice(0, 20)))
         .enter()
         .append('g')
         .classed('arc', true)
-    console.log(pies)
+
     pies.append('path')
         .attr('d', d => path(d))
-        .attr('fill', d => {
-            console.log(d)
-            //return categories_colors[d.name]
-        })
+        .attr('fill', d => color(d.data.name))
         .attr('id', d => d.data.name)
 
     const pieChart = d3.select(id).append('g')
 
     let position = 30, othersPosition = 30, xOthersPosition = 750
-    const total = data[data.length - 1].total
-    data = data.splice(0, data.length - 1)
+    const total = counts_ordered[0].total
 
     data.forEach((item, i) => {
         if (i < 20) {
@@ -773,11 +787,7 @@ function changePieChartColor(data, names, id) {
                 .attr('cy', position)
                 .attr('cx', 550)
                 .attr('r', 6)
-                .style('fill', () => {
-                    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    console.log(categories_colors[item.name])
-                    return 'pink'
-                })
+                .style('fill', () => color(item.name))
 
             pieChart.append('text')
                 .attr('y', position + 5)
@@ -791,7 +801,7 @@ function changePieChartColor(data, names, id) {
                 .attr('cy', position)
                 .attr('cx', 550)
                 .attr('r', 6)
-                .style('fill', categories_colors[item.name])
+                .style('fill', () => color(item.name))
                 .attr('class', 'showOthers')
 
             if (document.querySelector('.showOthers')) {
@@ -815,10 +825,7 @@ function changePieChartColor(data, names, id) {
                 .attr('cx', xOthersPosition)
                 .attr('r', 6)
                 .attr('class', 'others')
-                .style('fill', () => {
-                    console.log(categories_colors[item.name])
-                    return categories_colors[item.name]
-                })
+                .style('fill', () => color(item.name))
                 .style('display', 'none')
 
             pieChart.append('text')
@@ -838,7 +845,9 @@ function changePieChartColor(data, names, id) {
         position += 20
     })
 
-    const legend = pieChart.attr('id', 'legend')
+    const legend = legendTransform ? pieChart.attr('id', 'legend').attr("transform", `${legendTransform}`) :
+        pieChart.attr('id', 'legend')
+
     legend.append('text')
         .attr('y', 350)
         .attr('x', 250)
@@ -1015,6 +1024,7 @@ function constructPieChart(data, names, id) {
 }
 
 function linkToTree() {
+
     document.getElementById('linktreebuttonD').addEventListener('click', () => {
 
         if (!dendrogram.isDraw) {
@@ -1066,6 +1076,58 @@ function linkToTree() {
         document.getElementById('svg_graph').appendChild(pieChart)
 
         // go to tree tab
+        document.getElementById("home-tab").click()
+    })
+
+    document.getElementById('linktreebuttonR').addEventListener('click', () => {
+        if (!radial.isDraw) {
+            setupRadialGraphConfiguration()
+            view = radial
+            let graph = radial.build(data)
+            radial.draw('#container', graph.root)
+
+            radial.addNodeStyle()
+            radial.addLinkStyle()
+
+            changeNodeColor(radial.changeNodeColor, radial.getNodes())
+            changePieColor()
+            changeNodeSize(radial.changeNodeSize)
+            changeLinkSize(radial.changeLinkSize)
+            changeLabelsSize(radial.changeLabelsSize)
+        }
+
+        // call the filter to add the bar charts
+        filterTables.colors = categories_colors
+        filterTables.transform = radial.buildBarChart
+        radial.applyFilter(filterTables)
+
+        if (document.getElementById("tree_pieChart")) {
+            document.getElementById("tree_pieChart").remove()
+        }
+        const isolates_pieChart = document.getElementById("svg_isolate")
+        const pieChart = isolates_pieChart.cloneNode(true)
+        pieChart.setAttribute("id", "tree_pieChart")
+        pieChart.setAttribute("width", "1536")
+        pieChart.setAttribute("height", "2000")
+        pieChart.getElementById('pieChart').setAttribute('transform',
+            'translate(1000, 500) scale(0.7)')
+        pieChart.getElementById('legend').setAttribute('transform',
+            'translate(790, 390)  scale(0.7)')
+
+        const hide = document.getElementById("btnHide")
+        hide.style.display = 'block'
+        hide.onclick = () => {
+            if (document.getElementById('pieChart').style.display === 'none') {
+                document.getElementById('pieChart').style.display = 'block'
+                document.getElementById('legend').style.display = 'block'
+            } else {
+                document.getElementById('pieChart').style.display = 'none'
+                document.getElementById('legend').style.display = 'none'
+            }
+        }
+
+        document.getElementById('svg_graph').appendChild(pieChart)
+
         document.getElementById("home-tab").click()
     })
 }

@@ -162,8 +162,7 @@ const dendrogram = function () {
         graph.links = linksAttr(graph.element.selectAll('.link').data(links, d => d.data.id).enter())
         graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
 
-        if (graph.style.barChart) addLeafLabelsNotIsolates()
-        else addLeafLabels()
+        if (!graph.style.barChart) addLeafLabels()
     }
 
     /********************* Collapse functions *********************/
@@ -493,7 +492,7 @@ const dendrogram = function () {
 
         graph.element.selectAll(".node--leaf:not(.isolates)")
             .append("text")
-            .attr('class', 'leafLabel')
+            .attr('class', 'leafLabelNoIsolates')
             .attr("dy", 5)
             .attr("x", 13)
             .style("text-anchor", "start")
@@ -537,7 +536,7 @@ const dendrogram = function () {
         addLinkStyle()
         if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
         if (graph.style.barChart) {
-            graph.element.selectAll(".leafLabelIsolates").remove()
+            graph.element.selectAll(".leafLabelIsolates text").remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -1068,8 +1067,10 @@ const dendrogram = function () {
      */
     function buildBarChart(name, lines, columns, colors) {
         graph.element.selectAll('rect').remove()
-        graph.element.selectAll(".leafLabel").remove();
-        graph.element.selectAll(".leafLabelIsolates").remove();
+        graph.element.selectAll(".leafLabel").remove()
+        graph.element.selectAll(".leafLabelIsolates text").remove()
+        graph.element.selectAll(".addBarChartLabel text").remove()
+        graph.element.selectAll(".isolates").selectAll("g").remove()
         graph.style.barChart = true
 
         const profilesId = lines[0]
@@ -1315,12 +1316,14 @@ const dendrogram = function () {
      * @param node the node to add the bar chart
      */
     function addBarCharts(node) {
+        graph.element.selectAll(".addBarChartLabel text").remove()
+
         if (!node.children && node.data.barChart) {
             if (!graph.element.select(`#node${node.data.id}`).selectAll('g').empty()) {
                 graph.element.select(`#node${node.data.id}`).selectAll('g').remove()
             }
             const nodeElement = graph.element.select(`#node${node.data.id}`)
-                .attr("class", "isolates")
+                .attr("class", "node node--internal node--norm isolates")
                 .append("g")
 
             let totalWidth = 0
@@ -1339,8 +1342,9 @@ const dendrogram = function () {
                     .attr("class", "barChart")
 
                 if (i === node.data.barChart.length - 1) {
-                    graph.element.select(`#node${node.data.id}`)
+                    nodeElement
                         .append("text")
+                        .attr("class", "addBarChartLabel")
                         .attr("dy", 5)
                         .attr("x", totalWidth + 10)
                         .style("text-anchor", "start")

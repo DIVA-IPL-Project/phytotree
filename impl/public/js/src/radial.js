@@ -136,8 +136,7 @@ const radial = function () {
         nodesAttrs(graph.nodes.selectAll('.node').data(nodes).enter())
         linksAttr(graph.links.selectAll('.link').data(links).enter())
 
-        if (graph.style.barChart) addLeafLabelsNotIsolates()
-        else addLeafLabels()
+        if (!graph.style.barChart) addLeafLabels()
     }
 
 
@@ -675,7 +674,7 @@ const radial = function () {
 
         graph.element.selectAll(".node--leaf:not(.isolates)")
             .append("text")
-            .attr('class', 'leafLabel')
+            .attr('class', 'leafLabelNoIsolates')
             .attr("dx", 10)
             .attr("dy", ".31em")
             .attr('transform', d => `rotate(${angle(d)})`)
@@ -895,8 +894,10 @@ const radial = function () {
      */
     function buildBarChart(name, lines, columns, colors) {
         graph.element.selectAll('rect').remove()
-        graph.element.selectAll(".leafLabel").remove();
-        graph.element.selectAll(".leafLabelIsolates").remove();
+        graph.element.selectAll(".leafLabel").remove()
+        graph.element.selectAll(".leafLabelIsolates text").remove()
+        graph.element.selectAll(".addBarChartLabel text").remove()
+        graph.element.selectAll(".isolates").selectAll("g").remove()
         graph.style.barChart = true
 
         const profilesId = lines[0]
@@ -1158,13 +1159,14 @@ const radial = function () {
      * @param node the node to add the bar chart
      */
     function addBarCharts(node) {
-        graph.element.selectAll(".leafLabel").remove();
+        graph.element.selectAll(".addBarChartLabel text").remove()
+
         if (!node.children && node.data.barChart) {
             if (!graph.element.select(`#node${node.data.id}`).selectAll('g').empty()) {
                 graph.element.select(`#node${node.data.id}`).selectAll('g').remove()
             }
             const nodeElement = graph.element.select(`#node${node.data.id}`)
-                .attr("class", "isolates")
+                .attr("class", "node node--internal node--norm isolates")
                 .append("g")
 
             let totalWidth = 0
@@ -1184,9 +1186,9 @@ const radial = function () {
                     .attr("class", "barChart")
 
                 if (i === node.data.barChart.length - 1) {
-                    graph.element.select(`#node${node.data.id}`)
+                   nodeElement
                         .append("text")
-                        .attr('class', 'label')
+                        .attr("class", "addBarChartLabel")
                         .attr("dx", totalWidth + 10)
                         .attr("dy", ".31em")
                         .attr('transform', d => `rotate(${angle(d)})`)

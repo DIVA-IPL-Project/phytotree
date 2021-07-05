@@ -18,7 +18,7 @@ function load() {
 function setupTabs() {
     document.getElementById('profile-tab').addEventListener('click', () => {
         if (!is_table_profile_create) {
-            try{
+            try {
                 create_table_profile(data)
                 document.getElementById('profileDiv').style.display = 'block'
                 document.getElementById('svg_profile').style.display = 'block'
@@ -40,7 +40,7 @@ function setupTabs() {
                 document.getElementById('linktreebuttonR').style.display = 'block'
                 document.getElementById('svg_isolate').style.display = 'block'
                 is_table_isolate_create = true
-            }catch (err) {
+            } catch (err) {
                 document.getElementById('isolateDiv').style.display = 'none'
                 document.getElementById('linktreebuttonD').style.display = 'none'
                 document.getElementById('linktreebuttonR').style.display = 'none'
@@ -54,13 +54,13 @@ function setupTabs() {
 function setupRepresentationButtons() {
     const circularRadialButton = document.querySelector('.radial-btn')
     circularRadialButton.addEventListener('click', () => {
-        try{
+        try {
             let graph = circularRadial.build(data)
             hideGraphConfig()
             view = circularRadial
             circularRadial.draw('#container', graph.root)
         } catch (err) {
-            setUpError(err.message, 'treeError','containerError')
+            setUpError(err.message, 'treeError', 'containerError')
         }
     })
 
@@ -76,7 +76,7 @@ function setupRepresentationButtons() {
             changeNodeSize(radial.changeNodeSize)
             changeLinkSize(radial.changeLinkSize)
             changeLabelsSize(radial.changeLabelsSize)
-        }catch (err) {
+        } catch (err) {
             setUpError(err.message, 'treeError', 'containerError')
         }
     })
@@ -96,19 +96,20 @@ function setupRepresentationButtons() {
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
             changeLabelsSize(dendrogram.changeLabelsSize)
-        }catch (err) {
+        } catch (err) {
             setUpError(err.message, 'treeError', 'containerError')
         }
     })
 }
+
 /**
  *
  * @param message {string}
  * @param id {string}
  * @param contentId {string}
  */
-function setUpError(message, id, contentId){
-    if(document.getElementById(id) != null) return
+function setUpError(message, id, contentId) {
+    if (document.getElementById(id) != null) return
     const div = document.createElement('div')
     div.setAttribute('id', id)
     div.setAttribute('class', 'alert alert-danger')
@@ -519,7 +520,7 @@ const filterTables = {
 function create_table_profile(data) {
 
     //check if is possible build table
-    if(!data || data.schemeGenes.length <= 0){
+    if (!data || data.schemeGenes.length <= 0) {
         throw new Error('Please insert the profiles file first.')
     }
 
@@ -563,7 +564,7 @@ function create_table_profile(data) {
 function create_table_isolate(data) {
 
     //check if is possible build table
-    if(!data || data.metadata.length <= 0){
+    if (!data || data.metadata.length <= 0) {
         throw new Error('Please insert the isolates file first.')
     }
 
@@ -674,7 +675,7 @@ function clickHeader(header, id, categories, isolate) {
         removeColumn(tdElements, HeaderId, categories)
         removeColumnName(headerName)
 
-        if(categories.size === 0){
+        if (categories.size === 0) {
             length = -1
         }
         if (isolate) {
@@ -721,13 +722,13 @@ function clickHeader(header, id, categories, isolate) {
     }
 
     counts_ordered = counts.slice(0)
-    counts_ordered.sort(function(a, b) {
+    counts_ordered.sort(function (a, b) {
         return b.value - a.value
     })
 
     let total = 0
     counts_ordered.forEach(c => total += c.value)
-    counts_ordered.push({ total: total })
+    counts_ordered.push({total: total})
 
     sections = counts
     constructPieChart(counts_ordered, names, id)
@@ -977,7 +978,7 @@ function constructPieChart(data, names, id) {
         .attr('fill', (d, i) => color(i))
         .attr('id', d => d.data.name)
 
-   let colors = []
+    let colors = []
 
     if (data.length > 20) {
         document.querySelectorAll('.pieChartInvisible').forEach(item => {
@@ -1203,15 +1204,16 @@ function formatArray(names) {
 
 function sendNewickData() {
     const err = document.getElementById('treeError')
-    if(err != null){
+    if (err != null) {
         err.remove()
     }
+
 
     let headers = {'Content-Type': 'application/json'}
     let nwk = document.getElementById('formFileNw').files[0]
 
     const ext = nwk.name.split('.')
-    if(ext[1] !== 'txt') {
+    if (ext[1] !== 'txt') {
         alertMsg('Extension for tree file must be txt.')
         return
     }
@@ -1226,9 +1228,14 @@ function sendNewickData() {
                         data = await res.json()
                     })
                     .catch(err => alertMsg(err))
-            }).then(()=>{
-                document.getElementById('idPrfBt').style.display = "block";
-                document.getElementById('formFilePro').style.display = "block";
+            }).then(() => {
+                //
+                document.getElementById('nwkButton').style.display = "block"
+                document.getElementById('radButton').style.display = "block"
+                document.getElementById('denButton').style.display = "block"
+                //
+                document.getElementById('idPrfBt').style.display = "block"
+                document.getElementById('formFilePro').style.display = "block"
             })
             .catch(err => alertMsg(err))
     })
@@ -1236,7 +1243,7 @@ function sendNewickData() {
 
 function sendProfileData() {
     const err = document.getElementById('errorProfile')
-    if(err != null){
+    if (err != null) {
         err.remove()
     }
 
@@ -1248,7 +1255,7 @@ function sendProfileData() {
     let profile = document.getElementById('formFilePro').files[0]
 
     const ext = profile.name.split('.')
-    if(ext[1] !== 'tab') {
+    if (ext[1] !== 'tab') {
         alertMsg('Extension for profile file must be txt.')
         return
     }
@@ -1262,7 +1269,7 @@ function sendProfileData() {
                     data = await res.json()
                 })
                 .catch(err => alertMsg(err))
-        }).then(() =>{
+        }).then(() => {
             document.getElementById('formFileIso').style.display = "block";
             document.getElementById('idIsoBt').style.display = "block";
         }).catch(err => alertMsg(err))
@@ -1271,7 +1278,7 @@ function sendProfileData() {
 
 function sendIsolateData() {
     const err = document.getElementById('errorIsolate')
-    if(err != null){
+    if (err != null) {
         err.remove()
     }
 
@@ -1283,7 +1290,7 @@ function sendIsolateData() {
     let isolate = document.getElementById('formFileIso').files[0]
 
     const ext = isolate.name.split('.')
-    if(ext[1] !== 'tab') {
+    if (ext[1] !== 'tab') {
         alertMsg('Extension for isolate file must be txt.')
         return
     }
@@ -1316,7 +1323,13 @@ function sendNwkData() {
                     data = await res.json()
                 })
                 .catch(err => alertMsg(err))
-        })
+        }).then(() => {
+        //
+        document.getElementById('nwkButton').style.display = "block"
+        document.getElementById('radButton').style.display = "block"
+        document.getElementById('denButton').style.display = "block"
+        //
+    })
         .catch(err => alertMsg(err))
 }
 

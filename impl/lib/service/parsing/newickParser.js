@@ -1,6 +1,11 @@
 'use strict'
 
 function parseNewick(newickData) {
+    //parse nexus to JSON
+    if (newickData[0] !== '(') {
+        return parse(newickData.substring(newickData.indexOf('('), newickData.length + 1))
+    }
+    //parse newick to JSON
     return parse(newickData)
 }
 

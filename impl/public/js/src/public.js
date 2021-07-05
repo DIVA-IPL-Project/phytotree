@@ -18,19 +18,56 @@ function load() {
 function setupTabs() {
     document.getElementById('profile-tab').addEventListener('click', () => {
         if (!is_table_profile_create) {
-            create_table_profile(data)
-            is_table_profile_create = true
+            try{
+
+                create_table_profile(data)
+                document.getElementById('profileDiv').style.display = 'block'
+                document.getElementById('svg_profile').style.display = 'block'
+                is_table_profile_create = true
+            } catch (err) {
+                document.getElementById('profileDiv').style.display = 'none'
+                document.getElementById('svg_profile').style.display = 'none'
+                setUpErrorTables(err.message, 'errorProfile', 'profileContent')
+            }
         }
     })
 
     document.getElementById('isolate-tab').addEventListener('click', () => {
         if (!is_table_isolate_create) {
-            create_table_isolate(data)
-            is_table_isolate_create = true
+            try {
+                create_table_isolate(data)
+                document.getElementById('isolateDiv').style.display = 'block'
+                document.getElementById('linktreebuttonD').style.display = 'block'
+                document.getElementById('linktreebuttonR').style.display = 'block'
+                document.getElementById('svg_isolate').style.display = 'block'
+                is_table_isolate_create = true
+            }catch (err) {
+                document.getElementById('isolateDiv').style.display = 'none'
+                document.getElementById('linktreebuttonD').style.display = 'none'
+                document.getElementById('linktreebuttonR').style.display = 'none'
+                document.getElementById('svg_isolate').style.display = 'none'
+                setUpErrorTables(err.message, 'errorIsolate', 'isolateContent')
+            }
         }
     })
+}
 
-
+/**
+ *
+ * @param message {string}
+ * @param id {string}
+ * @param contentId {string}
+ */
+function setUpErrorTables(message, id, contentId){
+    if(document.getElementById(id) != null) return
+    const div = document.createElement('div')
+    div.setAttribute('id', id)
+    div.setAttribute('class', 'alert alert-danger')
+    div.setAttribute('role', 'alert')
+    const txt = document.createElement('p')
+    txt.innerText = message
+    div.appendChild(txt)
+    document.getElementById(contentId).appendChild(div)
 }
 
 function setupRepresentationButtons() {
@@ -470,6 +507,12 @@ const filterTables = {
 }
 
 function create_table_profile(data) {
+
+    //check if is possible build table
+    if(!data || data.schemeGenes.length <= 0){
+        throw new Error('Please insert the profiles file first.')
+    }
+
     const table = document.getElementById('table_profile')
     table.setAttribute('class', 'table table-bordered table-hover')
     table.setAttribute('height', "450")
@@ -508,6 +551,11 @@ function create_table_profile(data) {
 }
 
 function create_table_isolate(data) {
+
+    //check if is possible build table
+    if(!data || data.metadata.length <= 0){
+        throw new Error('Please insert the isolates file first.')
+    }
 
     /** Table **/
     const table = document.getElementById('table_isolate')
@@ -1172,6 +1220,15 @@ function sendNewickData() {
 }
 
 function sendProfileData() {
+    const err = document.getElementById('errorProfile')
+    if(err != null){
+        err.remove()
+    }
+
+    //
+    is_table_profile_create = false
+    //
+
     let headers = {'Content-Type': 'application/json'}
     let profile = document.getElementById('formFilePro').files[0]
 
@@ -1198,6 +1255,15 @@ function sendProfileData() {
 }
 
 function sendIsolateData() {
+    const err = document.getElementById('errorIsolate')
+    if(err != null){
+        err.remove()
+    }
+
+    //
+    is_table_isolate_create = false
+    //
+
     let headers = {'Content-Type': 'application/json'}
     let isolate = document.getElementById('formFileIso').files[0]
 

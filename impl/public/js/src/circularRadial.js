@@ -79,6 +79,7 @@ const circularRadial = function () {
     /********************* Main functions ************************/
 
     function build(input) {
+        if(!input) throw new Error('Please insert tree file first.')
         context.build = d3.cluster()
             .size([360, graph.innerRadius])
             .separation((a, b) => 1)

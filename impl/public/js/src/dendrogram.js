@@ -92,6 +92,7 @@ const dendrogram = function () {
      * @param input the JSON data.
      */
     function build(input) {
+        if(!input) throw new Error('Please insert tree file first.')
         data.input = input
         const strat = d3.stratify()
             .id(d => d.target)

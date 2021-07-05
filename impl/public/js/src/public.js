@@ -19,7 +19,6 @@ function setupTabs() {
     document.getElementById('profile-tab').addEventListener('click', () => {
         if (!is_table_profile_create) {
             try{
-
                 create_table_profile(data)
                 document.getElementById('profileDiv').style.display = 'block'
                 document.getElementById('svg_profile').style.display = 'block'
@@ -27,7 +26,7 @@ function setupTabs() {
             } catch (err) {
                 document.getElementById('profileDiv').style.display = 'none'
                 document.getElementById('svg_profile').style.display = 'none'
-                setUpErrorTables(err.message, 'errorProfile', 'profileContent')
+                setUpError(err.message, 'errorProfile', 'profileContent')
             }
         }
     })
@@ -46,19 +45,69 @@ function setupTabs() {
                 document.getElementById('linktreebuttonD').style.display = 'none'
                 document.getElementById('linktreebuttonR').style.display = 'none'
                 document.getElementById('svg_isolate').style.display = 'none'
-                setUpErrorTables(err.message, 'errorIsolate', 'isolateContent')
+                setUpError(err.message, 'errorIsolate', 'isolateContent')
             }
         }
     })
 }
 
+function setupRepresentationButtons() {
+    const circularRadialButton = document.querySelector('.radial-btn')
+    circularRadialButton.addEventListener('click', () => {
+        try{
+            let graph = circularRadial.build(data)
+            hideGraphConfig()
+            view = circularRadial
+            circularRadial.draw('#container', graph.root)
+        } catch (err) {
+            setUpError(err.message, 'treeError','containerError')
+        }
+    })
+
+    const radialButton = document.querySelector('.radialTree-btn')
+    radialButton.addEventListener('click', () => {
+        try {
+            let graph = radial.build(data)
+            setupRadialGraphConfiguration()
+            view = radial
+            radial.draw('#container', graph.root)
+
+            changeNodeColor(radial.changeNodeColor, radial.getNodes())
+            changeNodeSize(radial.changeNodeSize)
+            changeLinkSize(radial.changeLinkSize)
+            changeLabelsSize(radial.changeLabelsSize)
+        }catch (err) {
+            setUpError(err.message, 'treeError', 'containerError')
+        }
+    })
+
+    const dendrogramButton = document.querySelector('.dendro-btn')
+    dendrogramButton.addEventListener('click', () => {
+        try {
+            let graph = dendrogram.build(data)
+            setupDendrogramGraphConfiguration()
+            view = dendrogram
+            dendrogram.draw('#container', graph.root)
+
+            dendrogram.addNodeStyle()
+            dendrogram.addLinkStyle()
+
+            changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
+            changeNodeSize(dendrogram.changeNodeSize)
+            changeLinkSize(dendrogram.changeLinkSize)
+            changeLabelsSize(dendrogram.changeLabelsSize)
+        }catch (err) {
+            setUpError(err.message, 'treeError', 'containerError')
+        }
+    })
+}
 /**
  *
  * @param message {string}
  * @param id {string}
  * @param contentId {string}
  */
-function setUpErrorTables(message, id, contentId){
+function setUpError(message, id, contentId){
     if(document.getElementById(id) != null) return
     const div = document.createElement('div')
     div.setAttribute('id', id)
@@ -68,45 +117,6 @@ function setUpErrorTables(message, id, contentId){
     txt.innerText = message
     div.appendChild(txt)
     document.getElementById(contentId).appendChild(div)
-}
-
-function setupRepresentationButtons() {
-    const circularRadialButton = document.querySelector('.radial-btn')
-    circularRadialButton.addEventListener('click', () => {
-        hideGraphConfig()
-        view = circularRadial
-        let graph = circularRadial.build(data)
-        circularRadial.draw('#container', graph.root)
-    })
-
-    const radialButton = document.querySelector('.radialTree-btn')
-    radialButton.addEventListener('click', () => {
-        setupRadialGraphConfiguration()
-        view = radial
-        let graph = radial.build(data)
-        radial.draw('#container', graph.root)
-
-        changeNodeColor(radial.changeNodeColor, radial.getNodes())
-        changeNodeSize(radial.changeNodeSize)
-        changeLinkSize(radial.changeLinkSize)
-        changeLabelsSize(radial.changeLabelsSize)
-    })
-
-    const dendrogramButton = document.querySelector('.dendro-btn')
-    dendrogramButton.addEventListener('click', () => {
-        setupDendrogramGraphConfiguration()
-        view = dendrogram
-        let graph = dendrogram.build(data)
-        dendrogram.draw('#container', graph.root)
-
-        dendrogram.addNodeStyle()
-        dendrogram.addLinkStyle()
-
-        changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
-        changeNodeSize(dendrogram.changeNodeSize)
-        changeLinkSize(dendrogram.changeLinkSize)
-        changeLabelsSize(dendrogram.changeLabelsSize)
-    })
 }
 
 function setupData() {
@@ -1192,6 +1202,11 @@ function formatArray(names) {
 
 
 function sendNewickData() {
+    const err = document.getElementById('treeError')
+    if(err != null){
+        err.remove()
+    }
+
     let headers = {'Content-Type': 'application/json'}
     let nwk = document.getElementById('formFileNw').files[0]
 

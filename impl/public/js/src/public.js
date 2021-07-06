@@ -36,8 +36,6 @@ function setupTabs() {
             try {
                 create_table_isolate(data)
                 document.getElementById('isolateDiv').style.display = 'block'
-                document.getElementById('linktreebuttonD').style.display = 'block'
-                document.getElementById('linktreebuttonR').style.display = 'block'
                 document.getElementById('svg_isolate').style.display = 'block'
                 is_table_isolate_create = true
             } catch (err) {
@@ -161,7 +159,8 @@ function setupDendrogramGraphConfiguration() {
         alignNodes = document.querySelector('.align-nodes'),
         linkLabels = document.querySelector('.linkLabels'),
         linearScale = document.querySelector('.linearScale'),
-        logScale = document.querySelector('.logScale')
+        logScale = document.querySelector('.logScale'),
+        spread = document.querySelector('.spread')
 
     parentLabels.addEventListener('click', dendrogram.addInternalLabels)
     alignNodes.addEventListener('click', dendrogram.alignNodes)
@@ -172,6 +171,7 @@ function setupDendrogramGraphConfiguration() {
     linkLabels.style.display = ''
     linearScale.style.display = ''
     logScale.style.display = ''
+    spread.style.display = 'none'
 
     linearScale.addEventListener('click', dendrogram.applyLinearScale)
     logScale.addEventListener('click', dendrogram.applyLogScale)
@@ -197,18 +197,21 @@ function setupRadialGraphConfiguration() {
         alignNodes = document.querySelector('.align-nodes'),
         linkLabels = document.querySelector('.linkLabels'),
         linearScale = document.querySelector('.linearScale'),
-        logScale = document.querySelector('.logScale')
+        logScale = document.querySelector('.logScale'),
+        spread = document.querySelector('.spread')
 
     parentLabels.addEventListener('click', radial.addInternalLabels)
     linkLabels.addEventListener('click', radial.addLinkLabels)
     linearScale.addEventListener('click', radial.applyLinearScale)
     logScale.addEventListener('click', radial.applyLogScale)
+    spread.addEventListener('click', radial.addSpread)
 
     parentLabels.style.display = ''
     alignNodes.style.display = 'none'
     linkLabels.style.display = ''
     linearScale.style.display = ''
     logScale.style.display = ''
+    spread.style.display = ''
 
     document.getElementById('upButton').style.display = 'none'
     document.getElementById('downButton').style.display = 'none'

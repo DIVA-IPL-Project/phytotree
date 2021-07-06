@@ -28,7 +28,8 @@ const radial = function () {
         style: {
             linkLabels: false,
             parentLabels: false,
-            barChart: false
+            barChart: false,
+            spread: false
         },
         scale: linearScale()
     }
@@ -747,44 +748,37 @@ const radial = function () {
         }
     }
 
+    /**
+     * Applies the spread function to the tree, to separate the nodes.
+     */
+    function addSpread() {
+        graph.style.spread = !graph.style.spread
+        build(data.input)
+        draw("#container", data.root)
+    }
+
 
     /********************* Private functions *********************/
+
+    function spread(root) {
+        if (!root.children) {
+            root.spread = root.data.data.value
+            return root.data.data.value
+        } else {
+            root.spread = root.data.data.value || 0;
+            root.children.forEach(w => {
+                root.spread += root.data.data.value + spread(w)
+            });
+            root.spread /= parseFloat(root.children.length) // ??
+            return root.spread
+        }
+    }
 
     function radial() {
         const pi = Math.PI
 
         function max(input) {
             return Math.max.apply(null, input);
-        }
-
-        function spreadFirst(root) {
-            const ar = []
-            if (!root.children) {
-                root.spread = root.data.data.value
-                return root.data.data.value
-            } else {
-                root.spread = root.data.data.value || 0;
-                root.children.forEach(w => {
-                    ar.push(spreadFirst(w))
-                });
-                root.spread += max(ar)
-            }
-
-            return root.spread;
-        }
-
-        function spreadSecond(root) {
-            if (!root.children) {
-                root.spread = root.data.data.value
-                return root.data.data.value
-            } else {
-                root.spread = root.data.data.value || 0;
-                root.children.forEach(w => {
-                    root.spread += root.data.data.value + spreadSecond(w)
-                });
-                root.spread /= parseFloat(root.children.length) // ??
-                return root.spread
-            }
         }
 
         function radial(root) {
@@ -803,8 +797,7 @@ const radial = function () {
                 }
             });
 
-            //spreadFirst(root)
-            spreadSecond(root)
+            if (graph.style.spread) spread(root)
 
             root.rightBorder = 0;
             root.alpha = 0;
@@ -1227,6 +1220,7 @@ const radial = function () {
         getNodes,
         buildBarChart,
         applyFilter,
-        isDraw
+        isDraw,
+        addSpread
     }
 }()

@@ -555,7 +555,7 @@ const radial = function () {
         graph.style.labels_size = value
 
         graph.element
-            .selectAll(".label")
+            .selectAll("text")
             .style("font", `${value}px sans-serif`)
     }
 

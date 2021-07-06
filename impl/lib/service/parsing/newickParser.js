@@ -70,7 +70,8 @@ const parse = s => {
     }
     idx = 0
     map = new Map()
-    return { links, nodes } // todo throw err invalid format
+    //return { links, nodes } // todo throw err invalid format
+    throw error(new Error('; missing at the end'), 400)
 }
 
 let idx = 0
@@ -87,6 +88,12 @@ function validName(name) {
             return name
         }
     }
+}
+
+function error(err, statusCode, message) {
+    if (message) err.message = message
+    err.status = statusCode
+    return err
 }
 
 module.exports = parseNewick

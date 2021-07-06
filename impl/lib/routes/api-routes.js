@@ -9,6 +9,12 @@ let isolates
 router.get('/data', (req, res, next) =>{
     render.getRenderData().then(data => {
         res.json(data)
+    }).catch(err => {
+        res.status(err.status)
+        res.json({
+            message: err.message,
+            status: err.status
+        })
     })
 })
 

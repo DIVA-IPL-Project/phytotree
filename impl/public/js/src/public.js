@@ -1221,13 +1221,19 @@ function sendNewickData() {
     nwk.text().then(newick => {
         let body = JSON.stringify({data: newick})
         return fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
-            .then(() => {
-                return fetch('/api/data', {headers: headers})
-                    .then(async res => {
-                        if (res.status === 500) alertMsg('error')
-                        data = await res.json()
-                    })
-                    .catch(err => alertMsg(err))
+            .then(async res => {
+                try {
+                    if (res.status === 500) alertMsg('error')
+                    let response = await fetch('/api/data', {headers: headers})
+                    if (!response.ok) {
+                        let err = await response.json()
+                        alertMsg(err.message)
+                        return;
+                    }
+                    data = await response.json()
+                } catch (err) {
+                    alertMsg(err)
+                }
             }).then(() => {
                 //
                 document.getElementById('nwkButton').style.display = "block"
@@ -1316,21 +1322,25 @@ function sendNwkData() {
 
     fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
         .then(async res => {
-            if (res.status === 500) alertMsg('error')
-            fetch('/api/data', {headers: headers})
-                .then(async res => {
-                    if (res.status === 500) alertMsg('error')
-                    data = await res.json()
-                })
-                .catch(err => alertMsg(err))
+            try {
+                if (res.status === 500) alertMsg('error')
+                let response = await fetch('/api/data', {headers: headers})
+                if (!response.ok) {
+                    let err = await response.json()
+                    alertMsg(err.message)
+                    return;
+                }
+                data = await response.json()
+            } catch (err) {
+                alertMsg(err)
+            }
         }).then(() => {
         //
         document.getElementById('nwkButton').style.display = "block"
         document.getElementById('radButton').style.display = "block"
         document.getElementById('denButton').style.display = "block"
         //
-    })
-        .catch(err => alertMsg(err))
+    }).catch(err => alertMsg(err))
 }
 
 function downloadSVG() {

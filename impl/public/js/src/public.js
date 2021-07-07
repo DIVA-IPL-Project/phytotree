@@ -1358,12 +1358,15 @@ function alertMsg(message, kind) {
     if (!kind) kind = 'danger'
     document
         .querySelector('.messages')
-        .innerHTML = `<div class="alert alert-${kind} alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        .innerHTML = `<div class="alert alert-${kind} alert-dismissible" role="alert" id="divErr">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" id="buttonErr">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 ${message}
             </div>`
+    document.getElementById('buttonErr').addEventListener('click', ()=>{
+        document.getElementById('divErr').remove()
+    })
 }
 
 

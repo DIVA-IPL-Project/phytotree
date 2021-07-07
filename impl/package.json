@@ -13,10 +13,10 @@
     "body-parser": "^1.19.0",
     "d3": "^6.7.0",
     "express": "^4.17.1",
-    "hbs": "^4.1.2",
     "tailwindcss": "^2.1.2"
   },
   "devDependencies": {
+    "jspdf": "^2.3.1",
     "newick": "^2.0.0"
   }
 }

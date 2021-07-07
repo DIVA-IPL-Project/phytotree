@@ -25,7 +25,7 @@ function build_app(arg){
         }
         case '-client': {
             //console.log('No implemented yet')
-            app.use('/public', express.static(__dirname + '/public_cs'));
+            app.use('/public_cs', express.static(__dirname + '/public_cs'));
 
             app.use(bodyParser.json({limit: "50mb"}))
 

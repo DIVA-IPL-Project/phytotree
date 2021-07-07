@@ -10,7 +10,7 @@ function build_app(arg){
     switch (arg) {
         case '-server': {
 
-            app.use('/public', express.static(__dirname + '/public'));
+            app.use('/public', express.static(__dirname + '/public'))
 
             app.use(bodyParser.json({limit: "50mb"}))
 
@@ -24,8 +24,8 @@ function build_app(arg){
             break
         }
         case '-client': {
-            //console.log('No implemented yet')
-            app.use('/public_cs', express.static(__dirname + '/public_cs'));
+
+            app.use('/public', express.static(__dirname + '/public'))
 
             app.use(bodyParser.json({limit: "50mb"}))
 

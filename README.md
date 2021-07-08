@@ -34,7 +34,7 @@ The application receives tree types of input files:
 The data processing and parsing can be done in server ou client side.
 
 ## Launch the application
-1. Open the terminal in the project's folder
+1. Open the terminal in the `impl` folder
 2. Run the commnad `npm install`
 3. Run the command `node index.js -client` or `node index.js -server` (the option -[client | server] indicates where it will be done the data processing)
 4. Open a browser and use the uri http://localhost:8000/home to access the webpage

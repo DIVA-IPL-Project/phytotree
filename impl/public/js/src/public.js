@@ -85,7 +85,7 @@ function setupRepresentationButtons() {
             let graph = dendrogram.build(data)
             setupDendrogramGraphConfiguration()
             view = dendrogram
-            dendrogram.draw('#container', graph.root)
+            dendrogram.draw('#container', graph.tree)
 
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
@@ -126,6 +126,24 @@ function setupData() {
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
     document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
+    document.getElementById('save')
+        .addEventListener('click', () => {
+            let save = dendrogram.save()
+            downloadFile('save.json', JSON.stringify(save))
+        })
+    document.getElementById('load')
+        .addEventListener('click', () => {
+            let save = document.getElementById('loadFile').files[0]
+            save.text().then(text => {
+                let save = JSON.parse(text)
+                dendrogram.load(save)
+                setupDendrogramGraphConfiguration()
+                changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
+                changeNodeSize(dendrogram.changeNodeSize)
+                changeLinkSize(dendrogram.changeLinkSize)
+                changeLabelsSize(dendrogram.changeLabelsSize)
+            })
+        })
 }
 
 /********************* Setup Navbar UI *********************/
@@ -1404,6 +1422,21 @@ function download(filename) {
         doc.addImage(uri, 'PNG', 100, 650, 700, 200)
         doc.save(filename)
     })
+}
+
+function downloadFile(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
 }
 
 document.getHTML = function (who, deep) {

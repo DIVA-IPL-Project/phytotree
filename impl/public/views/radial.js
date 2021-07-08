@@ -148,7 +148,6 @@ const radial = function () {
     }
 
     function getTriangle(node) {
-        console.log(node)
         let length = node.leaves.length - 1 || 1
         let point = length / 2 * 15,
             label = node.leaves.length !== 1 ?
@@ -823,7 +822,6 @@ const radial = function () {
                 }
             })
 
-            root.eachBefore(d => {console.log({ id: d.data.id, angle: d.angle })})
             return root;
         }
 

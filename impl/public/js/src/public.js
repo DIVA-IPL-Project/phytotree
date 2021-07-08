@@ -1111,7 +1111,7 @@ function linkToTree() {
             setupDendrogramGraphConfiguration()
             view = dendrogram
             let graph = dendrogram.build(data)
-            dendrogram.draw('#container', graph.root)
+            dendrogram.draw('#container', graph.tree)
 
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()

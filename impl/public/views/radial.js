@@ -741,6 +741,12 @@ const radial = function () {
         graph.style.spread = !graph.style.spread
         build(data.input)
         draw("#container", data.root)
+        addNodeStyle()
+        addLinkStyle()
+
+        const links = canvas.container.select('svg').select('#graph').selectAll(".gLink")
+        if (graph.style.linkLabels) addLinkLabelsAfterUpdate(links)
+        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
     }
 
 

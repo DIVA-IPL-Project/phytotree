@@ -147,19 +147,6 @@ const radial = function () {
         return Math.log(number) / Math.log(base);
     }
 
-    function angle(node) {
-        let px = (node.parent?.x | 0), py = (node.parent?.y | 0)
-        let y = node.y - py, x = node.x - px
-        let value = radToDeg(Math.atan(y / x))
-        if (node.parent && node.x <= node.parent.x) value += 180
-        return value
-    }
-
-    function radToDeg(radian) {
-        let pi = Math.PI;
-        return radian * (180 / pi);
-    }
-
     function getTriangle(node) {
         console.log(node)
         let length = node.leaves.length - 1 || 1
@@ -182,7 +169,7 @@ const radial = function () {
 
         graph.element.select(`#node${parent.data.id}`).remove()
         let node = nodesAttrs(graph.nodes.data(parent))
-        let rot = angle(parent)
+        let rot = d.angle
 
         node.append('polygon')
             .attr('points', d => `0,0 100,${point} 100,${-point}`)
@@ -245,7 +232,7 @@ const radial = function () {
 
             if (!child.visibility) {
                 let {point, label} = getTriangle(child)
-                let rot = angle(child)
+                let rot = d.angle
 
                 nodeContainer.append('polygon')
                     .attr('points', d => `0,0 100,${point} 100,${-point}`)
@@ -660,7 +647,7 @@ const radial = function () {
             .attr('class', 'leafLabel')
             .attr("dx", 10)
             .attr("dy", ".31em")
-            .attr('transform', d => `rotate(${angle(d)})`)
+            .attr('transform', d => `rotate(${d.angle})`)
             .style("text-anchor", "start")
             .style("font", `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
@@ -679,7 +666,7 @@ const radial = function () {
             .attr('class', 'leafLabelNoIsolates')
             .attr("dx", 10)
             .attr("dy", ".31em")
-            .attr('transform', d => `rotate(${angle(d)})`)
+            .attr('transform', d => `rotate(${d.angle})`)
             .style("text-anchor", "start")
             .style("font", `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
@@ -777,8 +764,21 @@ const radial = function () {
     function radial() {
         const pi = Math.PI
 
-        function max(input) {
-            return Math.max.apply(null, input);
+        function angle(node) {
+            let px = (node.parent?.x || 0),
+                py = (node.parent?.y || 0),
+                y = node.y - py,
+                x = node.x - px
+
+            if (x === 0 && y === 0) return node.parent?.angle || 0
+            let value = radToDeg(Math.atan(y / x))
+            if (node.parent && node.x < node.parent.x) value += 180
+            return value
+        }
+
+        function radToDeg(radian) {
+            let pi = Math.PI;
+            return radian * (180 / pi);
         }
 
         function radial(root) {
@@ -806,15 +806,14 @@ const radial = function () {
             root.y = 0;
 
             root.eachBefore(parent => {
+                parent.angle = angle(parent)
                 if (parent.children) {
                     // separation
                     parent.children.sort((a, b) => a.spread - b.spread)
 
                     parent.children.forEach(child => {
                         child.rightBorder = parent.rightBorder;
-
                         child.wedgeSize = (2 * pi * child.leaves.length) / root.leaves.length
-
                         child.alpha = child.rightBorder + (child.wedgeSize / 2);
 
                         child.x = parent.x + Math.cos(child.alpha) * child.data.data.value * graph.scale.value;
@@ -823,6 +822,8 @@ const radial = function () {
                     })
                 }
             })
+
+            root.eachBefore(d => {console.log({ id: d.data.id, angle: d.angle })})
             return root;
         }
 
@@ -1053,7 +1054,7 @@ const radial = function () {
                 graph.nodes
                     .selectAll("circle")
                     .each(function (d) {
-                        if (d.data.id === profile) rotate = angle(d)
+                        if (d.data.id === profile) rotate = d.angle
                     })
 
                 isolate.isolates.forEach(item => {
@@ -1087,7 +1088,7 @@ const radial = function () {
                     .attr("class", "leafLabelIsolates")
                     .attr("dx", totalW + 10)
                     .attr("dy", ".31em")
-                    .attr('transform', d => `rotate(${angle(d)})`)
+                    .attr('transform', d => `rotate(${d.angle})`)
                     .style("text-anchor", "start")
                     .style("font", `${graph.style.labels_size}px sans-serif`)
                     .text(d => d.data.id)
@@ -1104,7 +1105,7 @@ const radial = function () {
                 graph.nodes
                     .selectAll("circle")
                     .each(function (d) {
-                        if (d.data.id === profile) rotate = angle(d)
+                        if (d.data.id === profile) rotate = d.angle
                     })
 
                 isolate.forEach(item => {
@@ -1138,7 +1139,7 @@ const radial = function () {
                     .attr('class', 'leafLabelIsolates')
                     .attr("dx", totalW + 10)
                     .attr("dy", ".31em")
-                    .attr('transform', d => `rotate(${angle(d)})`)
+                    .attr('transform', d => `rotate(${d.angle})`)
                     .style("text-anchor", "start")
                     .style("font", `${graph.style.labels_size}px sans-serif`)
                     .text(d => d.data.id)
@@ -1185,7 +1186,7 @@ const radial = function () {
                         .attr("class", "addBarChartLabel")
                         .attr("dx", totalWidth + 10)
                         .attr("dy", ".31em")
-                        .attr('transform', d => `rotate(${angle(d)})`)
+                        .attr('transform', d => `rotate(${d.angle})`)
                         .style("text-anchor", "start")
                         .style("font", `${graph.style.labels_size}px sans-serif`)
                         .text(d => d.data.id)

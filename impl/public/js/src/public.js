@@ -1368,12 +1368,12 @@ function alertMsg(message, kind) {
 }
 
 /** Download File **/
-function download(filename, text) {
+function download(filename) {
     // Create the pdf document
     const doc = new jsPDF('p', 'pt', 'a4')
     doc.setProperties({ title: "Report" })
     doc.setFontSize(28)
-    doc.text('Report', 230, 40)
+    doc.text('Report', 290, 40, { align: 'center' })
 
     const svg = document.getHTML(view.context.svg.element.node(), true)
     const parser = new DOMParser()
@@ -1394,9 +1394,9 @@ function download(filename, text) {
         const pdfHeight = doc.internal.pageSize.height
 
         const x = imgPropsW + 50
-        const y = imgPropsH + 50
+        const y = imgPropsH + 70
 
-        doc.addImage(uri, 'PNG', x, y, pdfWidth, pdfHeight - 400)
+        doc.addImage(uri, 'PNG', x, y, pdfWidth, pdfHeight - 450)
     })
 
     // Add pie chart and legend to the report

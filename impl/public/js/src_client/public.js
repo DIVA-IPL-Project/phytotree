@@ -442,8 +442,8 @@ function changePieColor() {
                 }
             })
 
-            const pieChartTransform = "translate(1000, 500) scale(0.7)"
-            const legendTransform = "translate(790, 390) scale(0.7)"
+            const pieChartTransform = "translate(1000, 500)"
+            const legendTransform = "translate(790, 390)"
             changePieChartColor(sections, names, pieChartTransform, "#tree_pieChart", legendTransform)
 
             const pieChartIsolatesTransform = "translate(340, 170)"
@@ -1119,9 +1119,9 @@ function linkToTree() {
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
         pieChart.getElementById('pieChart').setAttribute('transform',
-            'translate(1000, 500) scale(0.7)')
+            'translate(1000, 500)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(790, 390)  scale(0.7)')
+            'translate(790, 390)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
@@ -1172,9 +1172,9 @@ function linkToTree() {
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
         pieChart.getElementById('pieChart').setAttribute('transform',
-            'translate(1000, 500) scale(0.7)')
+            'translate(1000, 500)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(790, 390)  scale(0.7)')
+            'translate(790, 390)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
@@ -1315,8 +1315,7 @@ async function sendNwkData() {
 }
 
 function downloadSVG() {
-    const svg = document.getHTML(view.context.svg.element.node(), true)
-    download("view.svg", svg)
+    download("view.pdf")
 }
 
 
@@ -1339,17 +1338,42 @@ function alertMsg(message, kind) {
 
 
 /** Download File **/
-function download(filename, text) {
-    let element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
+function download(filename) {
+    // Create the pdf document
+    const doc = new jsPDF('p', 'pt', 'a4')
+    doc.setProperties({ title: "Report" })
+    doc.setFontSize(28)
+    doc.text('Report', 290, 40, { align: 'center' })
 
-    element.style.display = 'none';
-    document.body.appendChild(element);
+    const svg = document.getHTML(view.context.svg.element.node(), true)
+    const parser = new DOMParser()
+    const elem = parser.parseFromString(svg, "text/html").body
+    const graph = elem.children[0]
 
-    element.click();
+    const clone = graph.cloneNode(true)
+    if (clone.childNodes[3]) {
+        clone.removeChild(clone.childNodes[3])
+    }
 
-    document.body.removeChild(element);
+    // Add the tree to the report
+    svgAsPngUri(clone, null).then(uri => {
+        const imgPropsW = document.getElementById("graph").getAttribute("width")
+        const imgPropsH = document.getElementById("graph").getAttribute("height")
+
+        const pdfWidth = doc.internal.pageSize.width
+        const pdfHeight = doc.internal.pageSize.height
+
+        const x = imgPropsW + 50
+        const y = imgPropsH + 70
+
+        doc.addImage(uri, 'PNG', x, y, pdfWidth, pdfHeight - 450)
+    })
+
+    // Add pie chart and legend to the report
+    svgAsPngUri(document.getElementById("svg_isolate"), null).then(uri => {
+        doc.addImage(uri, 'PNG', 100, 650, 700, 200)
+        doc.save(filename)
+    })
 }
 
 document.getHTML = function (who, deep) {

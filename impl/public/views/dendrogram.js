@@ -1,5 +1,6 @@
 const dendrogram = function () {
 
+    const type = 'dendrogram'
     const scaler = {
         linear: linearScale(),
         log: logScale()
@@ -32,6 +33,7 @@ const dendrogram = function () {
         links: null,
         style: {
             align: false,
+            leafLabels: true,
             linkLabels: false,
             parentLabels: false,
             labels_size: 12,
@@ -96,7 +98,7 @@ const dendrogram = function () {
      * @param input the JSON data.
      */
     function build(input) {
-        if(!input) throw new Error('Please insert tree file first.')
+        if (!input) throw new Error('Please insert tree file first.')
         data.input = input
         const strat = d3.stratify()
             .id(d => d.target)
@@ -104,8 +106,7 @@ const dendrogram = function () {
 
         // Build Tree
         data.tree = d3.hierarchy(strat, d => d.children)
-        context.build = clusterTree()
-            .nodeSize(graph.nodeSize)
+        context.build = clusterTree().nodeSize(graph.nodeSize)
         data.tree = context.build(data.tree)
 
         // Apply scale
@@ -138,6 +139,7 @@ const dendrogram = function () {
         // apply xmlns
         svg.element.attr('xmlns', 'http://www.w3.org/2000/svg')
 
+        // creates graph container
         graph.element = svg.element
             .append("g")
             .attr("id", "graph")
@@ -168,7 +170,12 @@ const dendrogram = function () {
         graph.links = linksAttr(graph.element.selectAll('.link').data(links, d => d.data.id).enter())
         graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
 
-        if (!graph.style.barChart) addLeafLabels()
+        if (!graph.style.barChart) updateLeafLabels(graph.style.leafLabels)
+        else {
+            graph.element.selectAll(".leafLabelIsolates text").remove()
+            graph.element.selectAll('circle').each(d => addBarCharts(d))
+            addLeafLabelsNotIsolates()
+        }
 
         updateLinkLabels(graph.style.linkLabels)
         updateInternalLabels(graph.style.parentLabels)
@@ -188,7 +195,7 @@ const dendrogram = function () {
         let base = 1.1
         point = log(base, point / (node.depth || 1))
 
-        return { point, label }
+        return {point, label}
     }
 
     function collapse(parent, children) {
@@ -234,7 +241,8 @@ const dendrogram = function () {
 
         addNodeStyle()
         addLinkStyle()
-        if (graph.style.parentLabels) updateInternalLabels()
+        updateInternalLabels(graph.style.parentLabels)
+        updateLinkLabels(graph.style.linkLabels)
     }
 
     function expandAux(children) {
@@ -254,11 +262,6 @@ const dendrogram = function () {
                 addBarCharts(child)
                 addLeafLabelsNotIsolates()
             }
-
-            addNodeStyle()
-            addLinkStyle()
-            if (graph.style.linkLabels) /*addLinkLabelsAfterUpdate(linkContainer)*/updateLinkLabels()
-            if (graph.style.parentLabels) updateInternalLabels()
 
             if (!child.visibility) {
                 let {point, label} = getTriangle(child)
@@ -293,7 +296,7 @@ const dendrogram = function () {
             collapse(d, d.children)
         }
         if (d.children && !graph.style.barChart) {
-            addLeafLabels()
+            updateLeafLabels(graph.style.leafLabels)
         }
     }
 
@@ -392,15 +395,7 @@ const dendrogram = function () {
     function changeLabelsSize(value) {
         graph.style.labels_size = value
 
-        canvas.container.select('svg').select('#graph')
-            .selectAll(".node--internal text")
-            .style("font", `${value}px sans-serif`)
-
-        canvas.container.select('svg').select('#graph')
-            .selectAll(".node--leaf text")
-            .style("font", `${value}px sans-serif`)
-
-        canvas.container.select('svg').select('#graph')
+        graph.element
             .selectAll("text")
             .style("font", `${value}px sans-serif`)
     }
@@ -423,24 +418,6 @@ const dendrogram = function () {
     }
 
     /**
-     * Adds labels to the leaf nodes.
-     */
-    function addLeafLabels() {
-        graph.element.selectAll(".node--leaf text").remove();
-
-        graph.element.selectAll(".node--leaf")
-            .append("text")
-            .attr('class', 'leafLabel')
-            .attr("dy", 5)
-            .attr("x", 13)
-            .style("text-anchor", "start")
-            .style("font", `${graph.style.labels_size}px sans-serif`)
-            .text(d => d.data.id)
-            .on("mouseover", mouseOveredDendrogram(true))
-            .on("mouseout", mouseOveredDendrogram(false))
-    }
-
-    /**
      * Adds labels to the leaf nodes that dont have bar charts.
      */
     function addLeafLabelsNotIsolates() {
@@ -458,6 +435,25 @@ const dendrogram = function () {
             .on("mouseout", mouseOveredDendrogram(false))
     }
 
+
+    /**
+     * Adds labels to the leaf nodes.
+     */
+    function updateLeafLabels(active) {
+        graph.element.selectAll(".node--leaf text").remove();
+        if (active) {
+            graph.element.selectAll(".node--leaf")
+                .append("text")
+                .attr('class', 'leafLabel')
+                .attr("dy", 5)
+                .attr("x", 13)
+                .style("text-anchor", "start")
+                .style("font", `${graph.style.labels_size}px sans-serif`)
+                .text(d => d.data.id)
+                .on("mouseover", mouseOveredDendrogram(true))
+                .on("mouseout", mouseOveredDendrogram(false))
+        }
+    }
 
     /**
      * Adds internal labels on the nodes, after an update.
@@ -501,22 +497,23 @@ const dendrogram = function () {
     function alignNodes() {
         graph.style.align = !graph.style.align
 
-        if (graph.style.align) data.tree.eachBefore(d => {
-            let horizontal = graph.scale.horizontal
-            d.y = d.depth * (horizontal.value * horizontal.scalingFactor)
-            if (d.parent) updateLinkLabels(graph.style.linkLabels)
-        })
-        else data.tree.eachBefore(d => {
-            if (d.parent) {
-                let horizontal = graph.scale.horizontal
-                d.y = (horizontal.value * horizontal.scalingFactor * d.data.data.value) + d.parent.y
-
-                updateLinkLabels(graph.style.linkLabels)
-            }
-        })
+        // if (graph.style.align)
+        //     data.tree.eachBefore(d => {
+        //         let horizontal = graph.scale.horizontal
+        //         d.y = d.depth * (horizontal.value * horizontal.scalingFactor)
+        //         if (d.parent) updateLinkLabels(graph.style.linkLabels)
+        //     })
+        // else data.tree.eachBefore(d => {
+        //     if (d.parent) {
+        //         let horizontal = graph.scale.horizontal
+        //         d.y = (horizontal.value * horizontal.scalingFactor * d.data.data.value) + d.parent.y
+        //
+        //         updateLinkLabels(graph.style.linkLabels)
+        //     }
+        // })
+        applyScale(data.tree)
         update(data.tree)
         applyScaleText()
-        addDendrogramZoom()
         addNodeStyle()
         addLinkStyle()
         updateInternalLabels(graph.style.parentLabels)
@@ -546,7 +543,7 @@ const dendrogram = function () {
      */
     function changeNodeColor(node, color) {
         graph.nodes
-            .selectAll("circle")
+            .selectAll(`#node${node} circle`)
             .each(function (d) {
                 if (d.data.id === node) {
                     d.data.data.color = color;
@@ -562,15 +559,14 @@ const dendrogram = function () {
      * Applies the scale to the coordinates of the tree
      */
     function applyScale(tree) {
+        let horizontal = graph.scale.horizontal
         tree.eachBefore(d => {
             if (tree.data.id === d.data.id) return
-            d.x = d.x * graph.scale.vertical.value
+            d.x *= graph.scale.vertical.value
             if (d.parent) {
-                let horizontal = graph.scale.horizontal
                 if (!graph.style.align) {
-                    d.y = horizontal.value * d.data.data.value * horizontal.scalingFactor + d.parent.y
+                    d.y = d.data.data.value * horizontal.value * horizontal.scalingFactor + d.parent.y
                 } else d.y = d.depth * horizontal.scalingFactor * horizontal.value
-                // if (graph.style.linkLabels) addLinkLabelsAfterUpdate(graph.element.data(d))
             }
         })
     }
@@ -579,11 +575,6 @@ const dendrogram = function () {
      * Changes the scaling of the graph to linear scale
      */
     function applyLinearScale() {
-        graph.element.selectAll('.linkLabel').remove()
-        graph.element.selectAll('.link').remove()
-        graph.element.selectAll('.node').remove()
-        graph.element.selectAll('g').remove()
-
         graph.scale = scaler.linear
         applyScale(data.tree)
         applyScaleText()
@@ -597,18 +588,12 @@ const dendrogram = function () {
 
         addNodeStyle()
         addLinkStyle()
-        if (graph.style.parentLabels) updateInternalLabels()
     }
 
     /**
      * Changes the scaling of the graph to logarithmic scale
      */
     function applyLogScale() {
-        graph.element.selectAll('.linkLabel').remove()
-        graph.element.selectAll('.link').remove()
-        graph.element.selectAll('.node').remove()
-        graph.element.selectAll('g').remove()
-
         graph.scale = scaler.log
         applyScale(data.tree)
         applyScaleText()
@@ -622,7 +607,6 @@ const dendrogram = function () {
 
         addNodeStyle()
         addLinkStyle()
-        if (graph.style.parentLabels) updateInternalLabels()
     }
 
     /**
@@ -633,7 +617,7 @@ const dendrogram = function () {
      * }}
      */
     function linearScale(saved) {
-        const linear = saved ? saved :  {
+        const linear = saved ? saved : {
             vertical: {
                 value: 1,
                 limits: [0.1, 10],
@@ -939,13 +923,14 @@ const dendrogram = function () {
             let left = leafLeft(root),
                 right = leafRight(root),
                 x0 = left.x - separation(left, right) / 2,
-                x1 = right.x + separation(right, left) / 2;
+                x1 = right.x + separation(right, left) / 2
+
 
             // Second walk, normalizing x & y to the desired size.
             return root.eachAfter(nodeSize ?
                 function (node) {
-                    node.x = (node.x - root.x) * dx;
-                    node.y = (root.y - node.y) * dy;
+                    node.x = (node.x - root.x) * dx
+                    node.y = (root.y - node.y) * dy
 
                     if (!node.children)
                         node.leaves = [node];
@@ -960,7 +945,7 @@ const dendrogram = function () {
                     }
                 } :
                 function (node) {
-                    node.x = (node.x - x0) / (x1 - x0) * dx;
+                    node.x = (node.x - x0) / (x1 - x0) * dx
                     node.y = node.depth * graph.scale.horizontal.value * graph.scale.horizontal.scalingFactor
                 });
         }
@@ -1034,11 +1019,12 @@ const dendrogram = function () {
                 }))
     }
 
+
     /**
      * Applies the filter to add bar charts.
      * @param filter the filter to be applied
      */
-    function applyFilter(filter){
+    function applyFilter(filter) {
         graph.style.barChart.filter = filter
         filter.transform(filter.name, filter.line, filter.column, filter.colors)
         addLeafLabelsNotIsolates()
@@ -1152,15 +1138,18 @@ const dendrogram = function () {
         if (name === "&") {
             stack(order_data)[0].forEach(d => {
                 const counts = {}
-                d.data.isolates.forEach(x => { counts[x] = (counts[x] || 0) + 1 })
+                d.data.isolates.forEach(x => {
+                    counts[x] = (counts[x] || 0) + 1
+                })
 
                 function valuesToArray(obj) {
                     const result = []
                     for (let key in obj) {
-                        if (obj.hasOwnProperty(key)) result.push({ 'isolate': key, 'counter': obj[key] })
+                        if (obj.hasOwnProperty(key)) result.push({'isolate': key, 'counter': obj[key]})
                     }
                     return result
                 }
+
                 const data = {
                     'category': d.data.category,
                     'isolates': valuesToArray(counts),
@@ -1231,6 +1220,7 @@ const dendrogram = function () {
 
                     node.appendChild(rect)
                     graph.nodes
+                        // todo check save
                         .selectAll("circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
@@ -1274,16 +1264,16 @@ const dendrogram = function () {
 
                     node.appendChild(rect)
                     graph.nodes
-                        .selectAll("circle")
+                        // todo check save
+                        .selectAll("#node" + profile + " circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
-                                if (d.data.barChart) d.data.barChart.push(rect)
-                                else d.data.barChart = [rect]
+                                rectOf(d, rect)
                             }
                         })
                 })
 
-              d3.select(node)
+                d3.select(node)
                     .append("text")
                     .attr("class", "leafLabelIsolates")
                     .attr("dy", 5)
@@ -1295,6 +1285,19 @@ const dendrogram = function () {
                     .on("mouseout", mouseOveredDendrogram(false))
             })
         }
+        console.log(data.tree)
+    }
+
+    function rectOf(node, rect) {
+        let rectObj = {
+            width: rect.attributes['width'].nodeValue,
+            height: rect.attributes['height'].nodeValue,
+            fill: rect.attributes['fill'].nodeValue,
+            x: rect.attributes['x'].nodeValue,
+            y: rect.attributes['y'].nodeValue
+        }
+        if (node.data.data.barChart) node.data.data.barChart.push(rectObj)
+        else node.data.data.barChart = [rectObj]
     }
 
     /**
@@ -1304,30 +1307,30 @@ const dendrogram = function () {
     function addBarCharts(node) {
         graph.element.selectAll(".addBarChartLabel text").remove()
 
-        if (!node.children && node.data.barChart) {
+        if (!node.children && node.data.data.barChart) {
             if (!graph.element.select(`#node${node.data.id}`).selectAll('g').empty()) {
                 graph.element.select(`#node${node.data.id}`).selectAll('g').remove()
             }
             const nodeElement = graph.element.select(`#node${node.data.id}`)
-                .attr("class", "node node--internal node--norm isolates")
+                .attr("class", "node node--leaf node--norm isolates")
                 .append("g")
 
             let totalWidth = 0
-            for (let i = 0; i < node.data.barChart.length; i++) {
-                const rect = node.data.barChart[i]
+            for (let i = 0; i < node.data.data.barChart.length; i++) {
+                const rect = node.data.data.barChart[i]
                 nodeElement
                     .append("rect")
-                    .attr("width", () => {
-                        totalWidth += Number.parseInt(rect.attributes["width"].nodeValue)
-                        return rect.attributes["width"].nodeValue
+                    .attr("width", d => {
+                        totalWidth += Number.parseInt(rect.width)
+                        return rect.width
                     })
-                    .attr("fill", rect.attributes["fill"].nodeValue)
-                    .attr("y", rect.attributes["y"].nodeValue)
-                    .attr("height", rect.attributes["height"].nodeValue)
-                    .attr("x", rect.attributes["x"].nodeValue)
+                    .attr("height", rect.height)
+                    .attr("fill", rect.fill)
+                    .attr("x", rect.x)
+                    .attr("y", rect.y)
                     .attr("class", "barChart")
 
-                if (i === node.data.barChart.length - 1) {
+                if (i === node.data.data.barChart.length - 1) {
                     nodeElement
                         .append("text")
                         .attr("class", "addBarChartLabel")
@@ -1343,6 +1346,7 @@ const dendrogram = function () {
         }
     }
 
+
     function save() {
         const tree = []
         data.tree.eachBefore(d => {
@@ -1350,7 +1354,8 @@ const dendrogram = function () {
                 source: d.parent ? d.parent.data.id : null,
                 target: d.data.id,
                 value: d.data.data.value,
-                color: d.data.data.color
+                color: d.data.data.color,
+                barChart: d.data.data.barChart
             }
             tree.push(node)
         })
@@ -1358,6 +1363,7 @@ const dendrogram = function () {
         data.input.links = tree
 
         return {
+            type,
             data: {
                 tree,
                 input: data.input
@@ -1368,15 +1374,12 @@ const dendrogram = function () {
                 scale: scaler
             },
             canvas: {
-                width: canvas.width,
-                height: canvas.height,
-                margin: canvas.margin,
                 zoom: canvas.zoom
             }
         }
     }
 
-    function load(save) {
+    function load(container, save) {
         scaler.linear = save.graph.scale.linear
         scaler.log = save.graph.scale.log
 
@@ -1389,8 +1392,6 @@ const dendrogram = function () {
         canvas.margin.right = save.canvas.margin.right
 
         canvas.zoom = save.canvas.zoom
-        canvas.height = save.canvas.height
-        canvas.width = save.canvas.width
 
 
         scaler.linear = linearScale(save.graph.scale.linear)
@@ -1398,14 +1399,14 @@ const dendrogram = function () {
         graph.scale = scaler.linear
 
         let view = build(save.data.input)
-        draw('#container', view.tree)
+        draw(container, view.tree)
 
         addNodeStyle()
         addLinkStyle()
     }
 
     return {
-        type: 'dendrogram',
+        type,
         context,
         build,
         draw,

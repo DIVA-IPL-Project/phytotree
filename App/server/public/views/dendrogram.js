@@ -1218,12 +1218,10 @@ const dendrogram = function () {
 
                     node.appendChild(rect)
                     graph.nodes
-                        // todo check save
                         .selectAll("circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
-                                if (d.data.barChart) d.data.barChart.push(rect)
-                                else d.data.barChart = [rect]
+                                rectOf(d, rect)
                             }
                         })
                 })
@@ -1262,7 +1260,6 @@ const dendrogram = function () {
 
                     node.appendChild(rect)
                     graph.nodes
-                        // todo check save
                         .selectAll("#node" + profile + " circle")
                         .each(function (d) {
                             if (d.data.id === profile) {

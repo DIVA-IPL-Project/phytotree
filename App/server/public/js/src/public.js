@@ -128,7 +128,7 @@ function setupData() {
     document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
     document.getElementById('save')
         .addEventListener('click', () => {
-            let save = radial.save()
+            let save = view.save()
             downloadFile('save.json', JSON.stringify(save))
         })
     document.getElementById('load')

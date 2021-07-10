@@ -1064,8 +1064,7 @@ const radial = function () {
                         .selectAll("circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
-                                if (d.data.data.barChart) d.data.data.barChart.push(rect)
-                                else d.data.data.barChart = [rect]
+                                rectOf(d, rect)
                             }
                         })
                 })

@@ -1,4 +1,11 @@
 const radial = function () {
+
+    const type = 'radial'
+    const scaler = {
+        linear: linearScale(),
+        log: logScale()
+    }
+
     const margin = {
         top: 20,
         right: 90,
@@ -17,7 +24,6 @@ const radial = function () {
         }
     }
     const data = {
-        root: null,
         tree: null,
         input: null
     }
@@ -82,11 +88,13 @@ const radial = function () {
     function build(input) {
         if(!input) throw new Error('Please insert tree file first.')
         data.input = input
-        const strat = d3.stratify().id((d) => d.target).parentId((d) => d.source)(input.links);
-        data.root = d3.hierarchy(strat, d => d.children);
+        console.log(input)
+        const strat = d3.stratify().id(d => d.target).parentId(d => d.source)(input.links);
+        console.log(strat)
+        data.tree = d3.hierarchy(strat, d => d.children);
         context.build = radial()
 
-        data.tree = context.build(data.root)
+        data.tree = context.build(data.tree)
 
         return data;
     }
@@ -116,7 +124,6 @@ const radial = function () {
             .attr("transform", "translate(" + [canvas.zoom.x, canvas.zoom.y] + ")")
 
         update(tree)
-
         addRadialZoom()
 
         horizontalScale()
@@ -138,7 +145,15 @@ const radial = function () {
         nodesAttrs(graph.nodes.selectAll('.node').data(nodes).enter())
         linksAttr(graph.links.selectAll('.link').data(links).enter())
 
-        if (!graph.style.barChart) addLeafLabels()
+        if (!graph.style.barChart) updateLeafLabels()
+        else {
+            graph.element.selectAll(".leafLabelIsolates text").remove()
+            graph.element.selectAll('circle').each(d => addBarCharts(d))
+            addLeafLabelsNotIsolates()
+        }
+
+        updateLinkLabels(graph.style.linkLabels)
+        updateInternalLabels(graph.style.parentLabels)
     }
 
 
@@ -168,15 +183,14 @@ const radial = function () {
 
         graph.element.select(`#node${parent.data.id}`).remove()
         let node = nodesAttrs(graph.nodes.data(parent))
-        let rot = d.angle
 
         node.append('polygon')
             .attr('points', d => `0,0 100,${point} 100,${-point}`)
-            .attr('transform', `rotate(${rot})`)
+            .attr('transform', `rotate(${parent.angle})`)
             .style('fill', 'black')
         node.append('text')
             .text(label)
-            .attr('transform', `rotate(${rot})`)
+            .attr('transform', `rotate(${parent.angle})`)
             .attr('dx', '100')
             .attr('dy', '3')
     }
@@ -226,20 +240,19 @@ const radial = function () {
 
             addNodeStyle()
             addLinkStyle()
-            if (graph.style.linkLabels) addLinkLabelsAfterUpdate(linkContainer)
-            if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+            updateLinkLabels(graph.style.linkLabels)
+            updateInternalLabels(graph.style.parentLabels)
 
             if (!child.visibility) {
                 let {point, label} = getTriangle(child)
-                let rot = d.angle
 
                 nodeContainer.append('polygon')
                     .attr('points', d => `0,0 100,${point} 100,${-point}`)
-                    .attr('transform', `rotate(${rot})`)
+                    .attr('transform', `rotate(${child.angle})`)
                     .style('fill', 'black')
                 nodeContainer.append('text')
                     .text(label)
-                    .attr('transform', `rotate(${rot})`)
+                    .attr('transform', `rotate(${child.angle})`)
                     .attr('dx', '100')
                     .attr('dy', '3')
             }
@@ -259,7 +272,7 @@ const radial = function () {
             d.visibility = false
             collapse(d, d.children)
         }
-        if (d.children && !graph.style.barChart) addLeafLabels()
+        if (d.children && !graph.style.barChart) updateLeafLabels()
     }
 
 
@@ -272,9 +285,6 @@ const radial = function () {
         tree.eachBefore(d => {
             d.x = (d.x / last) * graph.scale.value
             d.y = (d.y / last) * graph.scale.value
-            if (d.parent) {
-                if (graph.style.linkLabels) addLinkLabelsAfterUpdate(graph.element.data(d))
-            }
         })
     }
 
@@ -289,24 +299,23 @@ const radial = function () {
      *  increment: function
      * }}
      */
-    function linearScale() {
-        const linear = {
+    function linearScale(saved) {
+        const linear = saved ? saved : {
             value: 500,
             limits: [50, 2000],
             scalingFactor: 1,
-            step: 25,
-            decrement: decrement,
-            increment: increment
+            step: 25
         }
 
         function increment() {
             linear.value += linear.step
         }
-
         function decrement() {
             linear.value -= linear.step
         }
 
+        linear.increment = increment
+        linear.decrement = decrement
         return linear
     }
 
@@ -321,27 +330,26 @@ const radial = function () {
      *  increment: function
      * }}
      */
-    function logScale() {
+    function logScale(saved) {
         let value = 1.1
-        const log = {
+        const log = saved ? saved : {
             value: 500,
             limits: [61, 2000],
             scalingFactor: 0.5,
             step: 40,
-            decrement: decrement,
-            increment: increment
         }
 
         function increment() {
             log.step *= value
             log.value += log.step
         }
-
         function decrement() {
             log.value -= log.step
             log.step /= value
         }
 
+        log.increment = increment
+        log.decrement = decrement
         return log
     }
 
@@ -358,7 +366,7 @@ const radial = function () {
         graph.scale = linearScale()
         applyScale(data.tree, last)
         applyScaleText()
-        update(data.root)
+        update(data.tree)
 
         if (graph.style.barChart) {
             graph.element.selectAll(".leafLabelIsolates").remove()
@@ -385,7 +393,7 @@ const radial = function () {
         graph.scale = logScale()
         applyScale(data.tree, last)
         applyScaleText()
-        update(data.root)
+        update(data.tree)
 
         if (graph.style.barChart) {
             graph.element.selectAll(".leafLabelIsolates").remove()
@@ -418,7 +426,7 @@ const radial = function () {
     }
 
     function setNewPositions(last) {
-        data.root.eachBefore(d => {
+        data.tree.eachBefore(d => {
             if (d.parent) {
                 d.x = (d.x / last) * graph.scale.value
                 d.y = (d.y / last) * graph.scale.value
@@ -462,8 +470,8 @@ const radial = function () {
             .on("click", click)
         container.append("circle")
             .attr("r", graph.style.nodes_size || 3)
-            .style("fill", d => d.data.color || '#000000')
-            .style("stroke", d => d.data.color || '#000000')
+            .style("fill", d => d.data.data.color || '#000000')
+            .style("stroke", d => d.data.data.color || '#000000')
         return container
     }
 
@@ -491,8 +499,8 @@ const radial = function () {
     function addNodeStyle() {
         graph.nodes
             .selectAll("circle")
-            .style("fill", d => d.data.color || '#000000')
-            .style("stroke", d => d.data.color || '#000000')
+            .style("fill", d => d.data.data.color || '#000000')
+            .style("stroke", d => d.data.data.color || '#000000')
     }
 
     /**
@@ -505,7 +513,7 @@ const radial = function () {
             .selectAll("circle")
             .each(function (d) {
                 if (d.data.id === nodeId) {
-                    d.data.color = color;
+                    d.data.data.color = color;
                     addNodeStyle();
                 }
             });
@@ -556,102 +564,21 @@ const radial = function () {
             .style("font", `${graph.style.labels_size}px sans-serif`);
     }
 
+
     /**
      * Adds labels to the parent nodes.
      */
     function addInternalLabels() {
-        if (graph.style.parentLabels) {
-            canvas.container.select('svg').select('#graph').selectAll(".node--internal text").remove();
-            graph.style.parentLabels = false;
-        } else {
-            graph.nodes
-                .selectAll(".node--internal")
-                .append("text")
-                .attr('class', 'label')
-                .attr("x", -13)
-                .attr("y", 13)
-                .style("text-anchor", "end")
-                .style("font", `${graph.style.labels_size}px sans-serif`)
-                .text(d => d.data.id);
-
-            graph.style.parentLabels = true;
-        }
-    }
-
-    /**
-     * Adds internal labels on the nodes, after an update.
-     */
-    function addInternalLabelsAfterUpdate() {
-        canvas.container.select('svg').select('#graph').selectAll(".node--internal text").remove();
-
-        canvas.container.select('svg').select('#graph')
-            .selectAll(".node--internal")
-            .append("text")
-            .attr('class', 'label')
-            .attr("x", -13)
-            .attr("y", 13)
-            .style("text-anchor", "end")
-            .style("font", `${graph.style.labels_size}px sans-serif`)
-            .text(d => d.data.id);
+        graph.style.parentLabels = !graph.style.parentLabels
+        updateInternalLabels(graph.style.parentLabels)
     }
 
     /**
      * Adds labels to the links.
      */
     function addLinkLabels() {
-        if (graph.style.linkLabels) {
-            graph.element.selectAll(".linkLabel").remove();
-            graph.style.linkLabels = false;
-        } else {
-            graph.links
-                .selectAll('.gLink')
-                .append("text")
-                .attr('class', 'linkLabel')
-                .attr("id", d => "label" + d.data.id)
-                .attr("x", d => (d.parent.x + d.x) / 2 - 15)
-                .attr("y", d => (d.parent.y + d.y) / 2 - 15)
-                .attr("text-anchor", "middle")
-                .style("font", `${graph.style.labels_size}px sans-serif`)
-                .text(d => d.data.data.value);
-
-            graph.style.linkLabels = true;
-        }
-    }
-
-    /**
-     * Adds labels to the links, after an update.
-     * @param links the links to add the labels.
-     */
-    function addLinkLabelsAfterUpdate(links) {
-        links
-            .append("text")
-            .attr("x", d => (d.parent.x + d.x) / 2 - 15)
-            .attr("y", d => (d.parent.y + d.y) / 2 - 15)
-            .attr("text-anchor", "middle")
-            .attr("class", "linkLabel")
-            .attr("id", d => "label" + d.data.id)
-            .style("font", `${graph.style.labels_size}px sans-serif`)
-            .text(d => d.data.data.value)
-    }
-
-    /**
-     * Adds labels to the leaf nodes.
-     */
-    function addLeafLabels() {
-        graph.nodes.selectAll(".node--leaf text").remove();
-
-        graph.nodes
-            .selectAll(".node--leaf")
-            .append("text")
-            .attr('class', 'leafLabel')
-            .attr("dx", 10)
-            .attr("dy", ".31em")
-            .attr('transform', d => `rotate(${d.angle})`)
-            .style("text-anchor", "start")
-            .style("font", `${graph.style.labels_size}px sans-serif`)
-            .text(d => d.data.id)
-            .on("mouseover", mouseOveredRadial(true))
-            .on("mouseout", mouseOveredRadial(false))
+        graph.style.linkLabels = !graph.style.linkLabels
+        updateLinkLabels(graph.style.linkLabels)
     }
 
     /**
@@ -671,6 +598,62 @@ const radial = function () {
             .text(d => d.data.id)
             .on("mouseover", mouseOveredRadial(true))
             .on("mouseout", mouseOveredRadial(false))
+    }
+
+
+    /**
+     * Adds labels to the leaf nodes.
+     */
+    function updateLeafLabels() {
+        graph.nodes.selectAll(".node--leaf text").remove();
+
+        graph.nodes
+            .selectAll(".node--leaf")
+            .append("text")
+            .attr('class', 'leafLabel')
+            .attr("dx", 10)
+            .attr("dy", ".31em")
+            .attr('transform', d => `rotate(${d.angle})`)
+            .style("text-anchor", "start")
+            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .text(d => d.data.id)
+            .on("mouseover", mouseOveredRadial(true))
+            .on("mouseout", mouseOveredRadial(false))
+    }
+
+    /**
+     * Adds internal labels on the nodes, after an update.
+     */
+    function updateInternalLabels(active) {
+        graph.element.selectAll(".node--internal text").remove()
+        if (active) {
+            graph.element
+                .selectAll(".node--internal")
+                .append("text")
+                .attr("x", -13)
+                .attr("y", 13)
+                .style("text-anchor", "end")
+                .style("font", `${graph.style.labels_size}px sans-serif`)
+                .text(d => d.data.id);
+        }
+    }
+
+    /**
+     * Adds labels to the links, after an update.
+     */
+    function updateLinkLabels(active) {
+        graph.element.selectAll(".gLink text").remove()
+        if (active) {
+            graph.element.selectAll(".gLink")
+                .append("text")
+                .attr("x", d => (d.parent.x + d.x) / 2 - 5)
+                .attr("y", d => (d.parent.y + d.y) / 2 - 5)
+                .attr("text-anchor", "middle")
+                .attr("class", "linkLabel")
+                .attr("id", d => "label" + d.data.id)
+                .style("font", `${graph.style.labels_size}px sans-serif`)
+                .text(d => d.data.data.value)
+        }
     }
 
 
@@ -740,13 +723,13 @@ const radial = function () {
     function addSpread() {
         graph.style.spread = !graph.style.spread
         build(data.input)
-        draw("#container", data.root)
+        draw("#container", data.tree)
         addNodeStyle()
         addLinkStyle()
 
         const links = canvas.container.select('svg').select('#graph').selectAll(".gLink")
-        if (graph.style.linkLabels) addLinkLabelsAfterUpdate(links)
-        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+        updateLinkLabels(graph.style.linkLabels)
+        updateInternalLabels(graph.style.parentLabels)
     }
 
 
@@ -1039,7 +1022,7 @@ const radial = function () {
                 d3.select(this)
                     .selectAll("rect")
                     .data(map)
-                d.data.barChart = null
+                d.data.data.barChart = null
             })
 
         let w = 30, lastX = 0, lastWidth = 5, totalW = 0, rotate
@@ -1081,8 +1064,8 @@ const radial = function () {
                         .selectAll("circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
-                                if (d.data.barChart) d.data.barChart.push(rect)
-                                else d.data.barChart = [rect]
+                                if (d.data.data.barChart) d.data.data.barChart.push(rect)
+                                else d.data.data.barChart = [rect]
                             }
                         })
                 })
@@ -1132,8 +1115,7 @@ const radial = function () {
                         .selectAll("circle")
                         .each(function (d) {
                             if (d.data.id === profile) {
-                                if (d.data.barChart) d.data.barChart.push(rect)
-                                else d.data.barChart = [rect]
+                                rectOf(d, rect)
                             }
                         })
                 })
@@ -1153,6 +1135,18 @@ const radial = function () {
         }
     }
 
+    function rectOf(node, rect) {
+        let rectObj = {
+            width: rect.attributes['width'].nodeValue,
+            height: rect.attributes['height'].nodeValue,
+            fill: rect.attributes['fill'].nodeValue,
+            x: rect.attributes['x'].nodeValue,
+            y: rect.attributes['y'].nodeValue
+        }
+        if (node.data.data.barChart) node.data.data.barChart.push(rectObj)
+        else node.data.data.barChart = [rectObj]
+    }
+
     /**
      * Draws the bar charts after an update.
      * @param node the node to add the bar chart
@@ -1160,32 +1154,32 @@ const radial = function () {
     function addBarCharts(node) {
         graph.element.selectAll(".addBarChartLabel text").remove()
 
-        if (!node.children && node.data.barChart) {
+        if (!node.children && node.data.data.barChart) {
             if (!graph.element.select(`#node${node.data.id}`).selectAll('g').empty()) {
                 graph.element.select(`#node${node.data.id}`).selectAll('g').remove()
             }
             const nodeElement = graph.element.select(`#node${node.data.id}`)
-                .attr("class", "node node--internal node--norm isolates")
+                .attr("class", "node node--leaf node--norm isolates")
                 .append("g")
 
             let totalWidth = 0
-            for (let i = 0; i < node.data.barChart.length; i++) {
-                const rect = node.data.barChart[i]
+            for (let i = 0; i < node.data.data.barChart.length; i++) {
+                const rect = node.data.data.barChart[i]
                 nodeElement
                     .append("rect")
-                    .attr("width", () => {
-                        totalWidth += Number.parseInt(rect.attributes["width"].nodeValue)
-                        return rect.attributes["width"].nodeValue
+                    .attr("width", d => {
+                        totalWidth += Number.parseInt(rect.width)
+                        return rect.width
                     })
-                    .attr("fill", rect.attributes["fill"].nodeValue)
-                    .attr("y", rect.attributes["y"].nodeValue)
-                    .attr("height", rect.attributes["height"].nodeValue)
-                    .attr("x", rect.attributes["x"].nodeValue)
-                    .attr('transform', rect.attributes["transform"].nodeValue)
+                    .attr("height", rect.height)
+                    .attr("fill", rect.fill)
+                    .attr("x", rect.x)
+                    .attr("y", rect.y)
+                    .attr("transform", `rotate(${node.angle})`)
                     .attr("class", "barChart")
 
-                if (i === node.data.barChart.length - 1) {
-                   nodeElement
+                if (i === node.data.data.barChart.length - 1) {
+                    nodeElement
                         .append("text")
                         .attr("class", "addBarChartLabel")
                         .attr("dx", totalWidth + 10)
@@ -1201,8 +1195,68 @@ const radial = function () {
         }
     }
 
+    function save() {
+        const tree = []
+        data.tree.eachBefore(d => {
+            const node = {
+                source: d.parent ? d.parent.data.id : null,
+                target: d.data.id,
+                value: d.data.data.value,
+                color: d.data.data.color,
+                barChart: d.data.data.barChart
+            }
+            tree.push(node)
+        })
+
+        data.input.links = tree
+
+        return {
+            type,
+            data: {
+                tree,
+                input: data.input
+            },
+            graph: {
+                nodeSize: graph.nodeSize,
+                style: graph.style,
+                scale: scaler
+            },
+            canvas: {
+                width: canvas.width,
+                height: canvas.height,
+                margin: canvas.margin,
+                zoom: canvas.zoom
+            }
+        }
+    }
+
+    function load(container, save) {
+        scaler.linear = save.graph.scale.linear
+        scaler.log = save.graph.scale.log
+
+        graph.style = save.graph.style
+        graph.nodeSize = save.graph.nodeSize
+
+        canvas.margin.top = save.canvas.margin.top
+        canvas.margin.bottom = save.canvas.margin.top
+        canvas.margin.left = save.canvas.margin.left
+        canvas.margin.right = save.canvas.margin.right
+
+        canvas.zoom = save.canvas.zoom
+
+        scaler.linear = linearScale(save.graph.scale.linear)
+        scaler.log = logScale(save.graph.scale.log)
+        graph.scale = scaler.linear
+
+        let view = build(save.data.input)
+        draw(container, view.tree)
+
+        addNodeStyle()
+        addLinkStyle()
+    }
+
     return {
-        type: 'radial',
+        type,
         context,
         build,
         draw,
@@ -1226,6 +1280,9 @@ const radial = function () {
         buildBarChart,
         applyFilter,
         isDraw,
-        addSpread
+        addSpread,
+
+        save,
+        load
     }
 }()

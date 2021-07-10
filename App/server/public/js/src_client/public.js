@@ -68,7 +68,7 @@ function setupRepresentationButtons() {
             let graph = radial.build(data)
             setupRadialGraphConfiguration()
             view = radial
-            radial.draw('#container', graph.root)
+            radial.draw('#container', graph.tree)
 
             changeNodeColor(radial.changeNodeColor, radial.getNodes())
             changeNodeSize(radial.changeNodeSize)
@@ -85,7 +85,7 @@ function setupRepresentationButtons() {
             let graph = dendrogram.build(data)
             setupDendrogramGraphConfiguration()
             view = dendrogram
-            dendrogram.draw('#container', graph.root)
+            dendrogram.draw('#container', graph.tree)
 
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
@@ -126,6 +126,38 @@ function setupData() {
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
     document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
+    document.getElementById('save')
+        .addEventListener('click', () => {
+            let save = radial.save()
+            downloadFile('save.json', JSON.stringify(save))
+        })
+    document.getElementById('load')
+        .addEventListener('click', () => {
+            let save = document.getElementById('loadFile').files[0]
+            save.text().then(text => {
+                let save = JSON.parse(text)
+                switch (save.type) {
+                    case 'dendrogram':
+                        loadView(dendrogram, save)
+                        setupDendrogramGraphConfiguration()
+                        break;
+                    case 'radial':
+                        console.log(save)
+                        loadView(radial, save)
+                        setupRadialGraphConfiguration()
+                        break;
+                }
+            })
+        })
+}
+
+function loadView(view, save) {
+    view.load('#container', save)
+    setupRadialGraphConfiguration()
+    changeNodeColor(view.changeNodeColor, view.getNodes())
+    changeNodeSize(view.changeNodeSize)
+    changeLinkSize(view.changeLinkSize)
+    changeLabelsSize(view.changeLabelsSize)
 }
 
 /********************* Setup Navbar UI *********************/
@@ -1093,7 +1125,7 @@ function linkToTree() {
             setupDendrogramGraphConfiguration()
             view = dendrogram
             let graph = dendrogram.build(data)
-            dendrogram.draw('#container', graph.root)
+            dendrogram.draw('#container', graph.tree)
 
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
@@ -1146,7 +1178,7 @@ function linkToTree() {
             setupRadialGraphConfiguration()
             view = radial
             let graph = radial.build(data)
-            radial.draw('#container', graph.root)
+            radial.draw('#container', graph.tree)
 
             radial.addNodeStyle()
             radial.addLinkStyle()

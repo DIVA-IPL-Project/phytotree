@@ -100,9 +100,7 @@ const dendrogram = function () {
     function build(input) {
         if (!input) throw new Error('Please insert tree file first.')
         data.input = input
-        const strat = d3.stratify()
-            .id(d => d.target)
-            .parentId(d => d.source)(input.links);
+        const strat = d3.stratify().id(d => d.target).parentId(d => d.source)(input.links);
 
         // Build Tree
         data.tree = d3.hierarchy(strat, d => d.children)
@@ -1392,7 +1390,6 @@ const dendrogram = function () {
         canvas.margin.right = save.canvas.margin.right
 
         canvas.zoom = save.canvas.zoom
-
 
         scaler.linear = linearScale(save.graph.scale.linear)
         scaler.log = logScale(save.graph.scale.log)

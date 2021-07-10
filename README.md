@@ -8,11 +8,11 @@ The tree visualization is done using Data Driven Documents ([D3.js](https://d3js
 ## Visualization Examples
 ### Dendrogram  
 
-<img src="https://github.com/AdrVB/Radial-Dendrogram-Visualization/blob/main/dendrogram.png" width="1000">
+<img src="https://github.com/AdrVB/Radial-Dendrogram-Visualization/blob/main/docs/dendrogram.png" width="1000">
 
 ### Radial  
 
-<img src="https://github.com/AdrVB/Radial-Dendrogram-Visualization/blob/main/radial.png" width="1000" height="700">
+<img src="https://github.com/AdrVB/Radial-Dendrogram-Visualization/blob/main/docs/radial.png" width="1000" height="700">
 
 ## Features
 + Tree visualization in Dendrogram, Radial and Circular Radial formats

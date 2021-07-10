@@ -1221,9 +1221,6 @@ const radial = function () {
                 scale: scaler
             },
             canvas: {
-                width: canvas.width,
-                height: canvas.height,
-                margin: canvas.margin,
                 zoom: canvas.zoom
             }
         }
@@ -1235,11 +1232,6 @@ const radial = function () {
 
         graph.style = save.graph.style
         graph.nodeSize = save.graph.nodeSize
-
-        canvas.margin.top = save.canvas.margin.top
-        canvas.margin.bottom = save.canvas.margin.top
-        canvas.margin.left = save.canvas.margin.left
-        canvas.margin.right = save.canvas.margin.right
 
         canvas.zoom = save.canvas.zoom
 

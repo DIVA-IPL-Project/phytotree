@@ -1381,11 +1381,6 @@ const dendrogram = function () {
         graph.style = save.graph.style
         graph.nodeSize = save.graph.nodeSize
 
-        canvas.margin.top = save.canvas.margin.top
-        canvas.margin.bottom = save.canvas.margin.top
-        canvas.margin.left = save.canvas.margin.left
-        canvas.margin.right = save.canvas.margin.right
-
         canvas.zoom = save.canvas.zoom
 
         scaler.linear = linearScale(save.graph.scale.linear)

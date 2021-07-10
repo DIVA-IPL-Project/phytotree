@@ -1,7 +1,9 @@
 # Radial and Dendrogram Visualization for Phylogenetic Trees
 Radial and Dendrogram Visualization for Phylogenetic Trees is a modular solution for phylogeneric tree visualization
 in **Dendrogram** and **Radial** formats. Can be used in applications such as PHYLOViZ, GrapeTree, Phylo.io, etc.   
-The tree visualization is done using Data Driven Documents ([D3.js](https://d3js.org/)), HTML and CSS.
+The tree visualization is done using Data Driven Documents ([D3.js](https://d3js.org/)), Javascript, HTML and CSS.
+
+[Docs](https://github.com/AdrVB/Radial-Dendrogram-Visualization/wiki)
 
 ## Visualization Examples
 ### Dendrogram  

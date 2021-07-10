@@ -15,12 +15,14 @@ function build_app(arg){
             app.use(bodyParser.json({limit: "50mb"}))
 
             app.use('/api', routesApi)
-            app.use(routesWeb.init_path('lib/views/home.html').init_router())
+
+            app.use(routesWeb.init_path(__dirname + '\\lib\\views\\home.html').init_router())
 
             app.listen(PORT, function (err) {
                 if (err) console.log(err);
                 console.log("Server listening on PORT", PORT);
             })
+
             break
         }
         case '-client': {
@@ -30,12 +32,13 @@ function build_app(arg){
             app.use(bodyParser.json({limit: "50mb"}))
 
             app.use('/api', routesApi)
-            app.use(routesWeb.init_path('lib/views/home_cs.html').init_router())
+            app.use(routesWeb.init_path(__dirname + '\\lib\\views\\home_cs.html').init_router())
 
             app.listen(PORT, function (err) {
                 if (err) console.log(err);
                 console.log("Server listening on PORT", PORT);
             })
+
             break
         }
         default:

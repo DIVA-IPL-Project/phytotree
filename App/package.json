@@ -1,0 +1,23 @@
+{
+  "name": "radial-dendrogram-visualization",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start" : "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdrVB/Radial-Dendrogram-Visualization.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdrVB/Radial-Dendrogram-Visualization/issues"
+  },
+  "homepage": "https://github.com/AdrVB/Radial-Dendrogram-Visualization#readme",
+  "devDependencies": {
+    "electron": "^13.1.6"
+  }
+}

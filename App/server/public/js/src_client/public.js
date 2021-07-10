@@ -1215,7 +1215,6 @@ function sendNewickData() {
             document.getElementById('idPrfBt').style.display = "block"
             document.getElementById('formFilePro').style.display = "block"
         } catch (err) {
-            //todo
             alertMsg(err.message)
         }
     })
@@ -1247,7 +1246,6 @@ function sendProfileData() {
             document.getElementById('formFileIso').style.display = "block";
             document.getElementById('idIsoBt').style.display = "block";
         } catch (err) {
-            //todo
             alertMsg(err.message)
         }
     })
@@ -1276,7 +1274,6 @@ function sendIsolateData() {
             render.set_isolates_data(iso)
             data = await render.getRenderData()
         } catch (err) {
-            //todo
             alertMsg(err.message)
         }
     })
@@ -1291,7 +1288,6 @@ async function sendNwkData() {
         document.getElementById('radButton').style.display = "block"
         document.getElementById('denButton').style.display = "block"
     } catch (err) {
-        //todo
         alertMsg(err.message)
     }
 }

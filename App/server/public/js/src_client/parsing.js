@@ -41,11 +41,11 @@ const parser = function () {
                 case ';':
                     links.push({
                         source: null,
-                        target: tree.name,
+                        target: tree.key,
                         value: tree.length
                     })
                     nodes.push({
-                        name: tree.name
+                        key: tree.key
                     })
                     idx = 0
                     map = new Map()
@@ -53,17 +53,17 @@ const parser = function () {
                 default:
                     let node = token.split(':')
                     const name = validName(node[0])
-                    tree.name = name
+                    tree.key = name
                     tree.length = parseFloat(node[1] ? node[1].split('[')[0] : 0)
                     if (tree.children) {
                         for (let j = 0; j < tree.children.length; j++) {
                             links.push({
                                 source: name,
-                                target: tree.children[j].name,
+                                target: tree.children[j].key,
                                 value: tree.children[j].length
                             })
                             nodes.push({
-                                name: tree.children[j].name
+                                key: tree.children[j].key
                             })
                         }
                     }
@@ -71,7 +71,6 @@ const parser = function () {
         }
         idx = 0
         map = new Map()
-        //return { links, nodes } // todo throw err invalid format
         throw error(new Error('; missing at the end'), 400)
     }
 

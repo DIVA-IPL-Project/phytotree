@@ -1,4 +1,4 @@
-const render = require('../service/data_rendering')
+const render = require('../service/data_render')
 const Router = require('express').Router
 const router = Router()
 

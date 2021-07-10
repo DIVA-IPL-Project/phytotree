@@ -50,18 +50,6 @@ function setupTabs() {
 }
 
 function setupRepresentationButtons() {
-    const circularRadialButton = document.querySelector('.radial-btn')
-    circularRadialButton.addEventListener('click', () => {
-        try {
-            let graph = circularRadial.build(data)
-            hideGraphConfig()
-            view = circularRadial
-            circularRadial.draw('#container', graph.root)
-        } catch (err) {
-            setUpError(err.message, 'treeError', 'containerError')
-        }
-    })
-
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
         try {
@@ -167,21 +155,6 @@ function loadView(view, save) {
  */
 function showGraphConfig() {
     document.getElementById('graphConfig').style.display = "grid";
-}
-
-/**
- * Removes buttons only applied for dendrogram.
- */
-function hideGraphConfig() {
-    document.getElementById('graphConfig').style.display = "none";
-
-    if (document.querySelector('.horizontalScale')) {
-        document.querySelector('.horizontalScale').remove();
-    }
-    if (document.querySelector('.scaleText')) {
-        document.querySelector('.scaleText').remove();
-    }
-    //horizontalScaleVisible = false;
 }
 
 function setupDendrogramGraphConfiguration() {
@@ -519,30 +492,6 @@ function setupScaleBtn(elem, func) {
         return {mDown, mUp}
     }
 }
-
-
-/********************* Data UI *********************/
-
-function showDataPart() {
-    document.getElementById('formFileNw').style.display = "block";
-    document.getElementById('idNwkBt').style.display = "block";
-    document.getElementById('nwk').style.display = "block";
-    document.getElementById('nwkBtn').style.display = "block";
-    document.getElementById('textData').style.display = "block";
-}
-
-function hideDataPart() {
-    document.getElementById('formFileNw').style.display = "none";
-    document.getElementById('idNwkBt').style.display = "none";
-    //document.getElementById('formFilePro').style.display = "none";
-    //document.getElementById('idPrfBt').style.display = "none";
-    //document.getElementById('formFileIso').style.display = "none";
-    //document.getElementById('idIsoBt').style.display = "none";
-    document.getElementById('nwk').style.display = "none";
-    document.getElementById('nwkBtn').style.display = "none";
-    document.getElementById('textData').style.display = "none";
-}
-
 
 /********************* Tables *********************/
 
@@ -1297,7 +1246,7 @@ function sendProfileData() {
 
     const ext = profile.name.split('.')
     if (ext[1] !== 'tab') {
-        alertMsg('Extension for profile file must be txt.')
+        alertMsg('Extension for profile file must be tab.')
         return
     }
 
@@ -1332,7 +1281,7 @@ function sendIsolateData() {
 
     const ext = isolate.name.split('.')
     if (ext[1] !== 'tab') {
-        alertMsg('Extension for isolate file must be txt.')
+        alertMsg('Extension for isolate file must be tab.')
         return
     }
 

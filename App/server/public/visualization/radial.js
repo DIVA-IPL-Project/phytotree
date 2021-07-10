@@ -88,9 +88,7 @@ const radial = function () {
     function build(input) {
         if(!input) throw new Error('Please insert tree file first.')
         data.input = input
-        console.log(input)
         const strat = d3.stratify().id(d => d.target).parentId(d => d.source)(input.links);
-        console.log(strat)
         data.tree = d3.hierarchy(strat, d => d.children);
         context.build = radial()
 

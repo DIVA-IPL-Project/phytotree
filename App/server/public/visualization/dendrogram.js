@@ -1280,7 +1280,6 @@ const dendrogram = function () {
                     .on("mouseout", mouseOveredDendrogram(false))
             })
         }
-        console.log(data.tree)
     }
 
     function rectOf(node, rect) {

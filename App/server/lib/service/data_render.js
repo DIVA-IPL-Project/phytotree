@@ -1,6 +1,6 @@
 'use strict'
 
-const nwkParser = require('./parsing/newickParser')
+const nwkParser = require('./parsing')
 
 /* Tree Part */
 let tree_data
@@ -221,9 +221,7 @@ async function getRenderData() {
         const data_parsing = nwkParser(tree_data)
 
         data.links = data_parsing.links
-        data.nodes = data_parsing.nodes.map(obj => {
-            return {key: obj.name}
-        })
+        data.nodes = data_parsing.nodes
     }
     if (profile_data_change) {
         if (profiles_data !== undefined && profiles_id !== undefined) {

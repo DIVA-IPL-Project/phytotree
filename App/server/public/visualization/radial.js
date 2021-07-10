@@ -216,7 +216,8 @@ const radial = function () {
 
         addNodeStyle()
         addLinkStyle()
-        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+        updateInternalLabels(graph.style.parentLabels)
+        updateLinkLabels(graph.style.linkLabels)
     }
 
     function expandAux(children) {

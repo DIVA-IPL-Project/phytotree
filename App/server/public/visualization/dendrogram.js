@@ -495,20 +495,6 @@ const dendrogram = function () {
     function alignNodes() {
         graph.style.align = !graph.style.align
 
-        // if (graph.style.align)
-        //     data.tree.eachBefore(d => {
-        //         let horizontal = graph.scale.horizontal
-        //         d.y = d.depth * (horizontal.value * horizontal.scalingFactor)
-        //         if (d.parent) updateLinkLabels(graph.style.linkLabels)
-        //     })
-        // else data.tree.eachBefore(d => {
-        //     if (d.parent) {
-        //         let horizontal = graph.scale.horizontal
-        //         d.y = (horizontal.value * horizontal.scalingFactor * d.data.data.value) + d.parent.y
-        //
-        //         updateLinkLabels(graph.style.linkLabels)
-        //     }
-        // })
         applyScale(data.tree)
         update(data.tree)
         applyScaleText()

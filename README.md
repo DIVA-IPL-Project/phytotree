@@ -21,7 +21,7 @@ It was created an Electron App, that uses the visualization modules.
 </p>
 
 ## Features
-+ Tree visualization in Dendrogram, Radial and Circular Radial formats
++ Tree visualization in Dendrogram and Radial formats
 + Add labels to the nodes and links
 + Colapse and expand nodes
 + Change node color and size
@@ -31,15 +31,6 @@ It was created an Electron App, that uses the visualization modules.
 + Integration of complementary data (year, location, sex, etc)
 + Save a report with the tree and statistics (in pdf format)
 + Save the current study (in a JSON file)
-
-## Electron App
-It was developed an Javascript application, using Electron to test the visualization modules.  
-The application receives tree types of input files:
-+ Tree file (.txt)
-+ Profiles file (.tab)
-+ Isolates file (.tab)
-
-The data processing and parsing can be done in server ou client side.
 
 ## Contacts
 + Adriano Baptista, a46072@alunos.isel.pt

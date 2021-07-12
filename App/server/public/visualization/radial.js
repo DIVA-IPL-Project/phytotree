@@ -229,7 +229,7 @@ const radial = function () {
                 expandAux(child.children)
             }
 
-            const linkContainer = linksAttr(graph.links.data(child))
+            linksAttr(graph.links.data(child))
             const nodeContainer = nodesAttrs(graph.nodes.data(child))
 
             if (graph.style.barChart) {
@@ -376,7 +376,7 @@ const radial = function () {
         addNodeStyle()
         addLinkStyle()
 
-        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+        updateInternalLabels(graph.style.parentLabels)
     }
 
     /**
@@ -403,21 +403,21 @@ const radial = function () {
         addNodeStyle()
         addLinkStyle()
 
-        if (graph.style.parentLabels) addInternalLabelsAfterUpdate()
+        updateInternalLabels(graph.style.parentLabels)
     }
 
     function rescale(increment) {
         if (increment) {
-            if (graph.scale.value > graph.scale.limits[0]) {
+            if (graph.scale.value < graph.scale.limits[1]) {
                 let last = graph.scale.value
-                graph.scale.decrement()
+                graph.scale.increment()
                 setNewPositions(last)
                 applyScaleText()
             }
         } else {
-            if (graph.scale.value < graph.scale.limits[1]) {
+            if (graph.scale.value > graph.scale.limits[0]) {
                 let last = graph.scale.value
-                graph.scale.increment()
+                graph.scale.decrement()
                 setNewPositions(last)
                 applyScaleText()
             }
@@ -726,7 +726,7 @@ const radial = function () {
         addNodeStyle()
         addLinkStyle()
 
-        const links = canvas.container.select('svg').select('#graph').selectAll(".gLink")
+        canvas.container.select('svg').select('#graph').selectAll(".gLink")
         updateLinkLabels(graph.style.linkLabels)
         updateInternalLabels(graph.style.parentLabels)
     }

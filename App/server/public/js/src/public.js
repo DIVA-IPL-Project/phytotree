@@ -130,7 +130,6 @@ function setupData() {
                         setupDendrogramGraphConfiguration()
                         break;
                     case 'radial':
-                        console.log(save)
                         loadView(radial, save)
                         setupRadialGraphConfiguration()
                         break;
@@ -1220,7 +1219,6 @@ function sendNewickData() {
                 }
             }).then(() => {
                 //
-                document.getElementById('nwkButton').style.display = "block"
                 document.getElementById('radButton').style.display = "block"
                 document.getElementById('denButton').style.display = "block"
                 //
@@ -1320,7 +1318,6 @@ function sendNwkData() {
             }
         }).then(() => {
         //
-        document.getElementById('nwkButton').style.display = "block"
         document.getElementById('radButton').style.display = "block"
         document.getElementById('denButton').style.display = "block"
         //

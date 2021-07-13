@@ -1290,7 +1290,7 @@ async function sendNwkData() {
 }
 
 function downloadSVG() {
-    download("view.pdf")
+    downloadReport("view.pdf")
 }
 
 function downloadFile(filename, text) {
@@ -1328,7 +1328,7 @@ function alertMsg(message, kind) {
 
 
 /** Download File **/
-function download(filename) {
+function downloadReport(filename) {
     // Create the pdf document
     const doc = new jsPDF('p', 'pt', 'a4')
     doc.setProperties({ title: "Report" })

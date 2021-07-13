@@ -31,9 +31,15 @@
     "electron-builder": "^22.11.7"
   },
   "build": {
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "nsis"
+    },
     "appId": "app.ps-g03-2021v.app",
     "productName": "Radial-Dendrogram-Visualization",
-    "target": "NSIS",
     "directories": {
       "output": "build"
     },
@@ -41,6 +47,23 @@
       "allowToChangeInstallationDirectory": true,
       "oneClick": false
     },
-    "files": ["!build${/*}", "!dist${/*}"]
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "files": [
+      "!build${/*}",
+      "!dist${/*}"
+    ]
   }
 }

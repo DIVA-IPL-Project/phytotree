@@ -113,7 +113,15 @@ function setupData() {
     document.getElementById('idPrfBt').addEventListener('click', sendProfileData)
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
-    document.getElementById('downloadSVG').addEventListener('click', downloadSVG)
+    document.getElementById('downloadSVG').addEventListener('click', () => {
+        document.getElementById("reportName").style.display = "block"
+        document.getElementById("labelReport").style.display = "block"
+        document.getElementById("downloadSVG").style.display = "none"
+        document.getElementById("reportName").addEventListener("change", () => {
+            if (document.getElementById("reportName").value === "") return
+            downloadSVG(document.getElementById("reportName").value)
+        })
+    })
     document.getElementById('save')
         .addEventListener('click', () => {
             let save = view.save()
@@ -1100,9 +1108,9 @@ function linkToTree() {
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
         pieChart.getElementById('pieChart').setAttribute('transform',
-            'translate(1000, 500)')
+            'translate(1000, 400)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(790, 390)')
+            'translate(790, 290)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
@@ -1289,8 +1297,8 @@ async function sendNwkData() {
     }
 }
 
-function downloadSVG() {
-    downloadReport("view.pdf")
+function downloadSVG(title) {
+    downloadReport("report.pdf", title)
 }
 
 function downloadFile(filename, text) {
@@ -1328,12 +1336,15 @@ function alertMsg(message, kind) {
 
 
 /** Download File **/
-function downloadReport(filename) {
+function downloadReport(filename, title) {
     // Create the pdf document
     const doc = new jsPDF('p', 'pt', 'a4')
     doc.setProperties({ title: "Report" })
-    doc.setFontSize(28)
-    doc.text('Report', 290, 40, { align: 'center' })
+    doc.setFontSize(24)
+    doc.text(title, 290, 40, { align: 'center' })
+    doc.setFontSize(10)
+    doc.text('Total number of profiles: ' + view.getNodes().length.toString(), 100, 500)
+    doc.text('Number of isolates: ' + sections.length.toString(), 100, 530)
 
     const svg = document.getHTML(view.context.svg.element.node(), true)
     const parser = new DOMParser()
@@ -1364,6 +1375,10 @@ function downloadReport(filename) {
         doc.addImage(uri, 'PNG', 100, 650, 700, 200)
         doc.save(filename)
     })
+    document.getElementById("downloadSVG").style.display = "block"
+    document.getElementById("reportName").style.display = "none"
+    document.getElementById("labelReport").style.display = "none"
+    document.getElementById("reportName").value = ""
 }
 
 document.getHTML = function (who, deep) {

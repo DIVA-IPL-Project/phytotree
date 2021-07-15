@@ -57,8 +57,12 @@
 
                 <!-- Views Buttons -->
                 <div class="btn-group-vertical d-grid justify-content-center">
-                    <button type="button" class="radialTree-btn btn btn btn-light mt-1" id="radButton" style="display: none">Radial</button>
-                    <button type="button" class="dendro-btn btn btn btn-light mt-1" id="denButton" style="display: none">Dendrogram</button>
+                    <button type="button" class="radialTree-btn btn btn btn-light mt-1" id="radButton"
+                            style="display: none">Radial
+                    </button>
+                    <button type="button" class="dendro-btn btn btn btn-light mt-1" id="denButton"
+                            style="display: none">Dendrogram
+                    </button>
                 </div>
 
                 <!-- Graph Config-->
@@ -157,6 +161,11 @@
                     </div>
 
                     <div class="d-grid gap-2 mt-2">
+                        <label id="labelReport" for="reportName" style="display:none;">
+                            Insert the report title and then press enter
+                        </label>
+                        <input id="reportName" type="text" class="form-control" placeholder="Report title"
+                               aria-label="Report title" aria-describedby="basic-addon2" style="display: none">
                         <button id="downloadSVG" type="button" class="btn btn-outline-secondary btn-sm">
                             Download Report
                         </button>
@@ -191,10 +200,14 @@
             <table class="table table-bordered table-hover" id="table_isolate"></table>
         </div>
         <div style="position: relative">
-            <button class="btn btn-light" id="linktreebuttonD" style="display: none; position: absolute; top: 40px; left: 50px">
-                Link to Dendrogram</button>
-            <button class="btn btn-light" id="linktreebuttonR" style="display: none; position: absolute; top: 90px; left: 50px">
-                Link to Radial</button>
+            <button class="btn btn-light" id="linktreebuttonD"
+                    style="display: none; position: absolute; top: 40px; left: 50px">
+                Link to Dendrogram
+            </button>
+            <button class="btn btn-light" id="linktreebuttonR"
+                    style="display: none; position: absolute; top: 90px; left: 50px">
+                Link to Radial
+            </button>
         </div>
         <div class="d-flex justify-content-center">
             <svg id="svg_isolate" width="1800" height="500"/>

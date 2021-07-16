@@ -162,11 +162,14 @@ const dendrogram = function () {
         if (graph.nodes && !graph.nodes.empty()) graph.nodes.remove()
         if (graph.links && !graph.links.empty()) graph.links.remove()
 
+        graph.links = graph.element.append('g').attr('id', 'linksContainer')
+        graph.nodes = graph.element.append('g').attr('id', 'nodesContainer')
+
         let nodes = tree.descendants()
         let links = tree.descendants().slice(1)
 
-        graph.links = linksAttr(graph.element.selectAll('.link').data(links, d => d.data.id).enter())
-        graph.nodes = nodesAttrs(graph.element.selectAll('.node').data(nodes).enter())
+        linksAttr(graph.links.selectAll('.link').data(links, d => d.data.id).enter())
+        nodesAttrs(graph.nodes.selectAll('.node').data(nodes).enter())
 
         if (!graph.style.barChart) updateLeafLabels(graph.style.leafLabels)
         else {
@@ -204,7 +207,7 @@ const dendrogram = function () {
         let {point, label} = getTriangle(parent)
 
         graph.element.select(`#node${parent.data.id}`).remove()
-        let node = nodesAttrs(graph.element.data(parent))
+        let node = nodesAttrs(graph.nodes.data(parent))
 
         node.append('polygon')
             .attr('points', d => `0,0 100,${point} 100,${-point}`)
@@ -219,8 +222,8 @@ const dendrogram = function () {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
             let id = child.data.id !== undefined ? child.data.id : child.id
-            graph.element.select(`#node${id}`).remove()
-            graph.element.select(`#link${id}`).remove()
+            graph.nodes.select(`#node${id}`).remove()
+            graph.links.select(`#link${id}`).remove()
             if (child.children) {
                 collapseAux(child.children)
             }
@@ -235,7 +238,7 @@ const dendrogram = function () {
         expandAux(children)
 
         graph.element.select(`#node${parent.data.id}`).remove()
-        nodesAttrs(graph.element.data(parent))
+        nodesAttrs(graph.nodes.data(parent))
 
         addNodeStyle()
         addLinkStyle()
@@ -253,8 +256,8 @@ const dendrogram = function () {
                 expandAux(child.children)
             }
 
-            const linkContainer = linksAttr(graph.element.data(child))
-            const nodeContainer = nodesAttrs(graph.element.data(child))
+            linksAttr(graph.links.data(child))
+            const nodeContainer = nodesAttrs(graph.nodes.data(child))
 
             if (graph.style.barChart) {
                 addBarCharts(child)
@@ -342,7 +345,7 @@ const dendrogram = function () {
      * Adds custom style to the nodes.
      */
     function addNodeStyle() {
-        graph.element
+        graph.nodes
             .selectAll("circle")
             .style("fill", d => d.data.data.color || '#000000')
             .style("stroke", d => d.data.data.color || '#000000')
@@ -353,7 +356,7 @@ const dendrogram = function () {
      * Adds custom style to the links.
      */
     function addLinkStyle() {
-        graph.element
+        graph.links
             .selectAll(".linkPath")
             .style("fill", "none")
             .style("stroke", "darkgrey")
@@ -369,7 +372,7 @@ const dendrogram = function () {
     function changeNodeSize(value) {
         graph.style.nodes_size = value
 
-        graph.element
+        graph.nodes
             .selectAll("circle")
             .attr("r", value);
     }
@@ -381,7 +384,7 @@ const dendrogram = function () {
     function changeLinkSize(value) {
         graph.style.links_size = value
 
-        graph.element
+        graph.links
             .selectAll(".linkPath")
             .style("stroke-width", value)
     }
@@ -457,11 +460,12 @@ const dendrogram = function () {
      * Adds internal labels on the nodes, after an update.
      */
     function updateInternalLabels(active) {
-        graph.element.selectAll(".node--internal text").remove()
+        graph.element.selectAll(".internal-label").remove()
         if (active) {
             graph.element
                 .selectAll(".node--internal")
                 .append("text")
+                .attr('class', ' internal-label')
                 .attr("dy", 20)
                 .attr("x", -13)
                 .style("text-anchor", "end")
@@ -514,9 +518,7 @@ const dendrogram = function () {
      */
     function getNodes() {
         const nodes = []
-        graph.nodes._groups[0].forEach(node => {
-            nodes.push(node.attributes.id.value.slice(4, node.length))
-        })
+        data.tree.each(d => nodes.push(d.data.id))
         return nodes
     }
 

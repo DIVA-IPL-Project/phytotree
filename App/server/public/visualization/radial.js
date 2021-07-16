@@ -624,11 +624,12 @@ const radial = function () {
      * Adds internal labels on the nodes, after an update.
      */
     function updateInternalLabels(active) {
-        graph.element.selectAll(".node--internal text").remove()
+        graph.element.selectAll(".internal-label").remove()
         if (active) {
             graph.element
                 .selectAll(".node--internal")
                 .append("text")
+                .attr("class", "internal-label")
                 .attr("x", -13)
                 .attr("y", 13)
                 .style("text-anchor", "end")

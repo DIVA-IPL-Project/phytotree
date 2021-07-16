@@ -230,8 +230,8 @@ function setupRadialGraphConfiguration() {
     let left = document.getElementById('leftButton')
     let right = document.getElementById('rightButton')
 
-    setupScaleBtn(left, () => radial.rescale(true))
-    setupScaleBtn(right, () => radial.rescale(false))
+    setupScaleBtn(left, () => radial.rescale(false))
+    setupScaleBtn(right, () => radial.rescale(true))
 
 }
 
@@ -496,7 +496,7 @@ function setupScaleBtn(elem, func) {
             clearInterval(id);
         }
 
-        return {mDown, mUp}
+        return { mDown, mUp }
     }
 }
 
@@ -719,7 +719,7 @@ function clickHeader(header, id, categories, isolate) {
 
     let total = 0
     counts_ordered.forEach(c => total += c.value)
-    counts_ordered.push({total: total})
+    counts_ordered.push({ total: total })
 
     sections = counts
     constructPieChart(counts_ordered, names, id)
@@ -1200,7 +1200,7 @@ function sendNewickData() {
     }
 
 
-    let headers = {'Content-Type': 'application/json'}
+    let headers = { 'Content-Type': 'application/json' }
     let nwk = document.getElementById('formFileNw').files[0]
 
     const ext = nwk.name.split('.')
@@ -1210,12 +1210,12 @@ function sendNewickData() {
     }
 
     nwk.text().then(newick => {
-        let body = JSON.stringify({data: newick})
-        return fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
+        let body = JSON.stringify({ data: newick })
+        return fetch('/api/update/newick', { method: 'post', body: body, headers: headers })
             .then(async res => {
                 try {
                     if (res.status === 500) alertMsg('error')
-                    let response = await fetch('/api/data', {headers: headers})
+                    let response = await fetch('/api/data', { headers: headers })
                     if (!response.ok) {
                         let err = await response.json()
                         alertMsg(err.message)
@@ -1247,7 +1247,7 @@ function sendProfileData() {
     is_table_profile_create = false
     //
 
-    let headers = {'Content-Type': 'application/json'}
+    let headers = { 'Content-Type': 'application/json' }
     let profile = document.getElementById('formFilePro').files[0]
 
     const ext = profile.name.split('.')
@@ -1257,9 +1257,9 @@ function sendProfileData() {
     }
 
     profile.text().then(prof => {
-        let body = JSON.stringify({data: prof})
-        fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).then(() => {
-            fetch('/api/data', {headers: headers})
+        let body = JSON.stringify({ data: prof })
+        fetch('/api/update/profiles', { method: 'post', body: body, headers: headers }).then(() => {
+            fetch('/api/data', { headers: headers })
                 .then(async res => {
                     if (res.status === 500) alertMsg('error')
                     data = await res.json()
@@ -1282,7 +1282,7 @@ function sendIsolateData() {
     is_table_isolate_create = false
     //
 
-    let headers = {'Content-Type': 'application/json'}
+    let headers = { 'Content-Type': 'application/json' }
     let isolate = document.getElementById('formFileIso').files[0]
 
     const ext = isolate.name.split('.')
@@ -1293,9 +1293,9 @@ function sendIsolateData() {
 
     isolate.text().then(iso => {
 
-        let body = JSON.stringify({data: iso})
-        fetch('/api/update/isolates', {method: 'post', body: body, headers: headers}).then(() => {
-            fetch('/api/data', {headers: headers})
+        let body = JSON.stringify({ data: iso })
+        fetch('/api/update/isolates', { method: 'post', body: body, headers: headers }).then(() => {
+            fetch('/api/data', { headers: headers })
                 .then(async res => {
                     if (res.status === 500) alertMsg('error')
                     data = await res.json()
@@ -1307,14 +1307,14 @@ function sendIsolateData() {
 
 function sendNwkData() {
     let nwk = document.getElementById('nwk').value
-    let body = JSON.stringify({data: nwk})
-    let headers = {'Content-Type': 'application/json'}
+    let body = JSON.stringify({ data: nwk })
+    let headers = { 'Content-Type': 'application/json' }
 
-    fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
+    fetch('/api/update/newick', { method: 'post', body: body, headers: headers })
         .then(async res => {
             try {
                 if (res.status === 500) alertMsg('error')
-                let response = await fetch('/api/data', {headers: headers})
+                let response = await fetch('/api/data', { headers: headers })
                 if (!response.ok) {
                     let err = await response.json()
                     alertMsg(err.message)
@@ -1325,11 +1325,11 @@ function sendNwkData() {
                 alertMsg(err)
             }
         }).then(() => {
-        //
-        document.getElementById('radButton').style.display = "block"
-        document.getElementById('denButton').style.display = "block"
-        //
-    }).catch(err => alertMsg(err))
+            //
+            document.getElementById('radButton').style.display = "block"
+            document.getElementById('denButton').style.display = "block"
+            //
+        }).catch(err => alertMsg(err))
 }
 
 function downloadSVG(title) {
@@ -1348,7 +1348,7 @@ function alertMsg(message, kind) {
                 </button>
                 ${message}
             </div>`
-    document.getElementById('buttonErr').addEventListener('click', ()=>{
+    document.getElementById('buttonErr').addEventListener('click', () => {
         document.getElementById('divErr').remove()
     })
 }

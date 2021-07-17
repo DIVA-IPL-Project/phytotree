@@ -59,15 +59,15 @@ function display_app(){
     document.getElementById('graphConfigId').style.display = 'none'
     document.getElementById('graphConfig').style.display = 'none'
 
-    document.getElementById('nodeColorId').remove()
-    document.getElementById('setColorId').remove()
-    document.getElementById('selectAllNodesId').remove()
-    document.getElementById('nodeSizeId').remove()
-    document.getElementById('rangeInputId').remove()
-    document.getElementById('linkThicknessId').remove()
-    document.getElementById('rangeInputLink').remove()
-    document.getElementById('labelsSizeId').remove()
-    document.getElementById('rangeInputLabel').remove()
+    document.getElementById('nodeColorId') !== null?document.getElementById('nodeColorId').remove() : () => {}
+    document.getElementById('setColorId') !== null?document.getElementById('setColorId').remove() : () =>{}
+    document.getElementById('selectAllNodesId') !== null?document.getElementById('selectAllNodesId').remove() : () =>{}
+    document.getElementById('nodeSizeId') !== null?document.getElementById('nodeSizeId').remove() : () =>{}
+    document.getElementById('rangeInputId') !== null?document.getElementById('rangeInputId').remove() : () =>{}
+    document.getElementById('linkThicknessId') !== null?document.getElementById('linkThicknessId').remove() : () =>{}
+    document.getElementById('rangeInputLink') !== null?document.getElementById('rangeInputLink').remove() : () =>{}
+    document.getElementById('labelsSizeId') !== null?document.getElementById('labelsSizeId').remove() : () =>{}
+    document.getElementById('rangeInputLabel') !== null?document.getElementById('rangeInputLabel').remove() : () =>{}
 
     reset_data()
 }
@@ -107,15 +107,15 @@ function display_test_app() {
     document.getElementById('graphConfigId').style.display = 'none'
     document.getElementById('graphConfig').style.display = 'none'
 
-    document.getElementById('nodeColorId').remove()
-    document.getElementById('setColorId').remove()
-    document.getElementById('selectAllNodesId').remove()
-    document.getElementById('nodeSizeId').remove()
-    document.getElementById('rangeInputId').remove()
-    document.getElementById('linkThicknessId').remove()
-    document.getElementById('rangeInputLink').remove()
-    document.getElementById('labelsSizeId').remove()
-    document.getElementById('rangeInputLabel').remove()
+    document.getElementById('nodeColorId') !== null?document.getElementById('nodeColorId').remove() : () => {}
+    document.getElementById('setColorId') !== null?document.getElementById('setColorId').remove() : () =>{}
+    document.getElementById('selectAllNodesId') !== null?document.getElementById('selectAllNodesId').remove() : () =>{}
+    document.getElementById('nodeSizeId') !== null?document.getElementById('nodeSizeId').remove() : () =>{}
+    document.getElementById('rangeInputId') !== null?document.getElementById('rangeInputId').remove() : () =>{}
+    document.getElementById('linkThicknessId') !== null?document.getElementById('linkThicknessId').remove() : () =>{}
+    document.getElementById('rangeInputLink') !== null?document.getElementById('rangeInputLink').remove() : () =>{}
+    document.getElementById('labelsSizeId') !== null?document.getElementById('labelsSizeId').remove() : () =>{}
+    document.getElementById('rangeInputLabel') !== null?document.getElementById('rangeInputLabel').remove() : () =>{}
 
     document.getElementById('nwk').style.display = 'none'
     document.getElementById('nwkBtn').style.display = 'none'
@@ -276,6 +276,7 @@ function setupData() {
 
 function loadView(view, save) {
     view.load('#container', save)
+    setupRadialGraphConfiguration()
     changeNodeColor(view.changeNodeColor, view.getNodes())
     changeNodeSize(view.changeNodeSize)
     changeLinkSize(view.changeLinkSize)
@@ -293,12 +294,6 @@ function showGraphConfig() {
 
 function setupDendrogramGraphConfiguration() {
     showGraphConfig()
-
-    const input = document.getElementById('search')
-    search(input, () => {
-        let value = input.value
-        dendrogram.search(value)
-    })
 
     const parentLabels = document.querySelector('.parentLabels'),
         alignNodes = document.querySelector('.align-nodes'),
@@ -339,12 +334,6 @@ function setupDendrogramGraphConfiguration() {
 
 function setupRadialGraphConfiguration() {
     showGraphConfig()
-
-    const input = document.getElementById('search')
-    search(input, () => {
-        let value = input.value
-        radial.search(value)
-    })
 
     const parentLabels = document.querySelector('.parentLabels'),
         alignNodes = document.querySelector('.align-nodes'),
@@ -650,22 +639,6 @@ function setupScaleBtn(elem, func) {
         }
 
         return {mDown, mUp}
-    }
-}
-
-function search(elem, func) {
-    let event = events()
-    elem.addEventListener('keyup', () => event())
-
-    function events() {
-        let id
-
-        function search() {
-            clearInterval(id)
-            id = setTimeout(func, 1000)
-        }
-
-        return search
     }
 }
 
@@ -1520,6 +1493,67 @@ function alertMsg(message, kind) {
     document.getElementById('buttonErr').addEventListener('click', () => {
         document.getElementById('divErr').remove()
     })
+}
+
+/** Download File **/
+function downloadReport(filename, title) {
+    // Create the pdf document
+    const doc = new jsPDF('p', 'pt', 'a4')
+    doc.setProperties({title: "Report"})
+    doc.setFontSize(24)
+    doc.text(title, 290, 40, {align: 'center'})
+    doc.setFontSize(10)
+    doc.text('Total number of profiles: ' + view.getNodes().length.toString(), 100, 500)
+    doc.text('Number of isolates: ' + sections.length.toString(), 100, 530)
+
+    const svg = document.getHTML(view.context.svg.element.node(), true)
+    const parser = new DOMParser()
+    const elem = parser.parseFromString(svg, "text/html").body
+    const graph = elem.children[0]
+
+    const clone = graph.cloneNode(true)
+    if (clone.childNodes[3]) {
+        clone.removeChild(clone.childNodes[3])
+    }
+
+    // Add the tree to the report
+    svgAsPngUri(clone, null).then(uri => {
+        const imgPropsW = document.getElementById("graph").getAttribute("width")
+        const imgPropsH = document.getElementById("graph").getAttribute("height")
+
+        const pdfWidth = doc.internal.pageSize.width
+        const pdfHeight = doc.internal.pageSize.height
+
+        const x = imgPropsW + 50
+        const y = imgPropsH + 70
+
+        doc.addImage(uri, 'PNG', x, y, pdfWidth, pdfHeight - 450)
+    })
+
+    // Add pie chart and legend to the report
+    svgAsPngUri(document.getElementById("svg_isolate"), null).then(uri => {
+        doc.addImage(uri, 'PNG', 100, 650, 700, 200)
+        doc.save(filename)
+    })
+    document.getElementById("downloadSVG").style.display = "block"
+    document.getElementById("reportName").style.display = "none"
+    document.getElementById("labelReport").style.display = "none"
+    document.getElementById("reportName").value = ""
+}
+
+function downloadFile(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
 }
 
 document.getHTML = function (who, deep) {

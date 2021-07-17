@@ -15,6 +15,134 @@ function load() {
 
 /********************* Setup UI *********************/
 
+function test_input_handler() {
+    const checkBox = document.getElementById('flexCheckDefault')
+    if (checkBox.checked === true) {
+        display_test_app()
+    } else {
+        display_app()
+    }
+}
+
+
+function display_app(){
+    document.getElementById('container').innerHTML = ''
+    document.getElementById('nwk').style.display = 'block'
+    document.getElementById('nwkBtn').style.display = 'block'
+    document.getElementById('formFileNw').style.display = 'block'
+    document.getElementById('idNwkBt').style.display = 'block'
+    document.getElementById('textData').style.display = 'block'
+
+    document.getElementById('radButton').style.display = 'none'
+    document.getElementById('denButton').style.display = 'none'
+
+    const parentLabels = document.querySelector('.parentLabels'),
+        alignNodes = document.querySelector('.align-nodes'),
+        linkLabels = document.querySelector('.linkLabels'),
+        linearScale = document.querySelector('.linearScale'),
+        logScale = document.querySelector('.logScale'),
+        spread = document.querySelector('.spread')
+
+    parentLabels.style.display = 'none'
+    alignNodes.style.display = 'none'
+    linkLabels.style.display = 'none'
+    linearScale.style.display = 'none'
+    logScale.style.display = 'none'
+    spread.style.display = 'none'
+
+    document.getElementById('upButton').style.display = 'none'
+    document.getElementById('downButton').style.display = 'none'
+    document.getElementById('leftButton').style.display = 'none'
+    document.getElementById('rightButton').style.display = 'none'
+
+    document.getElementById('labelLogScale').style.display = 'none'
+    document.getElementById('labelLinearScale').style.display = 'none'
+    document.getElementById('graphConfigId').style.display = 'none'
+    document.getElementById('graphConfig').style.display = 'none'
+
+    document.getElementById('nodeColorId').remove()
+    document.getElementById('setColorId').remove()
+    document.getElementById('selectAllNodesId').remove()
+    document.getElementById('nodeSizeId').remove()
+    document.getElementById('rangeInputId').remove()
+    document.getElementById('linkThicknessId').remove()
+    document.getElementById('rangeInputLink').remove()
+    document.getElementById('labelsSizeId').remove()
+    document.getElementById('rangeInputLabel').remove()
+
+    reset_data()
+}
+
+function display_test_app() {
+    document.getElementById('container').innerHTML = ''
+    document.getElementById('nwk').style.display = 'block'
+    document.getElementById('nwkBtn').style.display = 'block'
+    document.getElementById('formFileNw').style.display = 'block'
+    document.getElementById('idNwkBt').style.display = 'block'
+    document.getElementById('textData').style.display = 'block'
+
+    document.getElementById('radButton').style.display = 'none'
+    document.getElementById('denButton').style.display = 'none'
+
+    const parentLabels = document.querySelector('.parentLabels'),
+        alignNodes = document.querySelector('.align-nodes'),
+        linkLabels = document.querySelector('.linkLabels'),
+        linearScale = document.querySelector('.linearScale'),
+        logScale = document.querySelector('.logScale'),
+        spread = document.querySelector('.spread')
+
+    parentLabels.style.display = 'none'
+    alignNodes.style.display = 'none'
+    linkLabels.style.display = 'none'
+    linearScale.style.display = 'none'
+    logScale.style.display = 'none'
+    spread.style.display = 'none'
+
+    document.getElementById('upButton').style.display = 'none'
+    document.getElementById('downButton').style.display = 'none'
+    document.getElementById('leftButton').style.display = 'none'
+    document.getElementById('rightButton').style.display = 'none'
+
+    document.getElementById('labelLogScale').style.display = 'none'
+    document.getElementById('labelLinearScale').style.display = 'none'
+    document.getElementById('graphConfigId').style.display = 'none'
+    document.getElementById('graphConfig').style.display = 'none'
+
+    document.getElementById('nodeColorId').remove()
+    document.getElementById('setColorId').remove()
+    document.getElementById('selectAllNodesId').remove()
+    document.getElementById('nodeSizeId').remove()
+    document.getElementById('rangeInputId').remove()
+    document.getElementById('linkThicknessId').remove()
+    document.getElementById('rangeInputLink').remove()
+    document.getElementById('labelsSizeId').remove()
+    document.getElementById('rangeInputLabel').remove()
+
+    document.getElementById('nwk').style.display = 'none'
+    document.getElementById('nwkBtn').style.display = 'none'
+    document.getElementById('formFileNw').style.display = 'none'
+    document.getElementById('idNwkBt').style.display = 'none'
+    document.getElementById('textData').style.display = 'none'
+
+    document.getElementById('radButton').style.display = 'block'
+    document.getElementById('denButton').style.display = 'block'
+
+    set_up_test_data()
+}
+
+async function set_up_test_data() {
+    let headers = {'Content-Type': 'application/json'}
+    let response = await fetch('/api/default_data', {headers: headers})
+    data = await response.json()
+}
+
+function reset_data(){
+    data = []
+    is_table_profile_create = false
+    is_table_isolate_create = false
+}
+
+
 function setupTabs() {
     document.getElementById('profile-tab').addEventListener('click', () => {
         if (!is_table_profile_create) {
@@ -107,6 +235,7 @@ function setUpError(message, id, contentId) {
 }
 
 function setupData() {
+    document.getElementById('flexCheckDefault').addEventListener('click', test_input_handler)
     document.getElementById('nwkBtn').addEventListener('click', sendNwkData)
 
     document.getElementById('idNwkBt').addEventListener('click', sendNewickData)
@@ -178,11 +307,11 @@ function setupDendrogramGraphConfiguration() {
     alignNodes.addEventListener('click', dendrogram.alignNodes)
     linkLabels.addEventListener('click', dendrogram.addLinkLabels)
 
-    parentLabels.style.display = ''
-    alignNodes.style.display = ''
-    linkLabels.style.display = ''
-    linearScale.style.display = ''
-    logScale.style.display = ''
+    parentLabels.style.display = 'block'
+    alignNodes.style.display = 'block'
+    linkLabels.style.display = 'block'
+    linearScale.style.display = 'block'
+    logScale.style.display = 'block'
     spread.style.display = 'none'
 
     linearScale.addEventListener('click', dendrogram.applyLinearScale)
@@ -193,8 +322,10 @@ function setupDendrogramGraphConfiguration() {
     let left = document.getElementById('leftButton')
     let right = document.getElementById('rightButton')
 
-    up.style.display = ''
+    up.style.display =''
     down.style.display = ''
+    right.style.display = ''
+    left.style.display =''
 
     setupScaleBtn(up, () => dendrogram.verticalRescale(true))
     setupScaleBtn(down, () => dendrogram.verticalRescale(false))
@@ -218,17 +349,20 @@ function setupRadialGraphConfiguration() {
     logScale.addEventListener('click', radial.applyLogScale)
     spread.addEventListener('click', radial.addSpread)
 
-    parentLabels.style.display = ''
+    parentLabels.style.display = 'block'
     alignNodes.style.display = 'none'
-    linkLabels.style.display = ''
-    linearScale.style.display = ''
-    logScale.style.display = ''
-    spread.style.display = ''
+    linkLabels.style.display = 'block'
+    linearScale.style.display = 'block'
+    logScale.style.display = 'block'
+    spread.style.display = 'block'
 
     document.getElementById('upButton').style.display = 'none'
     document.getElementById('downButton').style.display = 'none'
     let left = document.getElementById('leftButton')
     let right = document.getElementById('rightButton')
+
+    right.style.display = ''
+    left.style.display = ''
 
     setupScaleBtn(left, () => radial.rescale(true))
     setupScaleBtn(right, () => radial.rescale(false))
@@ -248,6 +382,7 @@ function changeNodeColor(func, nodes) {
     colorDiv.setAttribute("class", "color justify-content-center");
     const title = document.createElement("p");
     title.setAttribute("class", "text-center");
+    title.setAttribute('id', 'nodeColorId')
     const text = document.createTextNode("Node color");
     title.appendChild(text);
 
@@ -265,11 +400,13 @@ function changeNodeColor(func, nodes) {
     const button = document.createElement("button")
     button.style.position = "relative"
     button.style.bottom = "-10px"
+    button.setAttribute('id', 'setColorId')
     button.setAttribute("class", "selectColorButton btn btn-light")
     button.appendChild(document.createTextNode("Select the color"))
 
     // Create Node Selector
     const selectNode = document.createElement("select");
+    selectNode.setAttribute('id', 'selectAllNodesId')
     selectNode.setAttribute("class", "selectNode form-select")
     const firstOption = document.createElement("option");
     firstOption.setAttribute("selected", "true");
@@ -313,10 +450,12 @@ function changeNodeSize(func) {
 
     const title = document.createElement("p");
     title.setAttribute("class", "text-center");
+    title.setAttribute('id', 'nodeSizeId')
     const text = document.createTextNode("Node size");
     title.appendChild(text);
 
     const rangeInput = document.createElement("input");
+    rangeInput.setAttribute('id', 'rangeInputId')
     rangeInput.setAttribute("type", "range");
     rangeInput.setAttribute("class", "form-range");
     rangeInput.setAttribute("min", "1");
@@ -340,11 +479,13 @@ function changeLinkSize(func) {
     linkSizeDiv.setAttribute("class", "linkSize justify-content-center mt-4");
 
     const title = document.createElement("p");
+    title.setAttribute('id', 'linkThicknessId')
     title.setAttribute("class", "text-center");
     const text = document.createTextNode("Link Thickness");
     title.appendChild(text);
 
     const rangeInput = document.createElement("input");
+    rangeInput.setAttribute('id', 'rangeInputLink')
     rangeInput.setAttribute("type", "range");
     rangeInput.setAttribute("class", "form-range");
     rangeInput.setAttribute("min", "1");
@@ -369,10 +510,12 @@ function changeLabelsSize(func) {
 
     const title = document.createElement("p");
     title.setAttribute("class", "text-center");
+    title.setAttribute('id', 'labelsSizeId')
     const text = document.createTextNode("Labels Size");
     title.appendChild(text);
 
     const rangeInput = document.createElement("input");
+    rangeInput.setAttribute('id', 'rangeInputLabel')
     rangeInput.setAttribute("type", "range");
     rangeInput.setAttribute("class", "form-range");
     rangeInput.setAttribute("min", "5");
@@ -1203,6 +1346,7 @@ function sendNewickData() {
 
     let nwk = document.getElementById('formFileNw').files[0]
 
+    console.log(nwk)
     const ext = nwk.name.split('.')
     if (ext[1] !== 'txt') {
         alertMsg('Extension for tree file must be txt.')
@@ -1211,10 +1355,11 @@ function sendNewickData() {
 
     nwk.text().then(async newick => {
         try {
+            console.log(newick)
             render.set_tree_data(newick)
             data = await render.getRenderData()
-
-            //
+            console.log(data)
+           //
             document.getElementById('radButton').style.display = "block"
             document.getElementById('denButton').style.display = "block"
             //
@@ -1237,7 +1382,7 @@ function sendProfileData() {
     //
 
     let profile = document.getElementById('formFilePro').files[0]
-
+    console.log(profile)
     const ext = profile.name.split('.')
     if (ext[1] !== 'tab') {
         alertMsg('Extension for profile file must be tab.')
@@ -1246,9 +1391,10 @@ function sendProfileData() {
 
     profile.text().then(async prof => {
         try {
+            console.log(prof)
             render.set_profiles_data(prof)
             data = await render.getRenderData()
-
+            console.log(data)
             document.getElementById('formFileIso').style.display = "block";
             document.getElementById('idIsoBt').style.display = "block";
         } catch (err) {

@@ -41,6 +41,7 @@ function display_app(){
 
     document.getElementById('radButton').style.display = 'none'
     document.getElementById('denButton').style.display = 'none'
+
     hideGraphConfig()
 
     reset_data()
@@ -53,6 +54,13 @@ function display_test_app() {
     document.getElementById('formFileNw').style.display = 'block'
     document.getElementById('idNwkBt').style.display = 'block'
     document.getElementById('textData').style.display = 'block'
+
+    document.getElementById('nwk').style.display = 'none'
+    document.getElementById('nwkBtn').style.display = 'none'
+    document.getElementById('formFileNw').style.display = 'none'
+    document.getElementById('idNwkBt').style.display = 'none'
+    document.getElementById('textData').style.display = 'none'
+    document.getElementById('textSubmitId').style.display = 'none'
 
 
     hideGraphConfig()
@@ -1329,6 +1337,7 @@ function sendNewickData() {
                     alertMsg(err)
                 }
             }).then(() => {
+                alertMsg('Tree data updated with success', 'success')
                 //
                 document.getElementById('radButton').style.display = "block"
                 document.getElementById('denButton').style.display = "block"
@@ -1369,6 +1378,7 @@ function sendProfileData() {
                 })
                 .catch(err => alertMsg(err))
         }).then(() => {
+            alertMsg('Profile data updated with success', 'success')
             document.getElementById('formFileIso').style.display = "block";
             document.getElementById('idIsoBt').style.display = "block";
         }).catch(err => alertMsg(err))
@@ -1402,7 +1412,9 @@ function sendIsolateData() {
                 .then(async res => {
                     if (res.status === 500) alertMsg('error')
                     data = await res.json()
-                })
+                }).then(() => {
+                alertMsg('Isolate data updated with success', 'success')
+            })
                 .catch(err => alertMsg(err))
         }).catch(err => alertMsg(err))
     })
@@ -1429,6 +1441,7 @@ function sendNwkData() {
             }
         }).then(() => {
         //
+        alertMsg('Tree data updated with success', 'success')
         document.getElementById('radButton').style.display = "block"
         document.getElementById('denButton').style.display = "block"
         //
@@ -1445,9 +1458,9 @@ function alertMsg(message, kind) {
     if (!kind) kind = 'danger'
     document
         .querySelector('.messages')
-        .innerHTML = `<div class="alert alert-${kind} alert-dismissible" role="alert" id="divErr">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close" id="buttonErr">
-                    <span aria-hidden="true">&times;</span>
+        .innerHTML = `<div class="alert alert-${kind} alert-dismissible fade show" role="alert" id="divErr">
+                <button type="button" class="btn" data-dismiss="alert" aria-label="Close" id="buttonErr">
+                    <i class="bi bi-x-lg"></i>
                 </button>
                 ${message}
             </div>`
@@ -1455,6 +1468,8 @@ function alertMsg(message, kind) {
         document.getElementById('divErr').remove()
     })
 }
+
+
 
 /** Download File **/
 function downloadReport(filename, title) {

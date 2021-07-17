@@ -1429,16 +1429,17 @@ function alertMsg(message, kind) {
     if (!kind) kind = 'danger'
     document
         .querySelector('.messages')
-        .innerHTML = `<div class="alert alert-${kind} alert-dismissible" role="alert" id="divErr">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close" id="buttonErr">
-                    <span aria-hidden="true">&times;</span>
+        .innerHTML = `<div class="alert alert-${kind} alert-dismissible fade show" role="alert" id="divErr">
+                <button type="button" class="btn" data-dismiss="alert" aria-label="Close" id="buttonErr">
+                    <i class="bi bi-x-lg"></i>
                 </button>
                 ${message}
             </div>`
-    document.getElementById('buttonErr').addEventListener('click', ()=>{
+    document.getElementById('buttonErr').addEventListener('click', () => {
         document.getElementById('divErr').remove()
     })
 }
+
 
 
 /** Download File **/

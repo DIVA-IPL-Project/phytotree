@@ -301,7 +301,7 @@ function setupRadialGraphConfiguration() {
     const input = document.getElementById('search')
     search(input, () => {
         let value = input.value
-        dendrogram.search(value)
+        radial.search(value)
     })
 
     const parentLabels = document.querySelector('.parentLabels'),
@@ -833,7 +833,7 @@ function clickHeader(header, id, categories, isolate) {
     counts_ordered.push({total: total})
 
     sections = counts
-    constructPieChart(counts_ordered, names, id)
+    constructPieChart(counts_ordered, names, id, isolate)
 }
 
 let sections = []
@@ -1024,7 +1024,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         .attr("alignment-baseline", "middle")
 }
 
-function constructPieChart(data, names, id) {
+function constructPieChart(data, names, id, isolate) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
     }
@@ -1039,8 +1039,10 @@ function constructPieChart(data, names, id) {
         }
         return
     } else {
-        document.getElementById('linktreebuttonD').style.display = 'block'
-        document.getElementById('linktreebuttonR').style.display = 'block'
+        //if(isolate){
+            document.getElementById('linktreebuttonD').style.display = 'block'
+            document.getElementById('linktreebuttonR').style.display = 'block'
+        //}
     }
 
     const g = d3.select(id).append('g').attr("transform", `translate(340, 170)`).attr('id', 'pieChart')

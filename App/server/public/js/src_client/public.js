@@ -293,7 +293,7 @@ function setupRadialGraphConfiguration() {
     const input = document.getElementById('search')
     search(input, () => {
         let value = input.value
-        dendrogram.search(value)
+        radial.search(value)
     })
 
     const parentLabels = document.querySelector('.parentLabels'),

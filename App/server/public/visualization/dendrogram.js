@@ -50,7 +50,7 @@ const dendrogram = function () {
         element: null,
         visible: false,
         width: canvas.width * 0.15,
-        x: canvas.height - 50,
+        x: canvas.height - 150,
         y: 100,
         padding: 10,
     }

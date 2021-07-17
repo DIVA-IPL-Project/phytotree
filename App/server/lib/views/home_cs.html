@@ -39,7 +39,7 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link link-light" id="isolate-tab" data-bs-toggle="tab" data-bs-target="#isolateContent"
                 type="button"
-                role="tab" aria-controls="isolate" aria-selected="false">Auxiliary Data
+                role="tab" aria-controls="isolate" aria-selected="false">Isolate Data
         </button>
     </li>
 </ul>
@@ -49,7 +49,12 @@
             <!-- Sidebar -->
             <nav class="sidenav">
                 <p class="messages" id="messages"></p>
-
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Example Demo
+                    </label>
+                </div>
                 <!-- Title -->
                 <div class="sidebar-header text-center mt-md-3">
                     <h3>Visualization</h3>
@@ -67,7 +72,7 @@
 
                 <!-- Graph Config-->
                 <div class="justify-content-center mt-md-3" id="graphConfig" style="display: none;padding-top: 25px">
-                    <h6 class="text-center">
+                    <h6 id="graphConfigId" class="text-center">
                         Graph Configuration
                     </h6>
                     <div class="btn-group-vertical d-grid justify-content-center">
@@ -127,28 +132,29 @@
 
                 <!-- Data Input-->
                 <div id="dataInput" class="d-grid gap-1 justify-content-center mt-md-3" style="padding-top: 25px">
-                    <div id="textData" class="sidebar-header text-center mt-md-3">
-                        <h4>Data</h4>
+                    <div class="sidebar-header text-center mt-md-3">
+                        <h4 id="textData">Data</h4>
+                        <p>Submit files or use the text area.</p>
                     </div>
 
                     <div class="d-grid justify-content-center gap-2 mt-2">
                         <input class="form-control form-control-sm" id="formFileNw" type="file">
                         <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt">
-                            Send newick file
+                            Load newick file
                         </button>
                     </div>
                     <div class="d-grid justify-content-center">
                         <input class="form-control form-control-sm" id="formFilePro" type="file" style="display: none">
                         <button type="button" class="btn btn-outline-secondary btn-sm" id="idPrfBt"
                                 style="display: none">
-                            Send profiles file
+                            Load profiles file
                         </button>
                     </div>
                     <div class="d-grid justify-content-center">
                         <input class="form-control form-control-sm" id="formFileIso" type="file" style="display: none">
                         <button type="button" class="btn btn-outline-secondary btn-sm " id="idIsoBt"
                                 style="display: none">
-                            Send isolate file
+                            Load isolate file
                         </button>
                     </div>
 

@@ -35,7 +35,7 @@ function build_app(arg){
 
             app.use('/api', routesApi)
 
-            let homeUri = path.join(__dirname, 'lib', 'views', 'home.html')
+            let homeUri = path.join(__dirname, 'lib', 'views', 'home_cs.html')
             app.use(routesWeb.init_path(homeUri).init_router())
 
             app.listen(PORT, function (err) {

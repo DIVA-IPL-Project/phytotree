@@ -23,6 +23,11 @@ function test_input_handler() {
         display_app()
     }
 }
+
+function hideGraphConfig() {
+    document.getElementById('graphConfig').style.display = "none";
+}
+
 function display_app(){
 
     document.getElementById('container').innerHTML = ''
@@ -32,42 +37,11 @@ function display_app(){
     document.getElementById('idNwkBt').style.display = 'block'
     document.getElementById('textData').style.display = 'block'
 
+    document.getElementById('textSubmitId').style.display = 'block'
+
     document.getElementById('radButton').style.display = 'none'
     document.getElementById('denButton').style.display = 'none'
-
-    const parentLabels = document.querySelector('.parentLabels'),
-        alignNodes = document.querySelector('.align-nodes'),
-        linkLabels = document.querySelector('.linkLabels'),
-        linearScale = document.querySelector('.linearScale'),
-        logScale = document.querySelector('.logScale'),
-        spread = document.querySelector('.spread')
-
-    parentLabels.style.display = 'none'
-    alignNodes.style.display = 'none'
-    linkLabels.style.display = 'none'
-    linearScale.style.display = 'none'
-    logScale.style.display = 'none'
-    spread.style.display = 'none'
-
-    document.getElementById('upButton').style.display = 'none'
-    document.getElementById('downButton').style.display = 'none'
-    document.getElementById('leftButton').style.display = 'none'
-    document.getElementById('rightButton').style.display = 'none'
-
-    document.getElementById('labelLogScale').style.display = 'none'
-    document.getElementById('labelLinearScale').style.display = 'none'
-    document.getElementById('graphConfigId').style.display = 'none'
-    document.getElementById('graphConfig').style.display = 'none'
-
-    document.getElementById('nodeColorId') !== null?document.getElementById('nodeColorId').remove() : () => {}
-    document.getElementById('setColorId') !== null?document.getElementById('setColorId').remove() : () =>{}
-    document.getElementById('selectAllNodesId') !== null?document.getElementById('selectAllNodesId').remove() : () =>{}
-    document.getElementById('nodeSizeId') !== null?document.getElementById('nodeSizeId').remove() : () =>{}
-    document.getElementById('rangeInputId') !== null?document.getElementById('rangeInputId').remove() : () =>{}
-    document.getElementById('linkThicknessId') !== null?document.getElementById('linkThicknessId').remove() : () =>{}
-    document.getElementById('rangeInputLink') !== null?document.getElementById('rangeInputLink').remove() : () =>{}
-    document.getElementById('labelsSizeId') !== null?document.getElementById('labelsSizeId').remove() : () =>{}
-    document.getElementById('rangeInputLabel') !== null?document.getElementById('rangeInputLabel').remove() : () =>{}
+    hideGraphConfig()
 
     reset_data()
 }
@@ -80,48 +54,8 @@ function display_test_app() {
     document.getElementById('idNwkBt').style.display = 'block'
     document.getElementById('textData').style.display = 'block'
 
-    document.getElementById('radButton').style.display = 'none'
-    document.getElementById('denButton').style.display = 'none'
 
-    const parentLabels = document.querySelector('.parentLabels'),
-        alignNodes = document.querySelector('.align-nodes'),
-        linkLabels = document.querySelector('.linkLabels'),
-        linearScale = document.querySelector('.linearScale'),
-        logScale = document.querySelector('.logScale'),
-        spread = document.querySelector('.spread')
-
-    parentLabels.style.display = 'none'
-    alignNodes.style.display = 'none'
-    linkLabels.style.display = 'none'
-    linearScale.style.display = 'none'
-    logScale.style.display = 'none'
-    spread.style.display = 'none'
-
-    document.getElementById('upButton').style.display = 'none'
-    document.getElementById('downButton').style.display = 'none'
-    document.getElementById('leftButton').style.display = 'none'
-    document.getElementById('rightButton').style.display = 'none'
-
-    document.getElementById('labelLogScale').style.display = 'none'
-    document.getElementById('labelLinearScale').style.display = 'none'
-    document.getElementById('graphConfigId').style.display = 'none'
-    document.getElementById('graphConfig').style.display = 'none'
-
-    document.getElementById('nodeColorId') !== null?document.getElementById('nodeColorId').remove() : () => {}
-    document.getElementById('setColorId') !== null?document.getElementById('setColorId').remove() : () =>{}
-    document.getElementById('selectAllNodesId') !== null?document.getElementById('selectAllNodesId').remove() : () =>{}
-    document.getElementById('nodeSizeId') !== null?document.getElementById('nodeSizeId').remove() : () =>{}
-    document.getElementById('rangeInputId') !== null?document.getElementById('rangeInputId').remove() : () =>{}
-    document.getElementById('linkThicknessId') !== null?document.getElementById('linkThicknessId').remove() : () =>{}
-    document.getElementById('rangeInputLink') !== null?document.getElementById('rangeInputLink').remove() : () =>{}
-    document.getElementById('labelsSizeId') !== null?document.getElementById('labelsSizeId').remove() : () =>{}
-    document.getElementById('rangeInputLabel') !== null?document.getElementById('rangeInputLabel').remove() : () =>{}
-
-    document.getElementById('nwk').style.display = 'none'
-    document.getElementById('nwkBtn').style.display = 'none'
-    document.getElementById('formFileNw').style.display = 'none'
-    document.getElementById('idNwkBt').style.display = 'none'
-    document.getElementById('textData').style.display = 'none'
+    hideGraphConfig()
 
     document.getElementById('radButton').style.display = 'block'
     document.getElementById('denButton').style.display = 'block'
@@ -292,8 +226,29 @@ function showGraphConfig() {
     document.getElementById('graphConfig').style.display = "grid";
 }
 
+function search(elem, func) {
+    let event = events()
+    elem.addEventListener('keyup', () => event())
+
+    function events() {
+        let id
+
+        function search() {
+            clearInterval(id)
+            id = setTimeout(func, 1000)
+        }
+
+        return search
+    }
+}
+
 function setupDendrogramGraphConfiguration() {
     showGraphConfig()
+    const input = document.getElementById('search')
+    search(input, () => {
+        let value = input.value
+        dendrogram.search(value)
+    })
 
     const parentLabels = document.querySelector('.parentLabels'),
         alignNodes = document.querySelector('.align-nodes'),
@@ -334,6 +289,12 @@ function setupDendrogramGraphConfiguration() {
 
 function setupRadialGraphConfiguration() {
     showGraphConfig()
+
+    const input = document.getElementById('search')
+    search(input, () => {
+        let value = input.value
+        dendrogram.search(value)
+    })
 
     const parentLabels = document.querySelector('.parentLabels'),
         alignNodes = document.querySelector('.align-nodes'),

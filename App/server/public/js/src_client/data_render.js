@@ -45,6 +45,8 @@ const render = function () {
             profiles_id = aux_data[0]
             profiles_data = aux_data.slice(1, aux_data.length)
 
+            console.log(profiles_id)
+            console.log(profiles_data)
             return {
                 get_profiles_ids,
                 get_profiles_data,
@@ -221,10 +223,10 @@ const render = function () {
             const data_parsing = parser.parseNewick(tree_data)
 
             data.links = data_parsing.links
-            data.nodes = data_parsing.nodes.map(obj => {
-                return {key: obj.name}
-            })
+            data.nodes = data_parsing.nodes
         }
+
+        console.log(profiles_data)
         if (profile_data_change) {
             if (profiles_data !== undefined && profiles_id !== undefined) {
                 data.schemeGenes = profiles_id

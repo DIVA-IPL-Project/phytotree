@@ -2,6 +2,18 @@
 
 const nwkParser = require('./parsing')
 
+function reset_data() {
+    set_tree_variables()
+    set_profiles_data()
+    set_isolates_data()
+    return {
+        schemeGenes: [],
+        nodes: [],
+        links: [],
+        metadata: []
+    }
+}
+
 /* Tree Part */
 let tree_data
 let tree_data_change = false
@@ -264,5 +276,6 @@ module.exports = {
     set_tree_data,
     set_profiles_data,
     set_isolates_data,
-    getRenderData
+    getRenderData,
+    reset_data
 }

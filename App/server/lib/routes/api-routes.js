@@ -1,4 +1,5 @@
 const render = require('../service/data_render')
+const rf = require('../service/read_files')
 const Router = require('express').Router
 const router = Router()
 
@@ -8,6 +9,18 @@ let isolates
 
 router.get('/data', (req, res, next) =>{
     render.getRenderData().then(data => {
+        res.json(data)
+    }).catch(err => {
+        res.status(err.status)
+        res.json({
+            message: err.message,
+            status: err.status
+        })
+    })
+})
+
+router.get('reset_data', (req, res, next) =>{
+    render.reset_data().then(data => {
         res.json(data)
     }).catch(err => {
         res.status(err.status)
@@ -34,6 +47,29 @@ router.post('/update/isolates', (req, res, next) =>{
     let isolates_data = req.body.data
     isolates = render.set_isolates_data(isolates_data)
     res.json()
+})
+
+router.get('/default_data', (req, res, next) => {
+    rf.read_tree_file().then(data => {
+        render.set_tree_data(data.toString())
+        return rf.read_profile_file()
+    }).then(data =>{
+        render.set_profiles_data(data.toString())
+        return rf.read_isolate_file()
+    }).then(data =>{
+        render.set_isolates_data(data.toString())
+    }).then(()=>{
+        render.getRenderData().then(data => {
+            res.json(data)
+        }).catch(err => {
+            res.status(err.status)
+            res.json({
+                message: err.message,
+                status: err.status
+            })
+        })
+    })
+
 })
 
 module.exports = router

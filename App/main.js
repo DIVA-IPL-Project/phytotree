@@ -6,12 +6,11 @@ server.build_app('-server')
 
 const loadMainWindow = () => {
     let mainWindow = new BrowserWindow({
-        width : 1200,
-        height: 800,
         webPreferences: {
             nodeIntegration: true
         }
     })
+    mainWindow.maximize()
     mainWindow.loadURL('http://localhost:8000/home')
     mainWindow.on('closed', function () {
         mainWindow = null

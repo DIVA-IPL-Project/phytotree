@@ -14,8 +14,8 @@ const dendrogram = function () {
     }
     const canvas = {
         container: null,
-        width: window.innerWidth - margin.left - margin.right,
-        height: window.innerHeight - margin.top - margin.bottom,
+        width: window.innerWidth,
+        height: window.innerHeight,
         margin: margin,
         zoom: {
             x: 100,
@@ -182,6 +182,42 @@ const dendrogram = function () {
         updateInternalLabels(graph.style.parentLabels)
     }
 
+    function centerGraph(node) {
+        let el = node, curr = node
+        while (curr.parent !== null) {
+            if (!curr.visibility) {
+                el = curr
+            }
+            curr = curr.parent
+        }
+        canvas.zoom.x = canvas.width / 2 - el.y
+        canvas.zoom.y = canvas.height / 2 - el.x
+        canvas.zoom.scale = 1
+        addDendrogramZoom()
+        return el.data.id
+    }
+
+    function search(id) {
+        if (id === "") return
+        let collapsedId = id
+        data.tree.each(d => {
+            if (d.data.id === id) {
+                collapsedId = centerGraph(d)
+            }
+        })
+        let selected = graph.nodes
+            .select(`#node${collapsedId}`)
+            .selectAll('circle')
+        selected
+            .attr('r', graph.style.nodes_size * 3)
+            .style('stroke', 'blue')
+            .style('fill', 'blue')
+        selected.transition()
+            .duration(1500)
+            .attr('r', graph.style.nodes_size)
+            .style('stroke', d => d.data.data.color)
+            .style('fill', d => d.data.data.color)
+    }
 
     /********************* Collapse functions *********************/
 
@@ -913,8 +949,8 @@ const dendrogram = function () {
 
 
             // Second walk, normalizing x & y to the desired size.
-            return root.eachAfter(nodeSize ?
-                function (node) {
+            return root.eachAfter(function (node) {
+                    node.visibility = true
                     node.x = (node.x - root.x) * dx
                     node.y = (root.y - node.y) * dy
 
@@ -929,11 +965,7 @@ const dendrogram = function () {
                                 node.leaves.push(...child.leaves)
                         })
                     }
-                } :
-                function (node) {
-                    node.x = (node.x - x0) / (x1 - x0) * dx
-                    node.y = node.depth * graph.scale.horizontal.value * graph.scale.horizontal.scalingFactor
-                });
+                })
         }
 
         cluster.separation = function (x) {
@@ -1386,6 +1418,7 @@ const dendrogram = function () {
         context,
         build,
         draw,
+        search,
         isDraw,
 
         addNodeStyle,

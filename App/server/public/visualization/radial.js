@@ -14,8 +14,8 @@ const radial = function () {
     }
     const canvas = {
         container: null,
-        width: window.innerWidth - margin.left - margin.right,
-        height: window.innerHeight - margin.top - margin.bottom,
+        width: window.innerWidth,
+        height: window.innerHeight,
         margin: margin,
         zoom: {
             x: window.innerWidth / 2,
@@ -32,8 +32,12 @@ const radial = function () {
         nodes: null,
         links: null,
         style: {
+            leafLabels: true,
             linkLabels: false,
             parentLabels: false,
+            labels_size: 12,
+            links_size: 2,
+            nodes_size: 3,
             barChart: false,
             spread: false
         },
@@ -154,6 +158,42 @@ const radial = function () {
         updateInternalLabels(graph.style.parentLabels)
     }
 
+    function centerGraph(node) {
+        let el = node, curr = node
+        while (curr.parent !== null) {
+            if (!curr.visibility) {
+                el = curr
+            }
+            curr = curr.parent
+        }
+        canvas.zoom.x = canvas.width / 2 - el.x
+        canvas.zoom.y = canvas.height / 2 - el.y
+        canvas.zoom.scale = 1
+        addRadialZoom()
+        return el.data.id
+    }
+
+    function search(id) {
+        if (id === "") return
+        let collapsedId = id
+        data.tree.each(d => {
+            if (d.data.id === id) {
+                collapsedId = centerGraph(d)
+            }
+        })
+        let selected = graph.nodes
+            .select(`#node${collapsedId}`)
+            .selectAll('circle')
+        selected
+            .attr('r', graph.style.nodes_size * 3)
+            .style('stroke', 'blue')
+            .style('fill', 'blue')
+        selected.transition()
+            .duration(1500)
+            .attr('r', graph.style.nodes_size)
+            .style('stroke', d => d.data.data.color)
+            .style('fill', d => d.data.data.color)
+    }
 
     /********************* Collapse functions *********************/
     function log(base, number) {
@@ -795,6 +835,7 @@ const radial = function () {
 
             root.eachBefore(parent => {
                 parent.angle = angle(parent)
+                parent.visibility = true
                 if (parent.children) {
                     // separation
                     parent.children.sort((a, b) => a.spread - b.spread)
@@ -1251,6 +1292,7 @@ const radial = function () {
         context,
         build,
         draw,
+        search,
 
         addNodeStyle,
         addLinkStyle,

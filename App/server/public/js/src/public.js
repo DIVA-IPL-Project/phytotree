@@ -216,13 +216,14 @@ function setupData() {
         })
 }
 
-function loadView(view, save) {
-    view.load('#container', save)
+function loadView(vis, save) {
+    view = vis
+    vis.load('#container', save)
     setupRadialGraphConfiguration()
-    changeNodeColor(view.changeNodeColor, view.getNodes())
-    changeNodeSize(view.changeNodeSize)
-    changeLinkSize(view.changeLinkSize)
-    changeLabelsSize(view.changeLabelsSize)
+    changeNodeColor(vis.changeNodeColor, vis.getNodes())
+    changeNodeSize(vis.changeNodeSize)
+    changeLinkSize(vis.changeLinkSize)
+    changeLabelsSize(vis.changeLabelsSize)
 }
 
 /********************* Setup Navbar UI *********************/

@@ -28,7 +28,7 @@ function hideGraphConfig() {
     document.getElementById('graphConfig').style.display = "none";
 }
 
-function display_app(){
+function display_app() {
 
     document.getElementById('container').innerHTML = ''
     document.getElementById('nwk').style.display = 'block'
@@ -48,6 +48,14 @@ function display_app(){
 }
 
 function display_test_app() {
+    if (document.getElementById('errorProfile')) {
+        document.getElementById('errorProfile').remove()
+    }
+
+    if (document.getElementById('errorIsolate')) {
+        document.getElementById('errorIsolate').remove()
+    }
+
     document.getElementById('container').innerHTML = ''
     document.getElementById('nwk').style.display = 'block'
     document.getElementById('nwkBtn').style.display = 'block'
@@ -72,6 +80,8 @@ function display_test_app() {
 }
 
 async function set_up_test_data() {
+    is_table_profile_create = false
+    is_table_isolate_create = false
     let headers = {'Content-Type': 'application/json'}
     let response = await fetch('/api/default_data', {headers: headers})
     data = await response.json()
@@ -79,7 +89,7 @@ async function set_up_test_data() {
 }
 
 async function reset_data() {
-    data = []
+    data = undefined
     is_table_profile_create = false
     is_table_isolate_create = false
 }
@@ -97,6 +107,8 @@ function setupTabs() {
                 document.getElementById('svg_profile').style.display = 'none'
                 setUpError(err.message, 'errorProfile', 'profileContent')
             }
+        } else {
+            addListenersToTables()
         }
     })
 
@@ -114,6 +126,8 @@ function setupTabs() {
                 document.getElementById('svg_isolate').style.display = 'none'
                 setUpError(err.message, 'errorIsolate', 'isolateContent')
             }
+        } else {
+            addListenersToTables()
         }
     })
 }
@@ -285,10 +299,10 @@ function setupDendrogramGraphConfiguration() {
     let left = document.getElementById('leftButton')
     let right = document.getElementById('rightButton')
 
-    up.style.display =''
+    up.style.display = ''
     down.style.display = ''
     right.style.display = ''
-    left.style.display =''
+    left.style.display = ''
 
     setupScaleBtn(up, () => dendrogram.verticalRescale(true))
     setupScaleBtn(down, () => dendrogram.verticalRescale(false))
@@ -621,6 +635,8 @@ const filterTables = {
 }
 
 function create_table_profile(data) {
+    document.getElementById('table_profile').innerHTML = ""
+
 
     //check if is possible build table
     if (!data || data.schemeGenes.length <= 0) {
@@ -665,6 +681,7 @@ function create_table_profile(data) {
 }
 
 function create_table_isolate(data) {
+    document.getElementById('table_isolate').innerHTML = ""
 
     //check if is possible build table
     if (!data || data.metadata.length <= 0) {
@@ -724,14 +741,14 @@ function addListenersToTables() {
         document.querySelectorAll('.prof').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem, '#svg_profile', categories.categoriesProfile, false))
+            elem.addEventListener('click', () => clickHeaderProfiles(elem, '#svg_profile', categories.categoriesProfile))
         })
     }
     if (document.querySelector('.iso') !== null) {
         document.querySelectorAll('.iso').forEach(elem => {
             elem.addEventListener('mouseover', () => elem.style.backgroundColor = '#cfcfcf')
             elem.addEventListener('mouseout', () => elem.style.backgroundColor = '#212529')
-            elem.addEventListener('click', () => clickHeader(elem, '#svg_isolate', categories.categoriesIsolate, true))
+            elem.addEventListener('click', () => clickHeaderIsolates(elem, '#svg_isolate', categories.categoriesIsolate))
         })
     }
 }
@@ -742,7 +759,8 @@ const categories = {
     categoriesIsolate: new Map()
 }
 
-const names = []
+let names_profiles = []
+let names_isolates = []
 let counts_ordered
 
 /**
@@ -760,15 +778,15 @@ function contains(id, map) {
  * @param header {}
  * @param id {string}
  * @param categories {Map}
- * @param isolate {boolean}
  */
-function clickHeader(header, id, categories, isolate) {
+function clickHeaderProfiles(header, id, categories) {
     const HeaderId = header.parentNode.getElementsByTagName('td')[header.id].cellIndex
     const headerName = header.parentNode.getElementsByTagName('td')[header.id].innerHTML
     const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
 
     let counts = []
     let length = -1
+   // counts_ordered = []
 
     // Check and remove the map
     if (categories.has(HeaderId.toString())) {
@@ -776,31 +794,18 @@ function clickHeader(header, id, categories, isolate) {
         categories.delete(HeaderId.toString())
         //remove column color
         removeColumn(tdElements, HeaderId, categories)
-        removeColumnName(headerName)
+        removeColumnNameProfiles(headerName)
 
         if (categories.size === 0) {
             length = -1
         }
-        if (isolate) {
-            for (let i = 0; i < filterTables.column.length; i++) {
-                if (filterTables.column[i] === HeaderId) {
-                    filterTables.column.splice(i, 1)
-                }
-            }
-        }
     } else {
         // Put in map for the first time
         if (tdElements.length > 0) {
-            if (isolate) {
-                filterTables.column.push(HeaderId)
-                if (filterTables.column.length > 1) {
-                    filterTables.name = "&"
-                }
-            }
             categories.set(HeaderId.toString(), [])
             const array = categories.get(HeaderId.toString())
             length = addColumn(tdElements, HeaderId, array, categories)
-            addColumnName(headerName)
+            addColumnNameProfiles(headerName)
         }
     }
 
@@ -834,7 +839,89 @@ function clickHeader(header, id, categories, isolate) {
     counts_ordered.push({total: total})
 
     sections = counts
-    constructPieChart(counts_ordered, names, id, isolate)
+    constructPieChart(counts_ordered, names_profiles, id)
+}
+
+/**
+ *
+ * @param header {}
+ * @param id {string}
+ * @param categories {Map}
+ */
+function clickHeaderIsolates(header, id, categories) {
+    const HeaderId = header.parentNode.getElementsByTagName('td')[header.id].cellIndex
+    const headerName = header.parentNode.getElementsByTagName('td')[header.id].innerHTML
+    const tdElements = header.parentNode.parentNode.parentNode.lastElementChild.getElementsByTagName('td')
+
+    let counts = []
+    let length = -1
+    counts_ordered = []
+
+    // Check and remove the map
+    if (categories.has(HeaderId.toString())) {
+        length = categories.get(HeaderId.toString()).length
+        categories.delete(HeaderId.toString())
+        //remove column color
+        removeColumn(tdElements, HeaderId, categories)
+        removeColumnNameIsolates(headerName)
+
+        if (categories.size === 0) {
+            length = -1
+        }
+
+        for (let i = 0; i < filterTables.column.length; i++) {
+            if (filterTables.column[i] === HeaderId) {
+                filterTables.column.splice(i, 1)
+            }
+        }
+
+    } else {
+        // Put in map for the first time
+        if (tdElements.length > 0) {
+
+            filterTables.column.push(HeaderId)
+            if (filterTables.column.length > 1) {
+                filterTables.name = "&"
+            }
+
+            categories.set(HeaderId.toString(), [])
+            const array = categories.get(HeaderId.toString())
+            length = addColumn(tdElements, HeaderId, array, categories)
+            addColumnNameIsolates(headerName)
+        }
+    }
+
+    if (length > 0) {
+        for (let i = 0; i < length; i++) {
+            let str = ''
+            categories.forEach((value, key) => {
+                if (str === '') {
+                    str = str + value[i].isolate
+                } else {
+                    str = str + ',' + value[i].isolate
+                }
+            })
+            if (!counts.find(i => i.name === str)) {
+                counts.push({
+                    name: str,
+                    value: 0
+                })
+            }
+            counts.find(i => i.name === str).value++
+        }
+    }
+
+    counts_ordered = counts.slice(0)
+    counts_ordered.sort(function (a, b) {
+        return b.value - a.value
+    })
+
+    let total = 0
+    counts_ordered.forEach(c => total += c.value)
+    counts_ordered.push({total: total})
+
+    sections = counts
+    constructPieChart(counts_ordered, names_isolates, id)
 }
 
 let sections = []
@@ -866,17 +953,30 @@ function removeColumn(tdElements, HeaderId, categories) {
     }
 }
 
-function addColumnName(name) {
-    names.push(name)
+function addColumnNameProfiles(name) {
+    names_profiles.push(name)
 }
 
-function removeColumnName(name) {
-    for (let i = 0; i < names.length; i++) {
-        if (names[i] === name) {
-            names.splice(i, 1)
+function removeColumnNameProfiles(name) {
+    for (let i = 0; i < names_profiles.length; i++) {
+        if (names_profiles[i] === name) {
+            names_profiles.splice(i, 1)
         }
     }
 }
+
+function addColumnNameIsolates(name) {
+    names_isolates.push(name)
+}
+
+function removeColumnNameIsolates(name) {
+    for (let i = 0; i < names_isolates.length; i++) {
+        if (names_isolates[i] === name) {
+            names_isolates.splice(i, 1)
+        }
+    }
+}
+
 
 const colorsRange = [
     "#1b70fc", "#33f0ff", "#718a90", "#b21bff", "#fe6616",
@@ -1025,9 +1125,10 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         .attr("alignment-baseline", "middle")
 }
 
-function constructPieChart(data, names, id, isolate) {
+function constructPieChart(data, names, id) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
+        d3.select(id).selectAll('.arc').remove()
     }
 
     //remove and return if data equals empty
@@ -1040,13 +1141,15 @@ function constructPieChart(data, names, id, isolate) {
         }
         return
     } else {
-        //if(isolate){
+        if (id === '#svg_isolate') {
             document.getElementById('linktreebuttonD').style.display = 'block'
             document.getElementById('linktreebuttonR').style.display = 'block'
-        //}
+        }
     }
 
-    const g = d3.select(id).append('g').attr("transform", `translate(340, 170)`).attr('id', 'pieChart')
+    const pieName = id.replace('#', '-')
+    const g = d3.select(id).append('g').attr("transform", `translate(340, 170)`).attr('id', 'pieChart' + pieName)
+
 
     const pie = d3.pie().value(d => d.value)
 
@@ -1086,11 +1189,13 @@ function constructPieChart(data, names, id, isolate) {
     let colors = []
 
     if (data.length > 20) {
-        document.querySelectorAll('.pieChartInvisible').forEach(item => {
+        document.querySelectorAll('.pieChartInvisible').forEach((item, i) => {
+            if (i === document.querySelectorAll('.pieChartInvisible').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
         })
     } else {
-        document.querySelectorAll('.arc').forEach(item => {
+        document.querySelectorAll('.arc').forEach((item, i) => {
+            if (i === document.querySelectorAll('.arc').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
         })
     }
@@ -1163,10 +1268,12 @@ function constructPieChart(data, names, id, isolate) {
             } else othersPosition += 20
         }
 
-        categories_colors.push({
-            name: item.name,
-            color: colors[i]
-        })
+        if (id === '#svg_isolate') {
+            categories_colors.push({
+                name: item.name,
+                color: colors[i]
+            })
+        }
 
         position += 20
     })
@@ -1220,19 +1327,19 @@ function linkToTree() {
         pieChart.setAttribute("id", "tree_pieChart")
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
-        pieChart.getElementById('pieChart').setAttribute('transform',
-            'translate(1000, 400)')
+        pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
+            'translate(700, 600) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(790, 290)')
+            'translate(510, 510) scale(0.6)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
         hide.onclick = () => {
-            if (document.getElementById('pieChart').style.display === 'none') {
-                document.getElementById('pieChart').style.display = 'block'
+            if (document.getElementById('pieChart-svg_isolate').style.display === 'none') {
+                document.getElementById('pieChart-svg_isolate').style.display = 'block'
                 document.getElementById('legend').style.display = 'block'
             } else {
-                document.getElementById('pieChart').style.display = 'none'
+                document.getElementById('pieChart-svg_isolate').style.display = 'none'
                 document.getElementById('legend').style.display = 'none'
             }
         }
@@ -1273,19 +1380,19 @@ function linkToTree() {
         pieChart.setAttribute("id", "tree_pieChart")
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
-        pieChart.getElementById('pieChart').setAttribute('transform',
-            'translate(1000, 500)')
+        pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
+            'translate(700, 600) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(790, 390)')
+            'translate(510, 510) scale(0.6)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
         hide.onclick = () => {
-            if (document.getElementById('pieChart').style.display === 'none') {
-                document.getElementById('pieChart').style.display = 'block'
+            if (document.getElementById('pieChart-svg_isolate').style.display === 'none') {
+                document.getElementById('pieChart-svg_isolate').style.display = 'block'
                 document.getElementById('legend').style.display = 'block'
             } else {
-                document.getElementById('pieChart').style.display = 'none'
+                document.getElementById('pieChart-svg_isolate').style.display = 'none'
                 document.getElementById('legend').style.display = 'none'
             }
         }
@@ -1308,6 +1415,7 @@ function formatArray(names) {
 
 
 function sendNewickData() {
+    document.getElementById("container").innerHTML = ""
     const err = document.getElementById('treeError')
     if (err != null) {
         err.remove()
@@ -1353,6 +1461,9 @@ function sendNewickData() {
 }
 
 function sendProfileData() {
+    data = null
+    document.getElementById('svg_profile').innerHTML = ""
+
     const err = document.getElementById('errorProfile')
     if (err != null) {
         err.remove()
@@ -1389,6 +1500,9 @@ function sendProfileData() {
 }
 
 function sendIsolateData() {
+    data = null
+    document.getElementById('svg_isolate').innerHTML = ""
+
     const err = document.getElementById('errorIsolate')
     if (err != null) {
         err.remove()
@@ -1473,7 +1587,6 @@ function alertMsg(message, kind) {
 }
 
 
-
 /** Download File **/
 function downloadReport(filename, title) {
     // Create the pdf document
@@ -1529,8 +1642,7 @@ function downloadFile(filename, text) {
         var event = document.createEvent('MouseEvents');
         event.initEvent('click', true, true);
         pom.dispatchEvent(event);
-    }
-    else {
+    } else {
         pom.click();
     }
 }

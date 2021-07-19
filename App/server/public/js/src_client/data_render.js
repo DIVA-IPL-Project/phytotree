@@ -216,7 +216,13 @@ const render = function () {
     }
 
     async function getRenderData() {
-
+        data = {
+            schemeGenes: [],
+            nodes: [],
+            links: [],
+            metadata: []
+        }
+        
         if (tree_data_change) {
             if (tree_data === undefined) return Promise.reject(new Error('Tree data must be set first'))
             //const data_parsing = nwkParser(tree_data)

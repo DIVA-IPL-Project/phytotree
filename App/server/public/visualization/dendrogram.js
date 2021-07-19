@@ -639,7 +639,7 @@ const dendrogram = function () {
      * }}
      */
     function linearScale(saved) {
-        const linear = saved ? saved : {
+        const linear = {
             vertical: {
                 value: 1,
                 limits: [0.1, 10],
@@ -652,6 +652,13 @@ const dendrogram = function () {
                 scalingFactor: 1000,
                 step: 0.01
             }
+        }
+
+        if (saved) {
+            if (saved.vertical)
+                Object.assign(linear.vertical, saved.vertical)
+            if (saved.horizontal)
+                Object.assign(linear.horizontal, saved.horizontal)
         }
 
         function incrementV() {
@@ -688,7 +695,7 @@ const dendrogram = function () {
     function logScale(saved) {
         let value = 1.1
 
-        const log = saved ? saved : {
+        const log = {
             vertical: {
                 value: 1,
                 limits: [1, 100],
@@ -701,6 +708,13 @@ const dendrogram = function () {
                 scalingFactor: 15,
                 step: 2
             }
+        }
+
+        if (saved) {
+            if (saved.vertical)
+                Object.assign(log.vertical, saved.vertical)
+            if (saved.horizontal)
+                Object.assign(log.horizontal, saved.horizontal)
         }
 
         function incrementV() {
@@ -1394,18 +1408,19 @@ const dendrogram = function () {
     }
 
     function load(container, save) {
-        scaler.linear = save.graph.scale.linear
-        scaler.log = save.graph.scale.log
+        if (!save.graph || !save.data || !save.canvas)
+            throw new Error("Save does not contain all needed properties {data, graph, canvas}.")
 
-        graph.style = save.graph.style
-        graph.nodeSize = save.graph.nodeSize
+        Object.assign(graph.style, save.graph.style || {})
+        Object.assign(canvas.zoom, save.canvas.zoom || {})
+        graph.nodeSize = save.graph.nodeSize || graph.nodeSize
 
-        canvas.zoom = save.canvas.zoom
-
-        scaler.linear = linearScale(save.graph.scale.linear)
-        scaler.log = logScale(save.graph.scale.log)
+        scaler.linear = linearScale(save.graph.scale?.linear)
+        scaler.log = logScale(save.graph.scale?.log)
         graph.scale = scaler.linear
 
+        if (!save.data.input)
+            throw new Error("Data must contain an input property.")
         let view = build(save.data.input)
         draw(container, view.tree)
 

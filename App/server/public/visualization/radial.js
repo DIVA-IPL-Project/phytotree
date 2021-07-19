@@ -339,16 +339,19 @@ const radial = function () {
      * }}
      */
     function linearScale(saved) {
-        const linear = saved ? saved : {
+        const linear = {
             value: 500,
             limits: [50, 2000],
             scalingFactor: 1,
             step: 25
         }
+        if (saved)
+            Object.assign(linear, saved)
 
         function increment() {
             linear.value += linear.step
         }
+
         function decrement() {
             linear.value -= linear.step
         }
@@ -371,17 +374,20 @@ const radial = function () {
      */
     function logScale(saved) {
         let value = 1.1
-        const log = saved ? saved : {
+        const log = {
             value: 500,
             limits: [61, 2000],
             scalingFactor: 0.5,
             step: 40,
         }
+        if (saved)
+            Object.assign(log, saved)
 
         function increment() {
             log.step *= value
             log.value += log.step
         }
+
         function decrement() {
             log.value -= log.step
             log.step /= value
@@ -396,13 +402,8 @@ const radial = function () {
      * Changes the scaling of the graph to linear scale
      */
     function applyLinearScale() {
-        graph.element.selectAll('.linkLabel').remove()
-        graph.element.selectAll('.link').remove()
-        graph.element.selectAll('.node').remove()
-        graph.element.selectAll('g').remove()
-
         const last = graph.scale.value
-        graph.scale = linearScale()
+        graph.scale = scaler.linear
         applyScale(data.tree, last)
         applyScaleText()
         update(data.tree)
@@ -423,13 +424,8 @@ const radial = function () {
      * Changes the scaling of the graph to logarithmic scale
      */
     function applyLogScale() {
-        graph.element.selectAll('.linkLabel').remove()
-        graph.links.selectAll('.link').remove()
-        graph.nodes.selectAll('.node').remove()
-        graph.element.selectAll('g').remove()
-
         const last = graph.scale.value
-        graph.scale = logScale()
+        graph.scale = scaler.log
         applyScale(data.tree, last)
         applyScaleText()
         update(data.tree)
@@ -1268,18 +1264,18 @@ const radial = function () {
     }
 
     function load(container, save) {
-        scaler.linear = save.graph.scale.linear
-        scaler.log = save.graph.scale.log
+        if (!save.graph || !save.data || !save.canvas)
+            throw new Error("Save does not contain all needed properties {data, graph, canvas}.")
 
-        graph.style = save.graph.style
-        graph.nodeSize = save.graph.nodeSize
+        Object.assign(graph.style, save.graph.style || {})
+        Object.assign(canvas.zoom, save.canvas.zoom || {})
 
-        canvas.zoom = save.canvas.zoom
-
-        scaler.linear = linearScale(save.graph.scale.linear)
-        scaler.log = logScale(save.graph.scale.log)
+        scaler.linear = linearScale(save.graph.scale?.linear)
+        scaler.log = logScale(save.graph.scale?.log)
         graph.scale = scaler.linear
 
+        if (!save.data.input)
+            throw new Error("Data must contain an input property.")
         let view = build(save.data.input)
         draw(container, view.tree)
 

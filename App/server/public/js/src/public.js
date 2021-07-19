@@ -56,6 +56,9 @@ function display_test_app() {
         document.getElementById('errorIsolate').remove()
     }
 
+    document.getElementById('svg_profile').innerHTML = ''
+    document.getElementById('svg_isolate').innerHTML = ''
+
     document.getElementById('container').innerHTML = ''
     document.getElementById('nwk').style.display = 'block'
     document.getElementById('nwkBtn').style.display = 'block'
@@ -73,8 +76,8 @@ function display_test_app() {
 
     hideGraphConfig()
 
-    document.getElementById('radButton').style.display = 'block'
-    document.getElementById('denButton').style.display = 'block'
+    //document.getElementById('radButton').style.display = 'block'
+    //document.getElementById('denButton').style.display = 'block'
 
     set_up_test_data()
 }
@@ -580,12 +583,13 @@ function changePieColor() {
                 }
             })
 
-            const pieChartTransform = "translate(1000, 500)"
-            const legendTransform = "translate(790, 390)"
-            changePieChartColor(sections, names, pieChartTransform, "#tree_pieChart", legendTransform)
+            const pieChartTransform = "translate(700, 500) scale(0.7)"
+            const legendTransform = "translate(510, 400) scale(0.7)"
+            changePieChartColor(sections, names_isolates, pieChartTransform, "#tree_pieChart", legendTransform)
 
-            const pieChartIsolatesTransform = "translate(340, 170)"
-            changePieChartColor(sections, names, pieChartIsolatesTransform, "#svg_isolate")
+            const pieChartIsolatesTransform = "translate(340, 170) scale(0.7)"
+            const legendTransformIsolates = "translate(100, 50) scale(0.7)"
+            changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, "#svg_isolate", legendTransformIsolates)
 
             filterTables.colors = categories_colors
 
@@ -596,6 +600,7 @@ function changePieColor() {
                 filterTables.transform = radial.buildBarChart
                 radial.applyFilter(filterTables)
             }
+            addListenersToTables()
         }
         node = null
         color = null
@@ -786,7 +791,7 @@ function clickHeaderProfiles(header, id, categories) {
 
     let counts = []
     let length = -1
-   // counts_ordered = []
+    counts_ordered = []
 
     // Check and remove the map
     if (categories.has(HeaderId.toString())) {
@@ -994,7 +999,7 @@ const colorsRange = [
     "#cf7c97", "#8b900a", "#d47270",
 ]
 
-const categories_colors = []
+let categories_colors = []
 
 function changePieChartColor(data, names, transform, id, legendTransform) {
     if (!d3.select(id).selectAll('g').empty()) {
@@ -1131,6 +1136,8 @@ function constructPieChart(data, names, id) {
         d3.select(id).selectAll('.arc').remove()
     }
 
+    categories_colors = []
+
     //remove and return if data equals empty
     if (data[0].total === 0) {
         document.getElementById('linktreebuttonD').style.display = 'none'
@@ -1148,7 +1155,7 @@ function constructPieChart(data, names, id) {
     }
 
     const pieName = id.replace('#', '-')
-    const g = d3.select(id).append('g').attr("transform", `translate(340, 170)`).attr('id', 'pieChart' + pieName)
+    const g = d3.select(id).append('g').attr("transform", `translate(340, 170) scale(0.7)`).attr('id', 'pieChart' + pieName)
 
 
     const pie = d3.pie().value(d => d.value)
@@ -1189,12 +1196,14 @@ function constructPieChart(data, names, id) {
     let colors = []
 
     if (data.length > 20) {
-        document.querySelectorAll('.pieChartInvisible').forEach((item, i) => {
+        document.getElementById('pieChart' + id.replace('#', '-'))
+            .querySelectorAll('.pieChartInvisible').forEach((item, i) => {
             if (i === document.querySelectorAll('.pieChartInvisible').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
         })
     } else {
-        document.querySelectorAll('.arc').forEach((item, i) => {
+        document.getElementById('pieChart' + id.replace('#', '-'))
+            .querySelectorAll('.arc').forEach((item, i) => {
             if (i === document.querySelectorAll('.arc').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
         })
@@ -1278,7 +1287,7 @@ function constructPieChart(data, names, id) {
         position += 20
     })
 
-    const legend = pieChart.attr('id', 'legend')
+    const legend = pieChart.attr('id', 'legend').attr("transform", `translate(100, 50) scale(0.7)`)
     legend.append('text')
         .attr('y', 350)
         .attr('x', 250)
@@ -1292,6 +1301,8 @@ function constructPieChart(data, names, id) {
         .text('Categories: ' + data.length)
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
+
+    colors = []
 }
 
 function linkToTree() {
@@ -1328,9 +1339,9 @@ function linkToTree() {
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
         pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
-            'translate(700, 600) scale(0.7)')
+            'translate(700, 500) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(510, 510) scale(0.6)')
+            'translate(510, 400) scale(0.7)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
@@ -1381,9 +1392,9 @@ function linkToTree() {
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
         pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
-            'translate(700, 600) scale(0.7)')
+            'translate(700, 500) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(510, 510) scale(0.6)')
+            'translate(510, 400) scale(0.7)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
@@ -1463,6 +1474,7 @@ function sendNewickData() {
 function sendProfileData() {
     data = null
     document.getElementById('svg_profile').innerHTML = ""
+    names_profiles = []
 
     const err = document.getElementById('errorProfile')
     if (err != null) {
@@ -1502,6 +1514,7 @@ function sendProfileData() {
 function sendIsolateData() {
     data = null
     document.getElementById('svg_isolate').innerHTML = ""
+    names_isolates = []
 
     const err = document.getElementById('errorIsolate')
     if (err != null) {

@@ -41,6 +41,7 @@ function display_app() {
 
     document.getElementById('radButton').style.display = 'none'
     document.getElementById('denButton').style.display = 'none'
+
     hideGraphConfig()
 
     reset_data()
@@ -55,6 +56,9 @@ function display_test_app() {
         document.getElementById('errorIsolate').remove()
     }
 
+    document.getElementById('svg_profile').innerHTML = ''
+    document.getElementById('svg_isolate').innerHTML = ''
+
     document.getElementById('container').innerHTML = ''
     document.getElementById('nwk').style.display = 'block'
     document.getElementById('nwkBtn').style.display = 'block'
@@ -62,11 +66,18 @@ function display_test_app() {
     document.getElementById('idNwkBt').style.display = 'block'
     document.getElementById('textData').style.display = 'block'
 
+    document.getElementById('nwk').style.display = 'none'
+    document.getElementById('nwkBtn').style.display = 'none'
+    document.getElementById('formFileNw').style.display = 'none'
+    document.getElementById('idNwkBt').style.display = 'none'
+    document.getElementById('textData').style.display = 'none'
+    document.getElementById('textSubmitId').style.display = 'none'
+
 
     hideGraphConfig()
 
-    document.getElementById('radButton').style.display = 'block'
-    document.getElementById('denButton').style.display = 'block'
+    //document.getElementById('radButton').style.display = 'block'
+    //document.getElementById('denButton').style.display = 'block'
 
     set_up_test_data()
 }
@@ -77,14 +88,14 @@ async function set_up_test_data() {
     let headers = {'Content-Type': 'application/json'}
     let response = await fetch('/api/default_data', {headers: headers})
     data = await response.json()
+
 }
 
-function reset_data() {
+async function reset_data() {
     data = undefined
     is_table_profile_create = false
     is_table_isolate_create = false
 }
-
 
 function setupTabs() {
     document.getElementById('profile-tab').addEventListener('click', () => {
@@ -339,8 +350,8 @@ function setupRadialGraphConfiguration() {
     right.style.display = ''
     left.style.display = ''
 
-    setupScaleBtn(left, () => radial.rescale(true))
-    setupScaleBtn(right, () => radial.rescale(false))
+    setupScaleBtn(left, () => radial.rescale(false))
+    setupScaleBtn(right, () => radial.rescale(true))
 
 }
 
@@ -454,8 +465,8 @@ function changeLinkSize(func) {
     linkSizeDiv.setAttribute("class", "linkSize justify-content-center mt-4");
 
     const title = document.createElement("p");
-    title.setAttribute('id', 'linkThicknessId')
     title.setAttribute("class", "text-center");
+    title.setAttribute('id', 'linkThicknessId')
     const text = document.createTextNode("Link Thickness");
     title.appendChild(text);
 
@@ -572,12 +583,13 @@ function changePieColor() {
                 }
             })
 
-            const pieChartTransform = "translate(1000, 500)"
-            const legendTransform = "translate(790, 390)"
-            changePieChartColor(sections, names, pieChartTransform, "#tree_pieChart", legendTransform)
+            const pieChartTransform = "translate(700, 500) scale(0.7)"
+            const legendTransform = "translate(510, 400) scale(0.7)"
+            changePieChartColor(sections, names_isolates, pieChartTransform, "#tree_pieChart", legendTransform)
 
-            const pieChartIsolatesTransform = "translate(340, 170)"
-            changePieChartColor(sections, names, pieChartIsolatesTransform, "#svg_isolate")
+            const pieChartIsolatesTransform = "translate(340, 170) scale(0.7)"
+            const legendTransformIsolates = "translate(100, 50) scale(0.7)"
+            changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, "#svg_isolate", legendTransformIsolates)
 
             filterTables.colors = categories_colors
 
@@ -588,6 +600,7 @@ function changePieColor() {
                 filterTables.transform = radial.buildBarChart
                 radial.applyFilter(filterTables)
             }
+            addListenersToTables()
         }
         node = null
         color = null
@@ -618,7 +631,6 @@ function setupScaleBtn(elem, func) {
     }
 }
 
-
 /********************* Tables *********************/
 
 const filterTables = {
@@ -629,6 +641,7 @@ const filterTables = {
 
 function create_table_profile(data) {
     document.getElementById('table_profile').innerHTML = ""
+
 
     //check if is possible build table
     if (!data || data.schemeGenes.length <= 0) {
@@ -778,7 +791,7 @@ function clickHeaderProfiles(header, id, categories) {
 
     let counts = []
     let length = -1
-    // counts_ordered = []
+    counts_ordered = []
 
     // Check and remove the map
     if (categories.has(HeaderId.toString())) {
@@ -969,6 +982,7 @@ function removeColumnNameIsolates(name) {
     }
 }
 
+
 const colorsRange = [
     "#1b70fc", "#33f0ff", "#718a90", "#b21bff", "#fe6616",
     "#f9bc0f", "#b65d66", "#07a2e6", "#c091ae", "#10b437",
@@ -985,7 +999,7 @@ const colorsRange = [
     "#cf7c97", "#8b900a", "#d47270",
 ]
 
-const categories_colors = []
+let categories_colors = []
 
 function changePieChartColor(data, names, transform, id, legendTransform) {
     if (!d3.select(id).selectAll('g').empty()) {
@@ -1122,6 +1136,8 @@ function constructPieChart(data, names, id) {
         d3.select(id).selectAll('.arc').remove()
     }
 
+    categories_colors = []
+
     //remove and return if data equals empty
     if (data[0].total === 0) {
         document.getElementById('linktreebuttonD').style.display = 'none'
@@ -1139,7 +1155,7 @@ function constructPieChart(data, names, id) {
     }
 
     const pieName = id.replace('#', '-')
-    const g = d3.select(id).append('g').attr("transform", `translate(340, 170)`).attr('id', 'pieChart' + pieName)
+    const g = d3.select(id).append('g').attr("transform", `translate(340, 170) scale(0.7)`).attr('id', 'pieChart' + pieName)
 
 
     const pie = d3.pie().value(d => d.value)
@@ -1180,12 +1196,14 @@ function constructPieChart(data, names, id) {
     let colors = []
 
     if (data.length > 20) {
-        document.querySelectorAll('.pieChartInvisible').forEach((item, i) => {
+        document.getElementById('pieChart' + id.replace('#', '-'))
+            .querySelectorAll('.pieChartInvisible').forEach((item, i) => {
             if (i === document.querySelectorAll('.pieChartInvisible').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
         })
     } else {
-        document.querySelectorAll('.arc').forEach((item, i) => {
+        document.getElementById('pieChart' + id.replace('#', '-'))
+            .querySelectorAll('.arc').forEach((item, i) => {
             if (i === document.querySelectorAll('.arc').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
         })
@@ -1269,7 +1287,7 @@ function constructPieChart(data, names, id) {
         position += 20
     })
 
-    const legend = pieChart.attr('id', 'legend')
+    const legend = pieChart.attr('id', 'legend').attr("transform", `translate(100, 50) scale(0.7)`)
     legend.append('text')
         .attr('y', 350)
         .attr('x', 250)
@@ -1283,6 +1301,8 @@ function constructPieChart(data, names, id) {
         .text('Categories: ' + data.length)
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
+
+    colors = []
 }
 
 function linkToTree() {
@@ -1319,9 +1339,9 @@ function linkToTree() {
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
         pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
-            'translate(700, 600) scale(0.7)')
+            'translate(700, 500) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(510, 510) scale(0.6)')
+            'translate(510, 400) scale(0.7)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
@@ -1372,9 +1392,9 @@ function linkToTree() {
         pieChart.setAttribute("width", "1536")
         pieChart.setAttribute("height", "2000")
         pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
-            'translate(700, 600) scale(0.7)')
+            'translate(700, 500) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
-            'translate(510, 510) scale(0.6)')
+            'translate(510, 400) scale(0.7)')
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
@@ -1413,36 +1433,48 @@ function sendNewickData() {
     }
 
 
+    let headers = {'Content-Type': 'application/json'}
     let nwk = document.getElementById('formFileNw').files[0]
 
-    console.log(nwk)
     const ext = nwk.name.split('.')
     if (ext[1] !== 'txt') {
         alertMsg('Extension for tree file must be txt.')
         return
     }
 
-    nwk.text().then(async newick => {
-        try {
-            console.log(newick)
-            render.set_tree_data(newick)
-            data = await render.getRenderData()
-            console.log(data)
-            //
-            document.getElementById('radButton').style.display = "block"
-            document.getElementById('denButton').style.display = "block"
-            //
-            document.getElementById('idPrfBt').style.display = "block"
-            document.getElementById('formFilePro').style.display = "block"
-        } catch (err) {
-            alertMsg(err.message)
-        }
+    nwk.text().then(newick => {
+        let body = JSON.stringify({data: newick})
+        return fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
+            .then(async res => {
+                try {
+                    if (res.status === 500) alertMsg('error')
+                    let response = await fetch('/api/data', {headers: headers})
+                    if (!response.ok) {
+                        let err = await response.json()
+                        alertMsg(err.message)
+                        return;
+                    }
+                    data = await response.json()
+                } catch (err) {
+                    alertMsg(err)
+                }
+            }).then(() => {
+                alertMsg('Tree data updated with success', 'success')
+                //
+                document.getElementById('radButton').style.display = "block"
+                document.getElementById('denButton').style.display = "block"
+                //
+                document.getElementById('idPrfBt').style.display = "block"
+                document.getElementById('formFilePro').style.display = "block"
+            })
+            .catch(err => alertMsg(err))
     })
 }
 
 function sendProfileData() {
     data = null
     document.getElementById('svg_profile').innerHTML = ""
+    names_profiles = []
 
     const err = document.getElementById('errorProfile')
     if (err != null) {
@@ -1453,31 +1485,36 @@ function sendProfileData() {
     is_table_profile_create = false
     //
 
+    let headers = {'Content-Type': 'application/json'}
     let profile = document.getElementById('formFilePro').files[0]
-    console.log(profile)
+
     const ext = profile.name.split('.')
     if (ext[1] !== 'tab') {
         alertMsg('Extension for profile file must be tab.')
         return
     }
 
-    profile.text().then(async prof => {
-        try {
-            console.log(prof)
-            render.set_profiles_data(prof)
-            data = await render.getRenderData()
-            console.log(data)
+    profile.text().then(prof => {
+        let body = JSON.stringify({data: prof})
+        fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).then(() => {
+            fetch('/api/data', {headers: headers})
+                .then(async res => {
+                    if (res.status === 500) alertMsg('error')
+                    data = await res.json()
+                })
+                .catch(err => alertMsg(err))
+        }).then(() => {
+            alertMsg('Profile data updated with success', 'success')
             document.getElementById('formFileIso').style.display = "block";
             document.getElementById('idIsoBt').style.display = "block";
-        } catch (err) {
-            alertMsg(err.message)
-        }
+        }).catch(err => alertMsg(err))
     })
 }
 
 function sendIsolateData() {
     data = null
     document.getElementById('svg_isolate').innerHTML = ""
+    names_isolates = []
 
     const err = document.getElementById('errorIsolate')
     if (err != null) {
@@ -1488,6 +1525,7 @@ function sendIsolateData() {
     is_table_isolate_create = false
     //
 
+    let headers = {'Content-Type': 'application/json'}
     let isolate = document.getElementById('formFileIso').files[0]
 
     const ext = isolate.name.split('.')
@@ -1496,46 +1534,53 @@ function sendIsolateData() {
         return
     }
 
-    isolate.text().then(async iso => {
-        try {
-            render.set_isolates_data(iso)
-            data = await render.getRenderData()
-        } catch (err) {
-            alertMsg(err.message)
-        }
+    isolate.text().then(iso => {
+
+        let body = JSON.stringify({data: iso})
+        fetch('/api/update/isolates', {method: 'post', body: body, headers: headers}).then(() => {
+            fetch('/api/data', {headers: headers})
+                .then(async res => {
+                    if (res.status === 500) alertMsg('error')
+                    data = await res.json()
+                }).then(() => {
+                alertMsg('Isolate data updated with success', 'success')
+            })
+                .catch(err => alertMsg(err))
+        }).catch(err => alertMsg(err))
     })
 }
 
-async function sendNwkData() {
+function sendNwkData() {
     let nwk = document.getElementById('nwk').value
-    try {
-        render.set_tree_data(nwk)
-        data = await render.getRenderData()
+    let body = JSON.stringify({data: nwk})
+    let headers = {'Content-Type': 'application/json'}
+
+    fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
+        .then(async res => {
+            try {
+                if (res.status === 500) alertMsg('error')
+                let response = await fetch('/api/data', {headers: headers})
+                if (!response.ok) {
+                    let err = await response.json()
+                    alertMsg(err.message)
+                    return;
+                }
+                data = await response.json()
+            } catch (err) {
+                alertMsg(err)
+            }
+        }).then(() => {
+        //
+        alertMsg('Tree data updated with success', 'success')
         document.getElementById('radButton').style.display = "block"
         document.getElementById('denButton').style.display = "block"
-    } catch (err) {
-        alertMsg(err.message)
-    }
+        //
+    }).catch(err => alertMsg(err))
 }
 
 function downloadSVG(title) {
     downloadReport("report.pdf", title)
 }
-
-function downloadFile(filename, text) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
-
-    if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
-    } else {
-        pom.click();
-    }
-}
-
 
 /********************* Aux function *********************/
 
@@ -1599,6 +1644,20 @@ function downloadReport(filename, title) {
     document.getElementById("reportName").style.display = "none"
     document.getElementById("labelReport").style.display = "none"
     document.getElementById("reportName").value = ""
+}
+
+function downloadFile(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    } else {
+        pom.click();
+    }
 }
 
 document.getHTML = function (who, deep) {

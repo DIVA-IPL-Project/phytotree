@@ -206,7 +206,7 @@ function setupData() {
         document.getElementById("downloadSVG").style.display = "none"
         document.getElementById("reportName").addEventListener("change", () => {
             if (document.getElementById("reportName").value === "") return
-            downloadSVG(document.getElementById("reportName").value)
+            downloadReport("report.pdf", document.getElementById("reportName").value)
         })
     })
     document.getElementById('save')
@@ -1013,7 +1013,7 @@ const colorsRange = [
     "#798cc3", "#25b3a7", "#938c6d", "#a05787", "#9c87a0",
     "#20c773", "#8b696d", "#78762d", "#e154c6", "#40835f",
     "#d73656", "#1397a3", "#f940a5", "#66aeff", "#d097e7",
-    "#cf7c97", "#8b900a", "#d47270",
+    "#cf7c97", "#8b900a", "#d47270", "#00ffff", "#cc00cc"
 ]
 
 let categories_colors = []
@@ -1153,27 +1153,31 @@ function constructPieChart(data, names, id) {
         d3.select(id).selectAll('.arc').remove()
     }
 
-    categories_colors = []
+    const pieName = id.replace('#', '-')
+    d3.select('pieChart' + pieName).selectAll('.arc').remove()
 
     //remove and return if data equals empty
     if (data[0].total === 0) {
-        document.getElementById('linktreebuttonD').style.display = 'none'
-        document.getElementById('linktreebuttonR').style.display = 'none'
-        if (document.getElementById('pieChart') && document.getElementById('legend')) {
-            document.getElementById('pieChart').remove()
-            document.getElementById('legend').remove()
+        d3.select('#linktreebuttonD').style('display', 'none')
+        d3.select('#linktreebuttonR').style('display', 'none')
+
+        if (d3.select('#pieChart') && d3.select('#legend')) {
+            d3.select('#pieChart').remove()
+            d3.select('#legend').remove()
         }
         return
     } else {
         if (id === '#svg_isolate') {
-            document.getElementById('linktreebuttonD').style.display = 'block'
-            document.getElementById('linktreebuttonR').style.display = 'block'
+            d3.select('#linktreebuttonD').style('display', 'block')
+            d3.select('#linktreebuttonR').style('display', 'block')
         }
     }
 
-    const pieName = id.replace('#', '-')
-    const g = d3.select(id).append('g').attr("transform", `translate(340, 170) scale(0.7)`).attr('id', 'pieChart' + pieName)
-
+    const g = d3
+        .select(id)
+        .append('g')
+        .attr("transform", `translate(340, 170) scale(0.7)`)
+        .attr('id', 'pieChart' + pieName)
 
     const pie = d3.pie().value(d => d.value)
 
@@ -1213,13 +1217,13 @@ function constructPieChart(data, names, id) {
     let colors = []
 
     if (data.length > 20) {
-        document.getElementById('pieChart' + id.replace('#', '-'))
+        document.getElementById('pieChart' + pieName)
             .querySelectorAll('.pieChartInvisible').forEach((item, i) => {
             if (i === document.querySelectorAll('.pieChartInvisible').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
         })
     } else {
-        document.getElementById('pieChart' + id.replace('#', '-'))
+        document.getElementById('pieChart' + pieName)
             .querySelectorAll('.arc').forEach((item, i) => {
             if (i === document.querySelectorAll('.arc').length - 1) return
             colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
@@ -1318,8 +1322,6 @@ function constructPieChart(data, names, id) {
         .text('Categories: ' + data.length)
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
-
-    colors = []
 }
 
 function linkToTree() {
@@ -1593,10 +1595,6 @@ function sendNwkData() {
         document.getElementById('denButton').style.display = "block"
         //
     }).catch(err => alertMsg(err))
-}
-
-function downloadSVG(title) {
-    downloadReport("report.pdf", title)
 }
 
 /********************* Aux function *********************/

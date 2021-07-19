@@ -90,7 +90,7 @@ const radial = function () {
         }`
 
     function build(input) {
-        if(!input) throw new Error('Please insert tree file first.')
+        if (!input) throw new Error('Please insert tree file first.')
         data.input = input
         const strat = d3.stratify().id(d => d.target).parentId(d => d.source)(input.links);
         data.tree = d3.hierarchy(strat, d => d.children);
@@ -466,26 +466,26 @@ const radial = function () {
                 d.x = (d.x / last) * graph.scale.value
                 d.y = (d.y / last) * graph.scale.value
 
-                const node = document.getElementById('node' + d.data.id)
+                const node = d3.select('#node' + d.data.id)
                 if (!node) return
 
-                node.setAttribute('transform', 'translate(' + [d.x, d.y] + ')')
+                node.attr('transform', 'translate(' + [d.x, d.y] + ')')
 
-                const link = document.getElementById('link' + d.data.id)
-                const line = link.querySelector('line')
+                const link = d3.select('#link' + d.data.id)
+                const line = link.select('line')
                 if (line) {
-                    line.setAttribute('x1', d.parent.x)
-                    line.setAttribute('y1', d.parent.y)
-                    line.setAttribute('x2', d.x)
-                    line.setAttribute('y2', d.y)
+                    line.attr('x1', d.parent.x)
+                    line.attr('y1', d.parent.y)
+                    line.attr('x2', d.x)
+                    line.attr('y2', d.y)
                 }
 
                 if (graph.style.linkLabels) {
-                    if (document.getElementById('label' + d.data.id)) {
-                        document.getElementById('label' + d.data.id)
-                            .setAttribute('x', ((d.parent.x + d.x) / 2 - 15).toString())
-                        document.getElementById('label' + d.data.id)
-                            .setAttribute('y', ((d.parent.y + d.y) / 2 - 15).toString())
+                    if (d3.select('#label' + d.data.id)) {
+                        d3.select('#label' + d.data.id)
+                            .attr('x', ((d.parent.x + d.x) / 2 - 15).toString())
+                        d3.select('#label' + d.data.id)
+                            .attr('y', ((d.parent.y + d.y) / 2 - 15).toString())
                     }
                 }
             }
@@ -898,7 +898,7 @@ const radial = function () {
      * Applies the filter to add bar charts.
      * @param filter the filter to be applied
      */
-    function applyFilter(filter){
+    function applyFilter(filter) {
         graph.style.barChart.filter = filter
         filter.transform(filter.name, filter.line, filter.column, filter.colors)
         addLeafLabelsNotIsolates()
@@ -947,10 +947,8 @@ const radial = function () {
             data.input.nodes.forEach(node => {
                 let isolates = [], profiles
                 if (node.isolates && node.isolates.length > 0) {
-                    const currClass = document.getElementById('node' + node.key)
-                        .getAttribute("class")
-                    document.getElementById('node' + node.key)
-                        .setAttribute("class", `${currClass} isolates`)
+                    const currClass = d3.select('#node' + node.key).attr("class")
+                    d3.select('#node' + node.key).attr("class", `${currClass} isolates`)
 
                     node.isolates.forEach(iso => columns.forEach((c, i) => {
                         if (i === 0) isolates.push(iso[c] + ',')
@@ -971,20 +969,16 @@ const radial = function () {
                     })
 
                 } else {
-                    const currClass = document.getElementById('node' + node.key)
-                        .getAttribute("class")
-                    document.getElementById('node' + node.key)
-                        .setAttribute("class", `${currClass} not-isolates`)
+                    const currClass = d3.select('#node' + node.key).attr("class")
+                    d3.select('#node' + node.key).attr("class", `${currClass} not-isolates`)
                 }
             })
         } else {
             columns.forEach(col => {
                 data.input.nodes.forEach(node => {
                     if (node.isolates && node.isolates.length > 0) {
-                        const currClass = document.getElementById('node' + node.key)
-                            .getAttribute("class")
-                        document.getElementById('node' + node.key)
-                            .setAttribute("class", `${currClass} isolates`)
+                        const currClass = d3.select('#node' + node.key).attr("class")
+                        d3.select('#node' + node.key).attr("class", `${currClass} isolates`)
 
                         node.isolates.forEach(iso => {
                             columns_data.push({
@@ -994,10 +988,8 @@ const radial = function () {
                             })
                         })
                     } else {
-                        const currClass = document.getElementById('node' + node.key)
-                            .getAttribute("class")
-                        document.getElementById('node' + node.key)
-                            .setAttribute("class", `${currClass} not-isolates`)
+                        const currClass = d3.select('#node' + node.key).attr("class")
+                        d3.select('#node' + node.key).attr("class", `${currClass} not-isolates`)
                     }
                 })
             })
@@ -1012,15 +1004,18 @@ const radial = function () {
         if (name === "&") {
             stack(order_data)[0].forEach(d => {
                 const counts = {}
-                d.data.isolates.forEach(x => { counts[x] = (counts[x] || 0) + 1 })
+                d.data.isolates.forEach(x => {
+                    counts[x] = (counts[x] || 0) + 1
+                })
 
                 function valuesToArray(obj) {
                     const result = []
                     for (let key in obj) {
-                        if (obj.hasOwnProperty(key)) result.push({ 'isolate': key, 'counter': obj[key] })
+                        if (obj.hasOwnProperty(key)) result.push({'isolate': key, 'counter': obj[key]})
                     }
                     return result
                 }
+
                 const data = {
                     'category': d.data.category,
                     'isolates': valuesToArray(counts),
@@ -1070,7 +1065,7 @@ const radial = function () {
 
         if (name === "&") {
             map.forEach((isolate, profile) => {
-                const node = document.getElementById('node' + profile).querySelector("g")
+                const node = d3.select('#node' + profile).select("g")
                 lastX = 0
                 lastWidth = 5
                 totalW = 0
@@ -1082,21 +1077,20 @@ const radial = function () {
                     })
 
                 isolate.isolates.forEach(item => {
-                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
-                    rect.setAttribute("y", "-5")
-                    rect.setAttribute("height", "11")
-                    rect.setAttribute("class", "barChart")
-                    rect.setAttribute('transform', `rotate(${rotate})`)
-                    rect.setAttribute("fill", getColor(item.isolate))
+                    const rect = node.append("rect")
+                    rect.attr("y", "-5")
+                    rect.attr("height", "11")
+                    rect.attr("class", "barChart")
+                    rect.attr('transform', `rotate(${rotate})`)
+                    rect.attr("fill", getColor(item.isolate))
 
                     lastX += lastWidth
-                    rect.setAttribute("x", lastX.toString())
+                    rect.attr("x", lastX.toString())
 
                     lastWidth = xScale(item.counter * w)
                     totalW += lastWidth
-                    rect.setAttribute("width", lastWidth.toString())
+                    rect.attr("width", lastWidth.toString())
 
-                    node.appendChild(rect)
                     graph.nodes
                         .selectAll("circle")
                         .each(function (d) {
@@ -1106,7 +1100,7 @@ const radial = function () {
                         })
                 })
 
-                d3.select(node)
+                node
                     .append("text")
                     .attr("class", "leafLabelIsolates")
                     .attr("dx", totalW + 10)
@@ -1120,7 +1114,7 @@ const radial = function () {
             })
         } else {
             map.forEach((isolate, profile) => {
-                const node = document.getElementById('node' + profile).querySelector("g")
+                const node = d3.select('#node' + profile).select("g")
                 lastX = 0
                 lastWidth = 5
                 totalW = 0
@@ -1132,21 +1126,20 @@ const radial = function () {
                     })
 
                 isolate.forEach(item => {
-                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
-                    rect.setAttribute("y", "-5")
-                    rect.setAttribute("height", "11")
-                    rect.setAttribute("class", "barChart")
-                    rect.setAttribute('transform', `rotate(${rotate})`)
-                    rect.setAttribute("fill", getColor(item.isolates))
+                    const rect = node.append("rect")
+                    rect.attr("y", "-5")
+                    rect.attr("height", "11")
+                    rect.attr("class", "barChart")
+                    rect.attr('transform', `rotate(${rotate})`)
+                    rect.attr("fill", getColor(item.isolates))
 
                     lastX += lastWidth
-                    rect.setAttribute("x", lastX.toString())
+                    rect.attr("x", lastX.toString())
 
                     lastWidth = xScale(item.numberOfIsolates * w)
                     totalW += lastWidth
-                    rect.setAttribute("width", lastWidth.toString())
+                    rect.attr("width", lastWidth.toString())
 
-                    node.appendChild(rect)
                     graph.nodes
                         .selectAll("circle")
                         .each(function (d) {
@@ -1156,7 +1149,7 @@ const radial = function () {
                         })
                 })
 
-                d3.select(node)
+                node
                     .append("text")
                     .attr('class', 'leafLabelIsolates')
                     .attr("dx", totalW + 10)
@@ -1172,12 +1165,13 @@ const radial = function () {
     }
 
     function rectOf(node, rect) {
+        const elem = rect._groups[0][0]
         let rectObj = {
-            width: rect.attributes['width'].nodeValue,
-            height: rect.attributes['height'].nodeValue,
-            fill: rect.attributes['fill'].nodeValue,
-            x: rect.attributes['x'].nodeValue,
-            y: rect.attributes['y'].nodeValue
+            width: elem.attributes['width'].nodeValue,
+            height: elem.attributes['height'].nodeValue,
+            fill: elem.attributes['fill'].nodeValue,
+            x: elem.attributes['x'].nodeValue,
+            y: elem.attributes['y'].nodeValue
         }
         if (node.data.data.barChart) node.data.data.barChart.push(rectObj)
         else node.data.data.barChart = [rectObj]

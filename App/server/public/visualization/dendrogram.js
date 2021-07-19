@@ -797,18 +797,18 @@ const dendrogram = function () {
             d.x = d.x / last
             d.x = d.x * graph.scale.vertical.value
 
-            let element = document.getElementById('node' + d.data.id)
+            let element = d3.select('#node' + d.data.id)
             if (!element) return
-            element.setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
+            element.attr('transform', 'translate(' + [d.y, d.x] + ')')
             if (d.parent) {
-                document.getElementById('link' + d.data.id)
-                    .querySelector('path')
-                    .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
+                d3.select('#link' + d.data.id)
+                    .select('path')
+                    .attr('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
 
                 if (graph.style.linkLabels) {
-                    if (document.getElementById('label' + d.data.id)) {
-                        document.getElementById('label' + d.data.id)
-                            .setAttribute('y', (d.x - 5).toString())
+                    if (d3.select('#label' + d.data.id)) {
+                        d3.select('#label' + d.data.id)
+                            .attr('y', (d.x - 5).toString())
                     }
                 }
             }
@@ -827,21 +827,21 @@ const dendrogram = function () {
                 else
                     d.y = d.depth * horizontal.scalingFactor * horizontal.value
 
-                let element = document.getElementById('node' + d.data.id)
+                let element = d3.select('#node' + d.data.id)
                 if (!element) return
-                element.setAttribute('transform', 'translate(' + [d.y, d.x] + ')')
+                element.attr('transform', 'translate(' + [d.y, d.x] + ')')
 
                 if (d.parent) {
-                    if (document.getElementById('link' + d.data.id).querySelector('path')) {
-                        document.getElementById('link' + d.data.id)
-                            .querySelector('path')
-                            .setAttribute('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
+                    if (d3.select('#link' + d.data.id).select('path')) {
+                        d3.select('#link' + d.data.id)
+                            .select('path')
+                            .attr('d', "M" + [d.parent.y, d.parent.x] + "V" + d.x + "H" + d.y)
                     }
 
                     if (graph.style.linkLabels) {
-                        if (document.getElementById('label' + d.data.id)) {
-                            document.getElementById('label' + d.data.id)
-                                .setAttribute('x', ((d.parent.y + d.y) / 2).toString())
+                        if (d3.select('#label' + d.data.id)) {
+                            d3.select('#label' + d.data.id)
+                                .attr('x', ((d.parent.y + d.y) / 2).toString())
                         }
                     }
                 }
@@ -964,22 +964,22 @@ const dendrogram = function () {
 
             // Second walk, normalizing x & y to the desired size.
             return root.eachAfter(function (node) {
-                    node.visibility = true
-                    node.x = (node.x - root.x) * dx
-                    node.y = (root.y - node.y) * dy
+                node.visibility = true
+                node.x = (node.x - root.x) * dx
+                node.y = (root.y - node.y) * dy
 
-                    if (!node.children)
-                        node.leaves = [node];
-                    else {
-                        node.leaves = []
-                        node.children.forEach(child => {
-                            if (!child.children)
-                                node.leaves.push(child.data.id)
-                            else
-                                node.leaves.push(...child.leaves)
-                        })
-                    }
-                })
+                if (!node.children)
+                    node.leaves = [node];
+                else {
+                    node.leaves = []
+                    node.children.forEach(child => {
+                        if (!child.children)
+                            node.leaves.push(child.data.id)
+                        else
+                            node.leaves.push(...child.leaves)
+                    })
+                }
+            })
         }
 
         cluster.separation = function (x) {
@@ -1040,9 +1040,7 @@ const dendrogram = function () {
 
                     graph.element.attr("transform", event.transform)
 
-                    const zoomElem = document
-                        .getElementById("graph")
-                        .getAttribute("transform")
+                    const zoomElem = d3.select("#graph").attr("transform")
 
                     const scaleAttr = zoomElem.substring(zoomElem.indexOf("scale"), zoomElem.length)
                     const scaleValue = scaleAttr.substring(scaleAttr.indexOf("(") + 1, scaleAttr.length - 1)
@@ -1105,10 +1103,9 @@ const dendrogram = function () {
             data.input.nodes.forEach(node => {
                 let isolates = [], profiles
                 if (node.isolates && node.isolates.length > 0) {
-                    const currClass = document.getElementById('node' + node.key)
-                        .getAttribute("class")
-                    document.getElementById('node' + node.key)
-                        .setAttribute("class", `${currClass} isolates`)
+                    const currClass = d3.select('#node' + node.key).attr("class")
+
+                    d3.select('#node' + node.key).attr("class", `${currClass} isolates`)
 
                     node.isolates.forEach(iso => columns.forEach((c, i) => {
                         if (i === 0) isolates.push(iso[c] + ',')
@@ -1129,20 +1126,16 @@ const dendrogram = function () {
                     })
 
                 } else {
-                    const currClass = document.getElementById('node' + node.key)
-                        .getAttribute("class")
-                    document.getElementById('node' + node.key)
-                        .setAttribute("class", `${currClass} not-isolates`)
+                    const currClass = d3.select('#node' + node.key).attr("class")
+                    d3.select('#node' + node.key).attr("class", `${currClass} not-isolates`)
                 }
             })
         } else {
             columns.forEach(col => {
                 data.input.nodes.forEach(node => {
                     if (node.isolates && node.isolates.length > 0) {
-                        const currClass = document.getElementById('node' + node.key)
-                            .getAttribute("class")
-                        document.getElementById('node' + node.key)
-                            .setAttribute("class", `${currClass} isolates`)
+                        const currClass = d3.select('#node' + node.key).attr("class")
+                        d3.select('#node' + node.key).attr("class", `${currClass} isolates`)
 
                         node.isolates.forEach(iso => {
                             columns_data.push({
@@ -1152,10 +1145,8 @@ const dendrogram = function () {
                             })
                         })
                     } else {
-                        const currClass = document.getElementById('node' + node.key)
-                            .getAttribute("class")
-                        document.getElementById('node' + node.key)
-                            .setAttribute("class", `${currClass} not-isolates`)
+                        const currClass = d3.select('#node' + node.key).attr("class")
+                        d3.select('#node' + node.key).attr("class", `${currClass} not-isolates`)
                     }
                 })
             })
@@ -1231,26 +1222,25 @@ const dendrogram = function () {
 
         if (name === "&") {
             map.forEach((isolate, profile) => {
-                const node = document.getElementById('node' + profile).querySelector("g")
+                const node = d3.select('#node' + profile).select("g")
                 lastX = 0
                 lastWidth = 5
                 totalW = 0
 
                 isolate.isolates.forEach(item => {
-                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
-                    rect.setAttribute("y", "-5")
-                    rect.setAttribute("height", "11")
-                    rect.setAttribute("class", "barChart")
-                    rect.setAttribute("fill", getColor(item.isolate))
+                    const rect = node.append("rect")
+                        .attr("y", "-5")
+                        .attr("height", "11")
+                        .attr("class", "barChart")
+                        .attr("fill", getColor(item.isolate))
 
                     lastX += lastWidth
-                    rect.setAttribute("x", lastX.toString())
+                    rect.attr("x", lastX.toString())
 
                     lastWidth = xScale(item.counter * w)
                     totalW += lastWidth
-                    rect.setAttribute("width", lastWidth.toString())
+                    rect.attr("width", lastWidth.toString())
 
-                    node.appendChild(rect)
                     graph.nodes
                         .selectAll("circle")
                         .each(function (d) {
@@ -1260,7 +1250,7 @@ const dendrogram = function () {
                         })
                 })
 
-                d3.select(node)
+                node
                     .append("text")
                     .attr("class", "leafLabelIsolates")
                     .attr("dy", 5)
@@ -1273,26 +1263,25 @@ const dendrogram = function () {
             })
         } else {
             map.forEach((isolate, profile) => {
-                const node = document.getElementById('node' + profile).querySelector("g")
+                const node = d3.select('#node' + profile).select("g")
                 lastX = 0
                 lastWidth = 5
                 totalW = 0
 
                 isolate.forEach(item => {
-                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
-                    rect.setAttribute("y", "-5")
-                    rect.setAttribute("height", "11")
-                    rect.setAttribute("class", "barChart")
-                    rect.setAttribute("fill", getColor(item.isolates))
+                    const rect = node.append("rect")
+                        .attr("y", "-5")
+                        .attr("height", "11")
+                        .attr("class", "barChart")
+                        .attr("fill", getColor(item.isolates))
 
                     lastX += lastWidth
-                    rect.setAttribute("x", lastX.toString())
+                    rect.attr("x", lastX.toString())
 
                     lastWidth = xScale(item.numberOfIsolates * w)
                     totalW += lastWidth
-                    rect.setAttribute("width", lastWidth.toString())
+                    rect.attr("width", lastWidth.toString())
 
-                    node.appendChild(rect)
                     graph.nodes
                         .selectAll("#node" + profile + " circle")
                         .each(function (d) {
@@ -1302,7 +1291,7 @@ const dendrogram = function () {
                         })
                 })
 
-                d3.select(node)
+                node
                     .append("text")
                     .attr("class", "leafLabelIsolates")
                     .attr("dy", 5)
@@ -1317,12 +1306,13 @@ const dendrogram = function () {
     }
 
     function rectOf(node, rect) {
+        const elem = rect._groups[0][0]
         let rectObj = {
-            width: rect.attributes['width'].nodeValue,
-            height: rect.attributes['height'].nodeValue,
-            fill: rect.attributes['fill'].nodeValue,
-            x: rect.attributes['x'].nodeValue,
-            y: rect.attributes['y'].nodeValue
+            width: elem.attributes['width'].nodeValue,
+            height: elem.attributes['height'].nodeValue,
+            fill: elem.attributes['fill'].nodeValue,
+            x: elem.attributes['x'].nodeValue,
+            y: elem.attributes['y'].nodeValue
         }
         if (node.data.data.barChart) node.data.data.barChart.push(rectObj)
         else node.data.data.barChart = [rectObj]

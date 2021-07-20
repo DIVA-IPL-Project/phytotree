@@ -48,6 +48,8 @@ function display_app() {
 }
 
 function display_test_app() {
+    reset_data()
+
     if (document.getElementById('errorProfile')) {
         document.getElementById('errorProfile').remove()
     }
@@ -76,9 +78,6 @@ function display_test_app() {
 
     hideGraphConfig()
 
-    //document.getElementById('radButton').style.display = 'block'
-    //document.getElementById('denButton').style.display = 'block'
-
     set_up_test_data()
 }
 
@@ -95,9 +94,25 @@ async function reset_data() {
     data = undefined
     is_table_profile_create = false
     is_table_isolate_create = false
+    names_isolates = []
+    names_profiles = []
+    categories = {
+        categoriesProfile: new Map(),
+        categoriesIsolate: new Map()
+    }
+    filterTables = {
+        name: 'Bar chart',
+        line: [],
+        column: [],
+    }
+    categories_colors = []
 }
 
 function setupTabs() {
+    document.getElementById('home-tab').addEventListener('click', () => {
+        addListenersToTables()
+    })
+
     document.getElementById('profile-tab').addEventListener('click', () => {
         if (!is_table_profile_create) {
             try {
@@ -118,6 +133,9 @@ function setupTabs() {
     document.getElementById('isolate-tab').addEventListener('click', () => {
         if (!is_table_isolate_create) {
             try {
+                document.getElementById('linktreebuttonD').style.display = 'none'
+                document.getElementById('linktreebuttonR').style.display = 'none'
+
                 create_table_isolate(data)
                 document.getElementById('isolateDiv').style.display = 'block'
                 document.getElementById('svg_isolate').style.display = 'block'
@@ -650,7 +668,7 @@ function setupScaleBtn(elem, func) {
 
 /********************* Tables *********************/
 
-const filterTables = {
+let filterTables = {
     name: 'Bar chart',
     line: [],
     column: [],
@@ -776,7 +794,7 @@ function addListenersToTables() {
 }
 
 
-const categories = {
+let categories = {
     categoriesProfile: new Map(),
     categoriesIsolate: new Map()
 }
@@ -784,6 +802,7 @@ const categories = {
 let names_profiles = []
 let names_isolates = []
 let counts_ordered
+let sections = []
 
 /**
  *
@@ -945,8 +964,6 @@ function clickHeaderIsolates(header, id, categories) {
     sections = counts
     constructPieChart(counts_ordered, names_isolates, id)
 }
-
-let sections = []
 
 function addColumn(tdElements, HeaderId, array, categories) {
     for (let i = 0; i < tdElements.length; i++) {
@@ -1153,6 +1170,8 @@ function constructPieChart(data, names, id) {
         d3.select(id).selectAll('.arc').remove()
     }
 
+    categories_colors = []
+
     const pieName = id.replace('#', '-')
     d3.select('pieChart' + pieName).selectAll('.arc').remove()
 
@@ -1161,8 +1180,8 @@ function constructPieChart(data, names, id) {
         d3.select('#linktreebuttonD').style('display', 'none')
         d3.select('#linktreebuttonR').style('display', 'none')
 
-        if (d3.select('#pieChart') && d3.select('#legend')) {
-            d3.select('#pieChart').remove()
+        if (d3.select('#pieChart' + pieName) && d3.select('#legend')) {
+            d3.select('#pieChart' + pieName).remove()
             d3.select('#legend').remove()
         }
         return
@@ -1187,6 +1206,8 @@ function constructPieChart(data, names, id) {
         .domain(d3.range(0, length))
         .range(colorsRange)
 
+    const colors = []
+
     if (data.length > 20) {
         const piesInvisible = g.selectAll('.arc')
             .data(pie(data))
@@ -1198,7 +1219,13 @@ function constructPieChart(data, names, id) {
 
         piesInvisible.append('path')
             .attr('d', d => path(d))
-            .attr('fill', (d, i) => color(i))
+            .attr('fill', (d, i) => {
+                colors.push({
+                    name: d.data.name,
+                    color: color(i)
+                })
+                return color(i)
+            })
             .attr('id', d => d.data.name)
             .style('display', 'none')
     }
@@ -1211,23 +1238,19 @@ function constructPieChart(data, names, id) {
 
     pies.append('path')
         .attr('d', d => path(d))
-        .attr('fill', (d, i) => color(i))
+        .attr('fill', (d, i) => {
+            colors.push({
+                name: d.data.name,
+                color: color(i)
+            })
+            return color(i)
+        })
         .attr('id', d => d.data.name)
 
-    let colors = []
-
-    if (data.length > 20) {
-        document.getElementById('pieChart' + pieName)
-            .querySelectorAll('.pieChartInvisible').forEach((item, i) => {
-            if (i === document.querySelectorAll('.pieChartInvisible').length - 1) return
-            colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
-        })
-    } else {
-        document.getElementById('pieChart' + pieName)
-            .querySelectorAll('.arc').forEach((item, i) => {
-            if (i === document.querySelectorAll('.arc').length - 1) return
-            colors.push(item.getElementsByTagName('path')[0].attributes['fill'].nodeValue)
-        })
+    function getColor(name) {
+        for (let i = 0; i < colors.length; i++) {
+            if (colors[i].name === name) return colors[i].color
+        }
     }
 
     const pieChart = d3.select(id).append('g')
@@ -1242,7 +1265,7 @@ function constructPieChart(data, names, id) {
                 .attr('cy', position)
                 .attr('cx', 550)
                 .attr('r', 6)
-                .style('fill', colors[i])
+                .style('fill', getColor(item.name))
 
             pieChart.append('text')
                 .attr('y', position + 5)
@@ -1256,7 +1279,7 @@ function constructPieChart(data, names, id) {
                 .attr('cy', position)
                 .attr('cx', 550)
                 .attr('r', 6)
-                .style('fill', colors[i])
+                .style('fill', getColor(item.name))
                 .attr('class', 'showOthers')
 
             if (document.querySelector('.showOthers')) {
@@ -1280,7 +1303,7 @@ function constructPieChart(data, names, id) {
                 .attr('cx', xOthersPosition)
                 .attr('r', 6)
                 .attr('class', 'others')
-                .style('fill', colors[i])
+                .style('fill', getColor(item.name))
                 .style('display', 'none')
 
             pieChart.append('text')
@@ -1301,7 +1324,7 @@ function constructPieChart(data, names, id) {
         if (id === '#svg_isolate') {
             categories_colors.push({
                 name: item.name,
-                color: colors[i]
+                color: colors[i].color
             })
         }
 

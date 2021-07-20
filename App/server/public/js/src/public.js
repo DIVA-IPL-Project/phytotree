@@ -58,6 +58,9 @@ function display_test_app() {
         document.getElementById('errorIsolate').remove()
     }
 
+    document.getElementById('radButton').style.display = 'block'
+    document.getElementById('denButton').style.display = 'block'
+
     document.getElementById('svg_profile').innerHTML = ''
     document.getElementById('svg_isolate').innerHTML = ''
 

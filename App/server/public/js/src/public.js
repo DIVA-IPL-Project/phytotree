@@ -1,5 +1,6 @@
 window.onload = load
 
+let dendrogram, radial
 let data
 let is_table_profile_create = false
 let is_table_isolate_create = false
@@ -8,6 +9,8 @@ let view
 /********************* Load Page *********************/
 
 function load() {
+    dendrogram = dendrogramView()
+    radial = radialView()
     setupRepresentationButtons()
     setupTabs()
     setupData()
@@ -215,9 +218,11 @@ function setUpError(message, id, contentId) {
 
 function setupData() {
     document.getElementById('flexCheckDefault').addEventListener('click', test_input_handler)
-    document.getElementById('nwkBtn').addEventListener('click', sendNwkData)
+    document.getElementById('nwkBtn')
+        .addEventListener('click', () => resetViewsOnDataRequest(sendNwkData))
 
-    document.getElementById('idNwkBt').addEventListener('click', sendNewickData)
+    document.getElementById('idNwkBt')
+        .addEventListener('click', () => resetViewsOnDataRequest(sendNewickData))
     document.getElementById('idPrfBt').addEventListener('click', sendProfileData)
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
@@ -1630,6 +1635,11 @@ function sendNwkData() {
     }).catch(err => alertMsg(err))
 }
 
+function resetViewsOnDataRequest(func) {
+    func()
+    clearVisualizations()
+}
+
 /********************* Aux function *********************/
 
 function alertMsg(message, kind) {
@@ -1645,4 +1655,10 @@ function alertMsg(message, kind) {
     document.getElementById('buttonErr').addEventListener('click', () => {
         document.getElementById('divErr').remove()
     })
+}
+
+function clearVisualizations() {
+    document.getElementById('container').innerHTML = ''
+    dendrogram = dendrogramView()
+    radial = radialView()
 }

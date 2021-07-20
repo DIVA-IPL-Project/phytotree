@@ -1,4 +1,4 @@
-const dendrogram = function () {
+function dendrogramView() {
 
     const type = 'dendrogram'
     const scaler = {
@@ -1416,6 +1416,8 @@ const dendrogram = function () {
 
         addNodeStyle()
         addLinkStyle()
+
+        return data.input
     }
 
     return {
@@ -1451,4 +1453,4 @@ const dendrogram = function () {
         save,
         load
     }
-}()
+}

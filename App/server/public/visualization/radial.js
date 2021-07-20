@@ -1,4 +1,4 @@
-const radial = function () {
+function radialView() {
 
     const type = 'radial'
     const scaler = {
@@ -1275,6 +1275,8 @@ const radial = function () {
 
         addNodeStyle()
         addLinkStyle()
+
+        return data.input
     }
 
     return {
@@ -1308,4 +1310,4 @@ const radial = function () {
         save,
         load
     }
-}()
+}

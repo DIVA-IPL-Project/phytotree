@@ -1385,6 +1385,17 @@ function linkToTree() {
         pieChart.getElementById('legend').setAttribute('transform',
             'translate(510, 400) scale(0.7)')
 
+        // const zoom = d3.zoom()
+        // const transform = d3.zoomIdentity.translate(100, 200).scale(1)
+        //
+        // pieChart
+        //     .call(zoom.transform, transform)
+        //     .call(zoom
+        //         .scaleExtent([0.1, 100])
+        //         .on("zoom", function (event) {
+        //             graph.element.attr("transform", event.transform)
+        //         }))
+
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'
         hide.onclick = () => {
@@ -1469,6 +1480,13 @@ function formatArray(names) {
 
 function sendNewickData() {
     document.getElementById("container").innerHTML = ""
+    if (view) view.isDraw = false
+    filterTables = {
+        name: 'Bar chart',
+        line: [],
+        column: [],
+    }
+
     const err = document.getElementById('treeError')
     if (err != null) {
         err.remove()

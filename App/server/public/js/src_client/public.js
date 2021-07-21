@@ -96,7 +96,7 @@ async function set_up_test_data() {
 
 }
 
-async function reset_data() {
+function reset_data() {
     data = undefined
     is_table_profile_create = false
     is_table_isolate_create = false
@@ -279,7 +279,8 @@ function setupData() {
 function loadView(vis, save) {
     view = vis
     vis.load('#container', save)
-    setupRadialGraphConfiguration()
+    if (vis.type === 'radial') setupRadialGraphConfiguration()
+    else setupDendrogramGraphConfiguration()
     changeNodeColor(vis.changeNodeColor, vis.getNodes())
     changeNodeSize(vis.changeNodeSize)
     changeLinkSize(vis.changeLinkSize)
@@ -1392,17 +1393,6 @@ function linkToTree() {
             'translate(700, 500) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
             'translate(510, 400) scale(0.7)')
-
-        // const zoom = d3.zoom()
-        // const transform = d3.zoomIdentity.translate(100, 200).scale(1)
-        //
-        // pieChart
-        //     .call(zoom.transform, transform)
-        //     .call(zoom
-        //         .scaleExtent([0.1, 100])
-        //         .on("zoom", function (event) {
-        //             graph.element.attr("transform", event.transform)
-        //         }))
 
         const hide = document.getElementById("btnHide")
         hide.style.display = 'block'

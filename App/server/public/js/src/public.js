@@ -96,7 +96,7 @@ async function set_up_test_data() {
 
 }
 
-async function reset_data() {
+function reset_data() {
     data = undefined
     is_table_profile_create = false
     is_table_isolate_create = false
@@ -279,7 +279,8 @@ function setupData() {
 function loadView(vis, save) {
     view = vis
     vis.load('#container', save)
-    setupRadialGraphConfiguration()
+    if (vis.type === 'radial') setupRadialGraphConfiguration()
+    else setupDendrogramGraphConfiguration()
     changeNodeColor(vis.changeNodeColor, vis.getNodes())
     changeNodeSize(vis.changeNodeSize)
     changeLinkSize(vis.changeLinkSize)

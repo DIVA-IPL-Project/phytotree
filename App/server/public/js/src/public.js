@@ -279,8 +279,6 @@ function setupData() {
 function loadView(vis, save) {
     view = vis
     vis.load('#container', save)
-    if (vis.type === 'radial') setupRadialGraphConfiguration()
-    else setupDendrogramGraphConfiguration()
     changeNodeColor(vis.changeNodeColor, vis.getNodes())
     changeNodeSize(vis.changeNodeSize)
     changeLinkSize(vis.changeLinkSize)

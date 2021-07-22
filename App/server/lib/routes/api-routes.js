@@ -19,18 +19,6 @@ router.get('/data', (req, res, next) =>{
     })
 })
 
-router.get('reset_data', (req, res, next) =>{
-    render.reset_data().then(data => {
-        res.json(data)
-    }).catch(err => {
-        res.status(err.status)
-        res.json({
-            message: err.message,
-            status: err.status
-        })
-    })
-})
-
 router.post('/update/newick', (req, res, next) => {
     let newick = req.body.data;
     tree = render.set_tree_data(newick)

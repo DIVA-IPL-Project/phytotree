@@ -34,7 +34,7 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link link-light" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profileContent"
                 type="button"
-                role="tab" aria-controls="profile" aria-selected="false">Primary Data
+                role="tab" aria-controls="profile" aria-selected="false">Profile Data
         </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -58,7 +58,7 @@
                 </div>
                 <!-- Title -->
                 <div class="sidebar-header text-center mt-md-3">
-                    <h3>Visualization</h3>
+                    <h4 id="visualization" style="display: none">Visualization</h4>
                 </div>
 
                 <!-- Views Buttons -->
@@ -74,7 +74,7 @@
                 <!-- Graph Config-->
                 <div class="justify-content-center mt-md-3" id="graphConfig" style="display: none;padding-top: 25px">
                     <h6 id="graphConfigId" class="text-center">
-                        Graph Configuration
+                        Tree Configuration
                     </h6>
                     <div class="d-grid gap-2 mt-2">
                         <label class="text-center" for="search">Search</label>
@@ -94,7 +94,7 @@
                             Spread
                         </button>
                         <button id="btnHide" class="btn btn-primary mt-1" style="display: none;">
-                            Pie Chart
+                            Legend
                         </button>
                     </div>
                     <div class="form-check mt-md-3">
@@ -138,11 +138,20 @@
                 <!-- Data Input-->
                 <div id="dataInput" class="d-grid gap-1 justify-content-center mt-md-3" style="padding-top: 25px">
                     <div class="sidebar-header text-center mt-md-3">
-                        <h4 id="textData">Data</h4>
-                        <p id="textSubmitId">Submit files or use the text area.</p>
+                        <h4 id="textData">New study</h4>
                     </div>
 
-                    <div class="d-grid justify-content-center gap-2 mt-2">
+                    <div class="d-grid gap-2 mt-2 text-center">
+                        <p id="textNwkData">Insert the tree in the text area (without isolate data)</p>
+                        <label for="nwk"></label>
+                        <textarea id="nwk" rows="4" cols="25" name="newick">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
+                        <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm">Load
+                            data
+                        </button>
+                    </div>
+
+                    <div class="d-grid justify-content-center text-center gap-2 mt-2">
+                        <p id="textNwkFile">Or submit files.</p>
                         <input class="form-control form-control-sm" id="formFileNw" type="file">
                         <button type="button" class="btn btn-outline-secondary btn-sm" id="idNwkBt">
                             Load newick file
@@ -163,29 +172,22 @@
                         </button>
                     </div>
 
-                    <div class="d-grid gap-2 mt-2">
-                        <label for="nwk"></label>
-                        <textarea id="nwk" rows="4" cols="25" name="newick">(((F:0.2, G:0.3)D:0.3,(H:0.5, (J:0.2,K:0.3)I:0.3)E:0.2)B:0.3, C:0.7)A:1.0;</textarea>
-                        <button id="nwkBtn" type="button" class="btn btn-outline-secondary btn-sm">Load
-                            data
-                        </button>
-                    </div>
-
-                    <div class="d-grid gap-2 mt-2">
+                    <div class="d-grid gap-2 text-center mt-2">
                         <label id="labelReport" for="reportName" style="display:none;">
                             Insert the report title and then press enter
                         </label>
                         <input id="reportName" type="text" class="form-control" placeholder="Report title"
                                aria-label="Report title" aria-describedby="basic-addon2" style="display: none">
-                        <button id="downloadSVG" type="button" class="btn btn-outline-secondary btn-sm">
+                        <button style="display: none" id="downloadSVG" type="button" class="btn btn-outline-secondary btn-sm">
                             Download Report
                         </button>
-                        <button id="save" type="button" class="btn btn-outline-secondary btn-sm">
-                            Save
+                        <button style="display: none" id="save" type="button" class="btn btn-outline-secondary btn-sm">
+                            Save study
                         </button>
+                        <h4>Load study</h4>
                         <input class="form-control form-control-sm" id="loadFile" type="file">
                         <button id="load" type="button" class="btn btn-outline-secondary btn-sm">
-                            Load
+                            Load study
                         </button>
                     </div>
                 </div>

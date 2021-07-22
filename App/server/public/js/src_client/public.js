@@ -302,6 +302,8 @@ function loadView(vis, save) {
     changeNodeSize(vis.changeNodeSize)
     changeLinkSize(vis.changeLinkSize)
     changeLabelsSize(vis.changeLabelsSize)
+    document.getElementById('downloadSVG').style.display = 'block'
+    document.getElementById('save').style.display = 'block'
 }
 
 /********************* Setup Navbar UI *********************/
@@ -1396,6 +1398,8 @@ function linkToTree() {
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
             changeLabelsSize(dendrogram.changeLabelsSize)
+            document.getElementById('downloadSVG').style.display = 'block'
+            document.getElementById('save').style.display = 'block'
         }
 
         // call the filter to add the bar charts
@@ -1449,6 +1453,8 @@ function linkToTree() {
             changeNodeSize(radial.changeNodeSize)
             changeLinkSize(radial.changeLinkSize)
             changeLabelsSize(radial.changeLabelsSize)
+            document.getElementById('downloadSVG').style.display = 'block'
+            document.getElementById('save').style.display = 'block'
         }
 
         // call the filter to add the bar charts

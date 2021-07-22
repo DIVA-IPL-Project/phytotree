@@ -108,7 +108,7 @@ function dendrogramView() {
         data.tree = context.build(data.tree)
 
         // Apply scale
-        applyScale(data.tree)
+        applyScale(data.tree, 1)
 
         return data
     }
@@ -580,11 +580,11 @@ function dendrogramView() {
     /**
      * Applies the scale to the coordinates of the tree
      */
-    function applyScale(tree) {
+    function applyScale(tree, last) {
         let horizontal = graph.scale.horizontal
         tree.eachBefore(d => {
             if (tree.data.id === d.data.id) return
-            d.x *= graph.scale.vertical.value
+            if (last) d.x *= graph.scale.vertical.value / last
             if (d.parent) {
                 if (!graph.style.align) {
                     d.y = d.data.data.value * horizontal.value * horizontal.scalingFactor + d.parent.y
@@ -597,8 +597,9 @@ function dendrogramView() {
      * Changes the scaling of the graph to linear scale
      */
     function applyLinearScale() {
+        let last = graph.scale.vertical.value
         graph.scale = scaler.linear
-        applyScale(data.tree)
+        applyScale(data.tree, last)
         applyScaleText()
         update(data.tree)
 
@@ -616,8 +617,9 @@ function dendrogramView() {
      * Changes the scaling of the graph to logarithmic scale
      */
     function applyLogScale() {
+        let last = graph.scale.vertical.value
         graph.scale = scaler.log
-        applyScale(data.tree)
+        applyScale(data.tree, last)
         applyScaleText()
         update(data.tree)
 
@@ -644,7 +646,7 @@ function dendrogramView() {
                 value: 1,
                 limits: [0.1, 10],
                 scalingFactor: 1,
-                step: 0.02
+                step: 0.05
             },
             horizontal: {
                 value: 1,

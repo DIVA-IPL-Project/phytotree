@@ -40,10 +40,17 @@ function display_app() {
     document.getElementById('idNwkBt').style.display = 'block'
     document.getElementById('textData').style.display = 'block'
 
-    document.getElementById('textSubmitId').style.display = 'block'
+    document.getElementById('textNwkData').style.display = 'block'
+    document.getElementById('textNwkFile').style.display = 'block'
 
     document.getElementById('radButton').style.display = 'none'
     document.getElementById('denButton').style.display = 'none'
+    document.getElementById('visualization').style.display = 'none'
+    document.getElementById('downloadSVG').style.display = 'none'
+    document.getElementById('save').style.display = 'none'
+    document.getElementById("reportName").style.display = "none"
+    document.getElementById("labelReport").style.display = "none"
+    document.getElementById("reportName").value = ""
 
     hideGraphConfig()
 
@@ -63,6 +70,13 @@ function display_test_app() {
 
     document.getElementById('radButton').style.display = 'block'
     document.getElementById('denButton').style.display = 'block'
+    document.getElementById('visualization').style.display = 'block'
+    document.getElementById('downloadSVG').style.display = 'none'
+    document.getElementById('save').style.display = 'none'
+    document.getElementById("reportName").style.display = "none"
+    document.getElementById("labelReport").style.display = "none"
+    document.getElementById("reportName").value = ""
+
 
     document.getElementById('svg_profile').innerHTML = ''
     document.getElementById('svg_isolate').innerHTML = ''
@@ -79,7 +93,8 @@ function display_test_app() {
     document.getElementById('formFileNw').style.display = 'none'
     document.getElementById('idNwkBt').style.display = 'none'
     document.getElementById('textData').style.display = 'none'
-    document.getElementById('textSubmitId').style.display = 'none'
+    document.getElementById('textNwkFile').style.display = 'none'
+    document.getElementById('textNwkData').style.display = 'none'
 
 
     hideGraphConfig()
@@ -172,6 +187,8 @@ function setupRepresentationButtons() {
             changeNodeSize(radial.changeNodeSize)
             changeLinkSize(radial.changeLinkSize)
             changeLabelsSize(radial.changeLabelsSize)
+            document.getElementById('downloadSVG').style.display = 'block'
+            document.getElementById('save').style.display = 'block'
         } catch (err) {
             setUpError(err.message, 'treeError', 'containerError')
         }
@@ -192,6 +209,8 @@ function setupRepresentationButtons() {
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
             changeLabelsSize(dendrogram.changeLabelsSize)
+            document.getElementById('downloadSVG').style.display = 'block'
+            document.getElementById('save').style.display = 'block'
         } catch (err) {
             setUpError(err.message, 'treeError', 'containerError')
         }
@@ -1475,8 +1494,6 @@ function formatArray(names) {
 
 
 function sendNewickData() {
-    document.getElementById("container").innerHTML = ""
-    if (view) view.isDraw = false
     filterTables = {
         name: 'Bar chart',
         line: [],
@@ -1489,7 +1506,6 @@ function sendNewickData() {
     }
 
 
-    let headers = {'Content-Type': 'application/json'}
     let nwk = document.getElementById('formFileNw').files[0]
 
     const ext = nwk.name.split('.')
@@ -1498,40 +1514,25 @@ function sendNewickData() {
         return
     }
 
-    nwk.text().then(newick => {
-        let body = JSON.stringify({data: newick})
-        return fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
-            .then(async res => {
-                try {
-                    if (res.status === 500) alertMsg('error')
-                    let response = await fetch('/api/data', {headers: headers})
-                    if (!response.ok) {
-                        let err = await response.json()
-                        alertMsg(err.message)
-                        return;
-                    }
-                    data = await response.json()
-                } catch (err) {
-                    alertMsg(err)
-                }
-            }).then(() => {
-                alertMsg('Tree data updated with success', 'success')
-                //
-                document.getElementById('radButton').style.display = "block"
-                document.getElementById('denButton').style.display = "block"
-                //
-                document.getElementById('idPrfBt').style.display = "block"
-                document.getElementById('formFilePro').style.display = "block"
-            })
-            .catch(err => alertMsg(err))
+    nwk.text().then(async newick => {
+        try {
+            render.set_tree_data(newick)
+            data = await render.getRenderData()
+            //
+            document.getElementById('radButton').style.display = "block"
+            document.getElementById('denButton').style.display = "block"
+            document.getElementById('visualization').style.display = "block"
+            //
+            document.getElementById('idPrfBt').style.display = "block"
+            document.getElementById('formFilePro').style.display = "block"
+        } catch (err) {
+            alertMsg(err.message)
+        }
     })
 }
 
 function sendProfileData() {
-    data = null
-    document.getElementById('svg_profile').innerHTML = ""
     names_profiles = []
-
     const err = document.getElementById('errorProfile')
     if (err != null) {
         err.remove()
@@ -1541,37 +1542,27 @@ function sendProfileData() {
     is_table_profile_create = false
     //
 
-    let headers = {'Content-Type': 'application/json'}
     let profile = document.getElementById('formFilePro').files[0]
-
     const ext = profile.name.split('.')
     if (ext[1] !== 'tab') {
         alertMsg('Extension for profile file must be tab.')
         return
     }
 
-    profile.text().then(prof => {
-        let body = JSON.stringify({data: prof})
-        fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).then(() => {
-            fetch('/api/data', {headers: headers})
-                .then(async res => {
-                    if (res.status === 500) alertMsg('error')
-                    data = await res.json()
-                })
-                .catch(err => alertMsg(err))
-        }).then(() => {
-            alertMsg('Profile data updated with success', 'success')
+    profile.text().then(async prof => {
+        try {
+            render.set_profiles_data(prof)
+            data = await render.getRenderData()
             document.getElementById('formFileIso').style.display = "block";
             document.getElementById('idIsoBt').style.display = "block";
-        }).catch(err => alertMsg(err))
+        } catch (err) {
+            alertMsg(err.message)
+        }
     })
 }
 
 function sendIsolateData() {
-    data = null
-    document.getElementById('svg_isolate').innerHTML = ""
     names_isolates = []
-
     const err = document.getElementById('errorIsolate')
     if (err != null) {
         err.remove()
@@ -1581,7 +1572,6 @@ function sendIsolateData() {
     is_table_isolate_create = false
     //
 
-    let headers = {'Content-Type': 'application/json'}
     let isolate = document.getElementById('formFileIso').files[0]
 
     const ext = isolate.name.split('.')
@@ -1590,48 +1580,27 @@ function sendIsolateData() {
         return
     }
 
-    isolate.text().then(iso => {
-
-        let body = JSON.stringify({data: iso})
-        fetch('/api/update/isolates', {method: 'post', body: body, headers: headers}).then(() => {
-            fetch('/api/data', {headers: headers})
-                .then(async res => {
-                    if (res.status === 500) alertMsg('error')
-                    data = await res.json()
-                }).then(() => {
-                alertMsg('Isolate data updated with success', 'success')
-            })
-                .catch(err => alertMsg(err))
-        }).catch(err => alertMsg(err))
+    isolate.text().then(async iso => {
+        try {
+            render.set_isolates_data(iso)
+            data = await render.getRenderData()
+        } catch (err) {
+            alertMsg(err.message)
+        }
     })
 }
 
-function sendNwkData() {
+async function sendNwkData() {
     let nwk = document.getElementById('nwk').value
-    let body = JSON.stringify({data: nwk})
-    let headers = {'Content-Type': 'application/json'}
-
-    fetch('/api/update/newick', {method: 'post', body: body, headers: headers})
-        .then(async res => {
-            try {
-                if (res.status === 500) alertMsg('error')
-                let response = await fetch('/api/data', {headers: headers})
-                if (!response.ok) {
-                    let err = await response.json()
-                    alertMsg(err.message)
-                    return;
-                }
-                data = await response.json()
-            } catch (err) {
-                alertMsg(err)
-            }
-        }).then(() => {
-        //
-        alertMsg('Tree data updated with success', 'success')
+    try {
+        render.set_tree_data(nwk)
+        data = await render.getRenderData()
         document.getElementById('radButton').style.display = "block"
         document.getElementById('denButton').style.display = "block"
-        //
-    }).catch(err => alertMsg(err))
+        document.getElementById('visualization').style.display = "block"
+    } catch (err) {
+        alertMsg(err.message)
+    }
 }
 
 function resetViewsOnDataRequest(func) {

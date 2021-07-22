@@ -40,10 +40,17 @@ function display_app() {
     document.getElementById('idNwkBt').style.display = 'block'
     document.getElementById('textData').style.display = 'block'
 
-    document.getElementById('textSubmitId').style.display = 'block'
+    document.getElementById('textNwkData').style.display = 'block'
+    document.getElementById('textNwkFile').style.display = 'block'
 
     document.getElementById('radButton').style.display = 'none'
     document.getElementById('denButton').style.display = 'none'
+    document.getElementById('visualization').style.display = 'none'
+    document.getElementById('downloadSVG').style.display = 'none'
+    document.getElementById('save').style.display = 'none'
+    document.getElementById("reportName").style.display = "none"
+    document.getElementById("labelReport").style.display = "none"
+    document.getElementById("reportName").value = ""
 
     hideGraphConfig()
 
@@ -63,6 +70,13 @@ function display_test_app() {
 
     document.getElementById('radButton').style.display = 'block'
     document.getElementById('denButton').style.display = 'block'
+    document.getElementById('visualization').style.display = 'block'
+    document.getElementById('downloadSVG').style.display = 'none'
+    document.getElementById('save').style.display = 'none'
+    document.getElementById("reportName").style.display = "none"
+    document.getElementById("labelReport").style.display = "none"
+    document.getElementById("reportName").value = ""
+
 
     document.getElementById('svg_profile').innerHTML = ''
     document.getElementById('svg_isolate').innerHTML = ''
@@ -79,7 +93,8 @@ function display_test_app() {
     document.getElementById('formFileNw').style.display = 'none'
     document.getElementById('idNwkBt').style.display = 'none'
     document.getElementById('textData').style.display = 'none'
-    document.getElementById('textSubmitId').style.display = 'none'
+    document.getElementById('textNwkFile').style.display = 'none'
+    document.getElementById('textNwkData').style.display = 'none'
 
 
     hideGraphConfig()
@@ -172,6 +187,8 @@ function setupRepresentationButtons() {
             changeNodeSize(radial.changeNodeSize)
             changeLinkSize(radial.changeLinkSize)
             changeLabelsSize(radial.changeLabelsSize)
+            document.getElementById('downloadSVG').style.display = 'block'
+            document.getElementById('save').style.display = 'block'
         } catch (err) {
             setUpError(err.message, 'treeError', 'containerError')
         }
@@ -192,6 +209,8 @@ function setupRepresentationButtons() {
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
             changeLabelsSize(dendrogram.changeLabelsSize)
+            document.getElementById('downloadSVG').style.display = 'block'
+            document.getElementById('save').style.display = 'block'
         } catch (err) {
             setUpError(err.message, 'treeError', 'containerError')
         }
@@ -1519,6 +1538,7 @@ function sendNewickData() {
                 //
                 document.getElementById('radButton').style.display = "block"
                 document.getElementById('denButton').style.display = "block"
+                document.getElementById('visualization').style.display = "block"
                 //
                 document.getElementById('idPrfBt').style.display = "block"
                 document.getElementById('formFilePro').style.display = "block"
@@ -1630,6 +1650,7 @@ function sendNwkData() {
         alertMsg('Tree data updated with success', 'success')
         document.getElementById('radButton').style.display = "block"
         document.getElementById('denButton').style.display = "block"
+        document.getElementById('visualization').style.display = "block"
         //
     }).catch(err => alertMsg(err))
 }

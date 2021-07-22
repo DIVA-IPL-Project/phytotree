@@ -2,22 +2,15 @@
 
 const nwkParser = require('./parsing')
 
-function reset_data() {
-    set_tree_variables()
-    set_profiles_data()
-    set_isolates_data()
-    return {
-        schemeGenes: [],
-        nodes: [],
-        links: [],
-        metadata: []
-    }
-}
-
 /* Tree Part */
 let tree_data
 let tree_data_change = false
 
+/**
+ * Set Tree data.
+ * @param data {String} Tree data.
+ * @returns {Object} All functions for tree data.
+ */
 function set_tree_data(data) {
     set_isolates_variables()
     set_profiles_variables()
@@ -33,6 +26,10 @@ function set_tree_data(data) {
     throw new Error('Tree data can´t be undefined')
 }
 
+/**
+ * get Tree data.
+ * @returns {Promise} tree data.
+ */
 function get_tree_data() {
     if (tree_data !== undefined) {
         return Promise.resolve(tree_data)
@@ -40,6 +37,9 @@ function get_tree_data() {
     throw new Error('Tree data must be set first')
 }
 
+/**
+ * Setup tree variables.
+ */
 function set_tree_variables() {
     tree_data = undefined
 }
@@ -49,6 +49,11 @@ let profiles_data
 let profiles_id
 let profile_data_change = false
 
+/**
+ * Set Profiles data.
+ * @param data {String} Profile data.
+ * @returns {Object} Return all functions for profiles data.
+ */
 function set_profiles_data(data) {
     set_profiles_variables()
     set_isolates_variables()
@@ -69,6 +74,10 @@ function set_profiles_data(data) {
     throw new Error('Profiles data can´t be undefined')
 }
 
+/**
+ * Get the profiles identifiers.
+ * @returns {Promise}
+ */
 function get_profiles_ids() {
     if (profiles_id !== undefined) {
         return Promise.resolve(profiles_id)
@@ -76,6 +85,10 @@ function get_profiles_ids() {
     return Promise.reject(new Error('Profiles data must be set first'))
 }
 
+/**
+ * Get profile data.
+ * @returns {Promise<Buffer | Error>}
+ */
 function get_profiles_data() {
     if (profiles_data !== undefined) {
         return Promise.resolve(profiles_data)
@@ -85,6 +98,10 @@ function get_profiles_data() {
 
 let idx_line_profile = 0
 
+/**
+ * Get next profile.
+ * @returns {String[] | null} Return data or null if idx is bigger then profiles length.
+ */
 function get_next_profile() {
     if (profiles_data !== undefined) {
         if (idx_line_profile >= profiles_data.length) return undefined
@@ -95,6 +112,11 @@ function get_next_profile() {
     return Promise.reject(new Error('Profiles data must be set first'))
 }
 
+/**
+ * Get a number of profiles.
+ * @param number_of_profiles {Number} Number of profiles to return.
+ * @returns {Promise}
+ */
 function get_n_profiles(number_of_profiles) {
     if (isolates_data !== undefined) {
         if (number_of_profiles >= profiles_data.length) return profiles_data
@@ -105,6 +127,10 @@ function get_n_profiles(number_of_profiles) {
 
 let first_column_name
 
+/**
+ * Get first column name.
+ * @returns {String}
+ */
 function get_first_column_name() {
     if (first_column_name !== undefined) return first_column_name
     if (profiles_id !== undefined) {
@@ -114,6 +140,11 @@ function get_first_column_name() {
     return Promise.reject(new Error('Profiles data must be set first'))
 }
 
+/**
+ * Get a determinate profile.
+ * @param id {String} Profile identifier.
+ * @returns {Promise}
+ */
 function get_determined_profile(id) {
     if (profiles_data !== undefined) {
         let curr
@@ -127,6 +158,9 @@ function get_determined_profile(id) {
     return Promise.reject(new Error('Profiles data must be set first'))
 }
 
+/**
+ * Setup profiles variables.
+ */
 function set_profiles_variables() {
     profiles_data = undefined
     profiles_id = undefined
@@ -140,6 +174,11 @@ let isolates_data
 let isolates_id
 let isolate_data_change = false
 
+/**
+ * Set isolate data.
+ * @param data {String} isolate data.
+ * @returns {Object} Return all functions for isolate data.
+ */
 function set_isolates_data(data) {
     set_isolates_variables()
     isolate_data_change = true
@@ -158,6 +197,10 @@ function set_isolates_data(data) {
     return Promise.reject(new Error('Isolate data can´t be undefined'))
 }
 
+/**
+ * Get the isolates identifiers.
+ * @returns {Promise}
+ */
 function get_isolates_ids() {
     if (isolates_id !== undefined) {
         return Promise.resolve(isolates_id)
@@ -165,6 +208,10 @@ function get_isolates_ids() {
     return Promise.reject(new Error('Isolates data must be set first'))
 }
 
+/**
+ * Get all isolates.
+ * @returns {Promise}
+ */
 function get_isolates_data() {
     if (isolates_data !== undefined) {
         return Promise.resolve(isolates_data)
@@ -174,6 +221,10 @@ function get_isolates_data() {
 
 let idx_line_isolate = 0
 
+/**
+ * Get next isolate.
+ * @returns {Promise<String[] | null>} return null if idx is bigger than isolates length, else return the isolate.
+ */
 function get_next_isolate() {
     if (isolates_data !== undefined) {
         if (idx_line_isolate >= isolates_data.length) return undefined
@@ -184,6 +235,11 @@ function get_next_isolate() {
     return Promise.reject(new Error('Isolates data must be set first'))
 }
 
+/**
+ * Get next isolate.
+ * @param number_of_isolates {String} Number of isolate to return.
+ * @returns {Promise<String[][]>}
+ */
 function get_n_isolates(number_of_isolates) {
     if (isolates_data !== undefined) {
         if (number_of_isolates >= isolates_data.length) return isolates_data
@@ -192,6 +248,12 @@ function get_n_isolates(number_of_isolates) {
     return Promise.reject(new Error('Isolates data must be set first'))
 }
 
+/**
+ * Get a determinate isolate.
+ * This function only cloud be call if already exist profiles file.
+ * @param id {Number} Isolate identifier.
+ * @returns {Promise<String[]>}
+ */
 function get_determined_isolate(id) {
     if (first_column_name === undefined) get_first_column_name()
     if (isolates_data !== undefined) {
@@ -209,6 +271,9 @@ function get_determined_isolate(id) {
     return Promise.reject(new Error('Isolates data must be set first'))
 }
 
+/**
+ * Setup isolates variables.
+ */
 function set_isolates_variables() {
     isolates_data = undefined
     isolates_id = undefined
@@ -225,6 +290,10 @@ let data = {
     metadata: []
 }
 
+/**
+ * Returns a object with the data.
+ * @returns {Promise<{metadata: *[], nodes: *[], schemeGenes: *[], links: *[]}>}
+ */
 async function getRenderData() {
     data = {
         schemeGenes: [],
@@ -286,6 +355,5 @@ module.exports = {
     set_tree_data,
     set_profiles_data,
     set_isolates_data,
-    getRenderData,
-    reset_data
+    getRenderData
 }

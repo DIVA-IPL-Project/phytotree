@@ -297,7 +297,8 @@ function setupData() {
 
 function loadView(vis, save) {
     view = vis
-    vis.load('#container', save)
+    data = vis.load('#container', save)
+    console.log(data)
     changeNodeColor(vis.changeNodeColor, vis.getNodes())
     changeNodeSize(vis.changeNodeSize)
     changeLinkSize(vis.changeLinkSize)

@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path')
 const Router = require('express').Router
 const router = Router()
 
@@ -13,12 +13,11 @@ function init_path(path){
 
 
 function init_router(){
-
     router.get('/home', (req, res, next) => {
-        res.sendFile(path.resolve(view_path));
+        res.sendFile(path.resolve(view_path))
     })
 
     return router
 }
 
-module.exports = {init_path};
+module.exports = {init_path}

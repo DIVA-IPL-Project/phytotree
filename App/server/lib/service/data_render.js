@@ -205,7 +205,6 @@ function get_determined_isolate(id) {
             }
         }
         return Promise.resolve(toReturn)
-        //return Promise.reject(new Error(`Isolate with id ${id} not exist`))
     }
     return Promise.reject(new Error('Isolates data must be set first'))
 }

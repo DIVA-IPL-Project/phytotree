@@ -28,7 +28,7 @@ function test_input_handler() {
 }
 
 function hideGraphConfig() {
-    document.getElementById('graphConfig').style.display = "none";
+    document.getElementById('graphConfig').style.display = 'none'
 }
 
 function display_app() {
@@ -48,9 +48,9 @@ function display_app() {
     document.getElementById('visualization').style.display = 'none'
     document.getElementById('downloadSVG').style.display = 'none'
     document.getElementById('save').style.display = 'none'
-    document.getElementById("reportName").style.display = "none"
-    document.getElementById("labelReport").style.display = "none"
-    document.getElementById("reportName").value = ""
+    document.getElementById('reportName').style.display = 'none'
+    document.getElementById('labelReport').style.display = 'none'
+    document.getElementById('reportName').value = ''
 
     hideGraphConfig()
 
@@ -73,9 +73,9 @@ function display_test_app() {
     document.getElementById('visualization').style.display = 'block'
     document.getElementById('downloadSVG').style.display = 'none'
     document.getElementById('save').style.display = 'none'
-    document.getElementById("reportName").style.display = "none"
-    document.getElementById("labelReport").style.display = "none"
-    document.getElementById("reportName").value = ""
+    document.getElementById('reportName').style.display = 'none'
+    document.getElementById('labelReport').style.display = 'none'
+    document.getElementById('reportName').value = ''
 
 
     document.getElementById('svg_profile').innerHTML = ''
@@ -225,14 +225,14 @@ function setupRepresentationButtons() {
  */
 function setUpError(message, id, contentId) {
     if (document.getElementById(id) != null) return
-    const div = document.createElement('div')
-    div.setAttribute('id', id)
-    div.setAttribute('class', 'alert alert-danger')
-    div.setAttribute('role', 'alert')
-    const txt = document.createElement('p')
-    txt.innerText = message
-    div.appendChild(txt)
-    document.getElementById(contentId).appendChild(div)
+
+    const elem = document.createElement('div')
+    elem.innerHTML = `<div class='alert alert-danger alert-dismissible fade show' role='alert' id=${id}>
+                ${message}
+            </div>`
+    document
+        .getElementById(contentId)
+        .appendChild(elem)
 }
 
 function setupData() {
@@ -246,12 +246,12 @@ function setupData() {
     document.getElementById('idIsoBt').addEventListener('click', sendIsolateData)
 
     document.getElementById('downloadSVG').addEventListener('click', () => {
-        document.getElementById("reportName").style.display = "block"
-        document.getElementById("labelReport").style.display = "block"
-        document.getElementById("downloadSVG").style.display = "none"
-        document.getElementById("reportName").addEventListener("change", () => {
-            if (document.getElementById("reportName").value === "") return
-            downloadReport("report.pdf", document.getElementById("reportName").value)
+        document.getElementById('reportName').style.display = 'block'
+        document.getElementById('labelReport').style.display = 'block'
+        document.getElementById('downloadSVG').style.display = 'none'
+        document.getElementById('reportName').addEventListener('change', () => {
+            if (document.getElementById('reportName').value === '') return
+            downloadReport('report.pdf', document.getElementById('reportName').value)
         })
     })
     document.getElementById('save')
@@ -310,7 +310,7 @@ function loadView(vis, save) {
  * Adds buttons only applied for dendrogram.
  */
 function showGraphConfig() {
-    document.getElementById('graphConfig').style.display = "grid";
+    document.getElementById('graphConfig').style.display = 'grid'
 }
 
 function search(elem, func) {
@@ -420,222 +420,222 @@ function setupRadialGraphConfiguration() {
 /********************* Graph Style Aux *********************/
 
 function changeNodeColor(func, nodes) {
-    if (document.querySelector(".color") != null) {
-        document.querySelector(".color").remove()
+    if (document.querySelector('.color') != null) {
+        document.querySelector('.color').remove()
     }
 
     // Create Container and title
-    const colorDiv = document.createElement("div");
-    colorDiv.setAttribute("class", "color justify-content-center");
-    const title = document.createElement("p");
-    title.setAttribute("class", "text-center");
+    const colorDiv = document.createElement('div')
+    colorDiv.setAttribute('class', 'color justify-content-center')
+    const title = document.createElement('p')
+    title.setAttribute('class', 'text-center')
     title.setAttribute('id', 'nodeColorId')
-    const text = document.createTextNode("Node color");
-    title.appendChild(text);
+    const text = document.createTextNode('Node color')
+    title.appendChild(text)
 
     // Create Color Picker
-    const inputColor = document.createElement("input");
-    inputColor.setAttribute("class", "colorInput");
-    inputColor.setAttribute("type", "color");
-    inputColor.style.opacity = "0";
-    inputColor.style.position = "absolute"
-    inputColor.style.top = "10px"
-    inputColor.style.left = "10px"
-    inputColor.style.width = "100px"
+    const inputColor = document.createElement('input')
+    inputColor.setAttribute('class', 'colorInput')
+    inputColor.setAttribute('type', 'color')
+    inputColor.style.opacity = '0'
+    inputColor.style.position = 'absolute'
+    inputColor.style.top = '10px'
+    inputColor.style.left = '10px'
+    inputColor.style.width = '100px'
 
 
-    const button = document.createElement("button")
-    button.style.position = "relative"
-    button.style.bottom = "-10px"
+    const button = document.createElement('button')
+    button.style.position = 'relative'
+    button.style.bottom = '-10px'
     button.setAttribute('id', 'setColorId')
-    button.setAttribute("class", "selectColorButton btn btn-light")
-    button.appendChild(document.createTextNode("Select the color"))
+    button.setAttribute('class', 'selectColorButton btn btn-light')
+    button.appendChild(document.createTextNode('Select the color'))
 
     // Create Node Selector
-    const selectNode = document.createElement("select");
+    const selectNode = document.createElement('select')
     selectNode.setAttribute('id', 'selectAllNodesId')
-    selectNode.setAttribute("class", "selectNode form-select")
-    const firstOption = document.createElement("option");
-    firstOption.setAttribute("selected", "true");
-    firstOption.setAttribute("disabled", "disabled");
-    firstOption.innerHTML = "Select the node";
-    selectNode.appendChild(firstOption);
+    selectNode.setAttribute('class', 'selectNode form-select')
+    const firstOption = document.createElement('option')
+    firstOption.setAttribute('selected', 'true')
+    firstOption.setAttribute('disabled', 'disabled')
+    firstOption.innerHTML = 'Select the node'
+    selectNode.appendChild(firstOption)
 
     // Add All Nodes to Selector
     nodes.forEach(node => {
-        const htmlOptionElement = document.createElement("option");
-        htmlOptionElement.setAttribute("value", node);
-        htmlOptionElement.innerHTML = node;
-        selectNode.appendChild(htmlOptionElement);
+        const htmlOptionElement = document.createElement('option')
+        htmlOptionElement.setAttribute('value', node)
+        htmlOptionElement.innerHTML = node
+        selectNode.appendChild(htmlOptionElement)
     })
 
     let node, color
-    selectNode.addEventListener("change", (event) => node = event.target.value)
+    selectNode.addEventListener('change', (event) => node = event.target.value)
 
-    colorDiv.appendChild(title);
-    colorDiv.appendChild(selectNode);
-    colorDiv.appendChild(button);
-    button.appendChild(inputColor);
+    colorDiv.appendChild(title)
+    colorDiv.appendChild(selectNode)
+    colorDiv.appendChild(button)
+    button.appendChild(inputColor)
 
-    document.getElementById("graphConfig").appendChild(colorDiv);
+    document.getElementById('graphConfig').appendChild(colorDiv)
 
-    inputColor.addEventListener("change", (event) => {
+    inputColor.addEventListener('change', (event) => {
         color = event.target.value
         if (node && color) func(node, color)
         node = null
         color = null
-    });
+    })
 }
 
 function changeNodeSize(func) {
-    if (document.querySelector(".nodeSize") != null) {
-        document.querySelector(".nodeSize").remove()
+    if (document.querySelector('.nodeSize') != null) {
+        document.querySelector('.nodeSize').remove()
     }
 
-    const nodeSizeDiv = document.createElement("div");
-    nodeSizeDiv.setAttribute("class", "nodeSize justify-content-center mt-4");
+    const nodeSizeDiv = document.createElement('div')
+    nodeSizeDiv.setAttribute('class', 'nodeSize justify-content-center mt-4')
 
-    const title = document.createElement("p");
-    title.setAttribute("class", "text-center");
+    const title = document.createElement('p')
+    title.setAttribute('class', 'text-center')
     title.setAttribute('id', 'nodeSizeId')
-    const text = document.createTextNode("Node size");
-    title.appendChild(text);
+    const text = document.createTextNode('Node size')
+    title.appendChild(text)
 
-    const rangeInput = document.createElement("input");
+    const rangeInput = document.createElement('input')
     rangeInput.setAttribute('id', 'rangeInputId')
-    rangeInput.setAttribute("type", "range");
-    rangeInput.setAttribute("class", "form-range");
-    rangeInput.setAttribute("min", "1");
-    rangeInput.setAttribute("max", "15");
-    rangeInput.setAttribute("value", "3");
+    rangeInput.setAttribute('type', 'range')
+    rangeInput.setAttribute('class', 'form-range')
+    rangeInput.setAttribute('min', '1')
+    rangeInput.setAttribute('max', '15')
+    rangeInput.setAttribute('value', '3')
 
-    rangeInput.addEventListener("change", (event) => func(event.target.value))
+    rangeInput.addEventListener('change', (event) => func(event.target.value))
 
-    nodeSizeDiv.appendChild(title);
-    nodeSizeDiv.appendChild(rangeInput);
+    nodeSizeDiv.appendChild(title)
+    nodeSizeDiv.appendChild(rangeInput)
 
-    document.getElementById("graphConfig").appendChild(nodeSizeDiv);
+    document.getElementById('graphConfig').appendChild(nodeSizeDiv)
 
 }
 
 function changeLinkSize(func) {
-    if (document.querySelector(".linkSize") != null) {
-        document.querySelector(".linkSize").remove()
+    if (document.querySelector('.linkSize') != null) {
+        document.querySelector('.linkSize').remove()
     }
-    const linkSizeDiv = document.createElement("div");
-    linkSizeDiv.setAttribute("class", "linkSize justify-content-center mt-4");
+    const linkSizeDiv = document.createElement('div')
+    linkSizeDiv.setAttribute('class', 'linkSize justify-content-center mt-4')
 
-    const title = document.createElement("p");
-    title.setAttribute("class", "text-center");
+    const title = document.createElement('p')
+    title.setAttribute('class', 'text-center')
     title.setAttribute('id', 'linkThicknessId')
-    const text = document.createTextNode("Link Thickness");
-    title.appendChild(text);
+    const text = document.createTextNode('Link Thickness')
+    title.appendChild(text)
 
-    const rangeInput = document.createElement("input");
+    const rangeInput = document.createElement('input')
     rangeInput.setAttribute('id', 'rangeInputLink')
-    rangeInput.setAttribute("type", "range");
-    rangeInput.setAttribute("class", "form-range");
-    rangeInput.setAttribute("min", "1");
-    rangeInput.setAttribute("max", "15");
-    rangeInput.setAttribute("value", "2");
+    rangeInput.setAttribute('type', 'range')
+    rangeInput.setAttribute('class', 'form-range')
+    rangeInput.setAttribute('min', '1')
+    rangeInput.setAttribute('max', '15')
+    rangeInput.setAttribute('value', '2')
 
-    rangeInput.addEventListener("change", (event) => func(event.target.value))
+    rangeInput.addEventListener('change', (event) => func(event.target.value))
 
-    linkSizeDiv.appendChild(title);
-    linkSizeDiv.appendChild(rangeInput);
+    linkSizeDiv.appendChild(title)
+    linkSizeDiv.appendChild(rangeInput)
 
-    document.getElementById("graphConfig").appendChild(linkSizeDiv);
+    document.getElementById('graphConfig').appendChild(linkSizeDiv)
 
 }
 
 function changeLabelsSize(func) {
-    if (document.querySelector(".labelsSize") != null) {
-        document.querySelector(".labelsSize").remove()
+    if (document.querySelector('.labelsSize') != null) {
+        document.querySelector('.labelsSize').remove()
     }
-    const labelsSize = document.createElement("div");
-    labelsSize.setAttribute("class", "labelsSize justify-content-center mt-4");
+    const labelsSize = document.createElement('div')
+    labelsSize.setAttribute('class', 'labelsSize justify-content-center mt-4')
 
-    const title = document.createElement("p");
-    title.setAttribute("class", "text-center");
+    const title = document.createElement('p')
+    title.setAttribute('class', 'text-center')
     title.setAttribute('id', 'labelsSizeId')
-    const text = document.createTextNode("Labels Size");
-    title.appendChild(text);
+    const text = document.createTextNode('Labels Size')
+    title.appendChild(text)
 
-    const rangeInput = document.createElement("input");
+    const rangeInput = document.createElement('input')
     rangeInput.setAttribute('id', 'rangeInputLabel')
-    rangeInput.setAttribute("type", "range");
-    rangeInput.setAttribute("class", "form-range");
-    rangeInput.setAttribute("min", "5");
-    rangeInput.setAttribute("max", "35");
-    rangeInput.setAttribute("value", "12");
+    rangeInput.setAttribute('type', 'range')
+    rangeInput.setAttribute('class', 'form-range')
+    rangeInput.setAttribute('min', '5')
+    rangeInput.setAttribute('max', '35')
+    rangeInput.setAttribute('value', '12')
 
-    rangeInput.addEventListener("change", (event) => func(event.target.value))
+    rangeInput.addEventListener('change', (event) => func(event.target.value))
 
-    labelsSize.appendChild(title);
-    labelsSize.appendChild(rangeInput);
+    labelsSize.appendChild(title)
+    labelsSize.appendChild(rangeInput)
 
-    document.getElementById("graphConfig").appendChild(labelsSize);
+    document.getElementById('graphConfig').appendChild(labelsSize)
 
 }
 
 function changePieColor() {
-    if (document.querySelector(".pieColor") != null) {
-        document.querySelector(".pieColor").remove()
+    if (document.querySelector('.pieColor') != null) {
+        document.querySelector('.pieColor').remove()
     }
 
     // Create Container and title
-    const colorDiv = document.createElement("div");
-    colorDiv.setAttribute("class", "pieColor justify-content-center mt-5");
-    const title = document.createElement("p");
-    title.setAttribute("class", "text-center");
-    const text = document.createTextNode("Pie color");
-    title.appendChild(text);
+    const colorDiv = document.createElement('div')
+    colorDiv.setAttribute('class', 'pieColor justify-content-center mt-5')
+    const title = document.createElement('p')
+    title.setAttribute('class', 'text-center')
+    const text = document.createTextNode('Pie color')
+    title.appendChild(text)
 
     // Create Color Picker
-    const inputColor = document.createElement("input");
-    inputColor.setAttribute("class", "colorInput");
-    inputColor.setAttribute("type", "color");
-    inputColor.style.opacity = "0";
-    inputColor.style.position = "absolute"
-    inputColor.style.top = "10px"
-    inputColor.style.left = "10px"
-    inputColor.style.width = "100px"
+    const inputColor = document.createElement('input')
+    inputColor.setAttribute('class', 'colorInput')
+    inputColor.setAttribute('type', 'color')
+    inputColor.style.opacity = '0'
+    inputColor.style.position = 'absolute'
+    inputColor.style.top = '10px'
+    inputColor.style.left = '10px'
+    inputColor.style.width = '100px'
 
 
-    const button = document.createElement("button")
-    button.style.position = "relative"
-    button.style.bottom = "-10px"
-    button.setAttribute("class", "selectColorButton btn btn-light")
-    button.appendChild(document.createTextNode("Select the color"))
+    const button = document.createElement('button')
+    button.style.position = 'relative'
+    button.style.bottom = '-10px'
+    button.setAttribute('class', 'selectColorButton btn btn-light')
+    button.appendChild(document.createTextNode('Select the color'))
 
     // Create Node Selector
-    const selectNode = document.createElement("select");
-    selectNode.setAttribute("class", "selectNode form-select")
-    const firstOption = document.createElement("option");
-    firstOption.setAttribute("selected", "true");
-    firstOption.setAttribute("disabled", "disabled");
-    firstOption.innerHTML = "Select the category";
-    selectNode.appendChild(firstOption);
+    const selectNode = document.createElement('select')
+    selectNode.setAttribute('class', 'selectNode form-select')
+    const firstOption = document.createElement('option')
+    firstOption.setAttribute('selected', 'true')
+    firstOption.setAttribute('disabled', 'disabled')
+    firstOption.innerHTML = 'Select the category'
+    selectNode.appendChild(firstOption)
 
     //Add All Nodes to Selector
     sections.forEach(pie => {
-        const htmlOptionElement = document.createElement("option");
-        htmlOptionElement.setAttribute("value", pie.name);
-        htmlOptionElement.innerHTML = pie.name;
-        selectNode.appendChild(htmlOptionElement);
+        const htmlOptionElement = document.createElement('option')
+        htmlOptionElement.setAttribute('value', pie.name)
+        htmlOptionElement.innerHTML = pie.name
+        selectNode.appendChild(htmlOptionElement)
     })
 
     let node, color
-    selectNode.addEventListener("change", (event) => node = event.target.value)
+    selectNode.addEventListener('change', (event) => node = event.target.value)
 
-    colorDiv.appendChild(title);
-    colorDiv.appendChild(selectNode);
-    colorDiv.appendChild(button);
-    button.appendChild(inputColor);
+    colorDiv.appendChild(title)
+    colorDiv.appendChild(selectNode)
+    colorDiv.appendChild(button)
+    button.appendChild(inputColor)
 
-    document.getElementById("graphConfig").appendChild(colorDiv);
+    document.getElementById('graphConfig').appendChild(colorDiv)
 
-    inputColor.addEventListener("change", (event) => {
+    inputColor.addEventListener('change', (event) => {
         color = event.target.value
         if (node && color) {
             categories_colors.forEach(item => {
@@ -644,13 +644,13 @@ function changePieColor() {
                 }
             })
 
-            const pieChartTransform = "translate(700, 500) scale(0.7)"
-            const legendTransform = "translate(510, 400) scale(0.7)"
-            changePieChartColor(sections, names_isolates, pieChartTransform, "#tree_pieChart", legendTransform)
+            const pieChartTransform = 'translate(700, 500) scale(0.7)'
+            const legendTransform = 'translate(510, 400) scale(0.7)'
+            changePieChartColor(sections, names_isolates, pieChartTransform, '#tree_pieChart', legendTransform)
 
-            const pieChartIsolatesTransform = "translate(340, 170) scale(0.7)"
-            const legendTransformIsolates = "translate(100, 50) scale(0.7)"
-            changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, "#svg_isolate", legendTransformIsolates)
+            const pieChartIsolatesTransform = 'translate(340, 170) scale(0.7)'
+            const legendTransformIsolates = 'translate(100, 50) scale(0.7)'
+            changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, '#svg_isolate', legendTransformIsolates)
 
             filterTables.colors = categories_colors
 
@@ -671,21 +671,24 @@ function changePieColor() {
 /********************* Navbar UI Aux *********************/
 
 function setupScaleBtn(elem, func) {
+    const new_element = elem.cloneNode(true)
+    elem.parentNode.replaceChild(new_element, elem)
+
     let event = events()
-    elem.addEventListener('mousedown', event.mDown)
-    elem.addEventListener('mouseup', event.mUp)
-    elem.addEventListener('mouseleave', event.mUp)
+    new_element.addEventListener('mousedown', event.mDown)
+    new_element.addEventListener('mouseup', event.mUp)
+    new_element.addEventListener('mouseleave', event.mUp)
 
     function events() {
         let id
 
         function mDown() {
             func()
-            id = setInterval(func, 100);
+            id = setInterval(func, 100)
         }
 
         function mUp() {
-            clearInterval(id);
+            clearInterval(id)
         }
 
         return {mDown, mUp}
@@ -701,7 +704,7 @@ let filterTables = {
 }
 
 function create_table_profile(data) {
-    document.getElementById('table_profile').innerHTML = ""
+    document.getElementById('table_profile').innerHTML = ''
 
 
     //check if is possible build table
@@ -711,20 +714,20 @@ function create_table_profile(data) {
 
     const table = document.getElementById('table_profile')
     table.setAttribute('class', 'table table-bordered table-hover')
-    table.setAttribute('height', "450")
+    table.setAttribute('height', '450')
 
     /** head **/
     const head = table.createTHead()
     head.setAttribute('class', 'table-dark')
     const head_row = head.insertRow()
-    head_row.setAttribute('class', "text-center")
+    head_row.setAttribute('class', 'text-center')
     data.schemeGenes.forEach(row => {
         const cell = head_row.insertCell()
         cell.textContent = row
         cell.setAttribute('class', 'prof')
         cell.setAttribute('id', row + '_profile')
         cell.setAttribute('scope', 'col')
-        cell.setAttribute('style', "cursor: pointer")
+        cell.setAttribute('style', 'cursor: pointer')
     })
 
     /** body **/
@@ -732,22 +735,22 @@ function create_table_profile(data) {
     data.nodes.forEach(node => {
         if (node.profile !== undefined) {
             const body_row = body.insertRow()
-            body_row.setAttribute('class', "text-center")
+            body_row.setAttribute('class', 'text-center')
             const b_cells = node.profile.forEach(profile => {
                 const cell = body_row.insertCell()
                 cell.textContent = profile
-                cell.setAttribute('style', "cursor: pointer")
+                cell.setAttribute('style', 'cursor: pointer')
             })
         }
     })
 
     table.setAttribute('class', 'table table-bordered table-hover')
-    table.setAttribute('height', "450")
+    table.setAttribute('height', '450')
     addListenersToTables()
 }
 
 function create_table_isolate(data) {
-    document.getElementById('table_isolate').innerHTML = ""
+    document.getElementById('table_isolate').innerHTML = ''
 
     //check if is possible build table
     if (!data || data.metadata.length <= 0) {
@@ -761,14 +764,14 @@ function create_table_isolate(data) {
     const head = table.createTHead()
     head.setAttribute('class', 'table-dark')
     const head_row = head.insertRow()
-    head_row.setAttribute('class', "text-center")
+    head_row.setAttribute('class', 'text-center')
     data.metadata.forEach(row => {
         const cell = head_row.insertCell()
         cell.textContent = row
         cell.setAttribute('class', 'iso')
         cell.setAttribute('id', row + '_isolate')
         cell.setAttribute('scope', 'col')
-        cell.setAttribute('style', "cursor: pointer")
+        cell.setAttribute('style', 'cursor: pointer')
     })
 
     const id = data.schemeGenes[0]
@@ -785,11 +788,11 @@ function create_table_isolate(data) {
             const b_cells = node.isolates.forEach(isolate => {
 
                 const body_row = body.insertRow()
-                body_row.setAttribute('class', "text-center")
+                body_row.setAttribute('class', 'text-center')
                 isolate.forEach(iso => {
                     const cell = body_row.insertCell()
                     cell.textContent = iso
-                    cell.setAttribute('style', "cursor: pointer")
+                    cell.setAttribute('style', 'cursor: pointer')
                 })
             })
         }
@@ -948,7 +951,7 @@ function clickHeaderIsolates(header, id, categories) {
 
             filterTables.column.push(HeaderId)
             if (filterTables.column.length > 1) {
-                filterTables.name = "&"
+                filterTables.name = '&'
             }
 
             categories.set(HeaderId.toString(), [])
@@ -1044,19 +1047,19 @@ function removeColumnNameIsolates(name) {
 
 
 const colorsRange = [
-    "#1b70fc", "#33f0ff", "#718a90", "#b21bff", "#fe6616",
-    "#f9bc0f", "#b65d66", "#07a2e6", "#c091ae", "#10b437",
-    "#ea42fe", "#c281fe", "#4f33ff", "#a946aa", "#16977e",
-    "#a88178", "#5776a9", "#678007", "#fa9316", "#85c070",
-    "#6aa2a9", "#989e5d", "#cd714a", "#c5639c", "#c23271",
-    "#678275", "#c5a121", "#a978ba", "#ee534e", "#d24506",
-    "#6f7385", "#9a634a", "#48aa6f", "#ad9ad0", "#6a8a53",
-    "#8c46fc", "#8f5ab8", "#7133ff", "#d77cd1", "#a9804b",
-    "#a67389", "#9e8cfe", "#bd443c", "#6d63ff", "#d110d5",
-    "#798cc3", "#25b3a7", "#938c6d", "#a05787", "#9c87a0",
-    "#20c773", "#8b696d", "#78762d", "#e154c6", "#40835f",
-    "#d73656", "#1397a3", "#f940a5", "#66aeff", "#d097e7",
-    "#cf7c97", "#8b900a", "#d47270", "#00ffff", "#cc00cc"
+    '#1b70fc', '#33f0ff', '#718a90', '#b21bff', '#fe6616',
+    '#f9bc0f', '#b65d66', '#07a2e6', '#c091ae', '#10b437',
+    '#ea42fe', '#c281fe', '#4f33ff', '#a946aa', '#16977e',
+    '#a88178', '#5776a9', '#678007', '#fa9316', '#85c070',
+    '#6aa2a9', '#989e5d', '#cd714a', '#c5639c', '#c23271',
+    '#678275', '#c5a121', '#a978ba', '#ee534e', '#d24506',
+    '#6f7385', '#9a634a', '#48aa6f', '#ad9ad0', '#6a8a53',
+    '#8c46fc', '#8f5ab8', '#7133ff', '#d77cd1', '#a9804b',
+    '#a67389', '#9e8cfe', '#bd443c', '#6d63ff', '#d110d5',
+    '#798cc3', '#25b3a7', '#938c6d', '#a05787', '#9c87a0',
+    '#20c773', '#8b696d', '#78762d', '#e154c6', '#40835f',
+    '#d73656', '#1397a3', '#f940a5', '#66aeff', '#d097e7',
+    '#cf7c97', '#8b900a', '#d47270', '#00ffff', '#cc00cc'
 ]
 
 let categories_colors = []
@@ -1066,7 +1069,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         d3.select(id).selectAll('g').remove()
     }
 
-    const g = d3.select(id).append('g').attr("transform", `${transform}`).attr('id', 'pieChart')
+    const g = d3.select(id).append('g').attr('transform', `${transform}`).attr('id', 'pieChart')
     const pie = d3.pie().value(d => d.value)
     const path = d3.arc().outerRadius(150).innerRadius(30)
 
@@ -1120,8 +1123,8 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
                 .attr('y', position + 5)
                 .attr('x', 560)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
-                .style("font-size", "15px")
-                .attr("alignment-baseline", "middle")
+                .style('font-size', '15px')
+                .attr('alignment-baseline', 'middle')
 
         } else if (i === 20) {
             pieChart.append('circle')
@@ -1142,8 +1145,8 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
                 .attr('y', position + 5)
                 .attr('x', 560)
                 .text('Others')
-                .style("font-size", "15px")
-                .attr("alignment-baseline", "middle")
+                .style('font-size', '15px')
+                .attr('alignment-baseline', 'middle')
                 .attr('class', 'showOthers')
 
         } else {
@@ -1159,8 +1162,8 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
                 .attr('y', othersPosition + 5)
                 .attr('x', xOthersPosition + 10)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
-                .style("font-size", "15px")
-                .attr("alignment-baseline", "middle")
+                .style('font-size', '15px')
+                .attr('alignment-baseline', 'middle')
                 .attr('class', 'others')
                 .style('display', 'none')
 
@@ -1172,22 +1175,22 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         position += 20
     })
 
-    const legend = legendTransform ? pieChart.attr('id', 'legend').attr("transform", `${legendTransform}`) :
+    const legend = legendTransform ? pieChart.attr('id', 'legend').attr('transform', `${legendTransform}`) :
         pieChart.attr('id', 'legend')
 
     legend.append('text')
         .attr('y', 350)
         .attr('x', 250)
         .text(formatArray(names))
-        .style("font-size", "15px")
-        .attr("alignment-baseline", "middle")
+        .style('font-size', '15px')
+        .attr('alignment-baseline', 'middle')
 
     legend.append('text')
         .attr('y', 380)
         .attr('x', 290)
         .text('Categories: ' + data.length)
-        .style("font-size", "15px")
-        .attr("alignment-baseline", "middle")
+        .style('font-size', '15px')
+        .attr('alignment-baseline', 'middle')
 }
 
 function constructPieChart(data, names, id) {
@@ -1221,7 +1224,7 @@ function constructPieChart(data, names, id) {
     const g = d3
         .select(id)
         .append('g')
-        .attr("transform", `translate(340, 170) scale(0.7)`)
+        .attr('transform', `translate(340, 170) scale(0.7)`)
         .attr('id', 'pieChart' + pieName)
 
     const pie = d3.pie().value(d => d.value)
@@ -1297,8 +1300,8 @@ function constructPieChart(data, names, id) {
                 .attr('y', position + 5)
                 .attr('x', 560)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
-                .style("font-size", "15px")
-                .attr("alignment-baseline", "middle")
+                .style('font-size', '15px')
+                .attr('alignment-baseline', 'middle')
 
         } else if (i === 20) {
             pieChart.append('circle')
@@ -1319,8 +1322,8 @@ function constructPieChart(data, names, id) {
                 .attr('y', position + 5)
                 .attr('x', 560)
                 .text('Others')
-                .style("font-size", "15px")
-                .attr("alignment-baseline", "middle")
+                .style('font-size', '15px')
+                .attr('alignment-baseline', 'middle')
                 .attr('class', 'showOthers')
 
         } else {
@@ -1336,8 +1339,8 @@ function constructPieChart(data, names, id) {
                 .attr('y', othersPosition + 5)
                 .attr('x', xOthersPosition + 10)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
-                .style("font-size", "15px")
-                .attr("alignment-baseline", "middle")
+                .style('font-size', '15px')
+                .attr('alignment-baseline', 'middle')
                 .attr('class', 'others')
                 .style('display', 'none')
 
@@ -1357,20 +1360,20 @@ function constructPieChart(data, names, id) {
         position += 20
     })
 
-    const legend = pieChart.attr('id', 'legend').attr("transform", `translate(100, 50) scale(0.7)`)
+    const legend = pieChart.attr('id', 'legend').attr('transform', `translate(100, 50) scale(0.7)`)
     legend.append('text')
         .attr('y', 350)
         .attr('x', 250)
         .text(formatArray(names))
-        .style("font-size", "15px")
-        .attr("alignment-baseline", "middle")
+        .style('font-size', '15px')
+        .attr('alignment-baseline', 'middle')
 
     legend.append('text')
         .attr('y', 380)
         .attr('x', 290)
         .text('Categories: ' + data.length)
-        .style("font-size", "15px")
-        .attr("alignment-baseline", "middle")
+        .style('font-size', '15px')
+        .attr('alignment-baseline', 'middle')
 }
 
 function linkToTree() {
@@ -1398,20 +1401,20 @@ function linkToTree() {
         filterTables.transform = dendrogram.buildBarChart
         dendrogram.applyFilter(filterTables)
 
-        if (document.getElementById("tree_pieChart")) {
-            document.getElementById("tree_pieChart").remove()
+        if (document.getElementById('tree_pieChart')) {
+            document.getElementById('tree_pieChart').remove()
         }
-        const isolates_pieChart = document.getElementById("svg_isolate")
+        const isolates_pieChart = document.getElementById('svg_isolate')
         const pieChart = isolates_pieChart.cloneNode(true)
-        pieChart.setAttribute("id", "tree_pieChart")
-        pieChart.setAttribute("width", "1536")
-        pieChart.setAttribute("height", "2000")
+        pieChart.setAttribute('id', 'tree_pieChart')
+        pieChart.setAttribute('width', '1536')
+        pieChart.setAttribute('height', '2000')
         pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
             'translate(700, 500) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
             'translate(510, 400) scale(0.7)')
-        
-        const hide = document.getElementById("btnHide")
+
+        const hide = document.getElementById('btnHide')
         hide.style.display = 'block'
         hide.onclick = () => {
             if (document.getElementById('pieChart-svg_isolate').style.display === 'none') {
@@ -1426,7 +1429,7 @@ function linkToTree() {
         document.getElementById('svg_graph').appendChild(pieChart)
 
         // go to tree tab
-        document.getElementById("home-tab").click()
+        document.getElementById('home-tab').click()
     })
 
     document.getElementById('linktreebuttonR').addEventListener('click', () => {
@@ -1451,20 +1454,20 @@ function linkToTree() {
         filterTables.transform = radial.buildBarChart
         radial.applyFilter(filterTables)
 
-        if (document.getElementById("tree_pieChart")) {
-            document.getElementById("tree_pieChart").remove()
+        if (document.getElementById('tree_pieChart')) {
+            document.getElementById('tree_pieChart').remove()
         }
-        const isolates_pieChart = document.getElementById("svg_isolate")
+        const isolates_pieChart = document.getElementById('svg_isolate')
         const pieChart = isolates_pieChart.cloneNode(true)
-        pieChart.setAttribute("id", "tree_pieChart")
-        pieChart.setAttribute("width", "1536")
-        pieChart.setAttribute("height", "2000")
+        pieChart.setAttribute('id', 'tree_pieChart')
+        pieChart.setAttribute('width', '1536')
+        pieChart.setAttribute('height', '2000')
         pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
             'translate(700, 500) scale(0.7)')
         pieChart.getElementById('legend').setAttribute('transform',
             'translate(510, 400) scale(0.7)')
 
-        const hide = document.getElementById("btnHide")
+        const hide = document.getElementById('btnHide')
         hide.style.display = 'block'
         hide.onclick = () => {
             if (document.getElementById('pieChart-svg_isolate').style.display === 'none') {
@@ -1478,7 +1481,7 @@ function linkToTree() {
 
         document.getElementById('svg_graph').appendChild(pieChart)
 
-        document.getElementById("home-tab").click()
+        document.getElementById('home-tab').click()
     })
 }
 
@@ -1494,7 +1497,7 @@ function formatArray(names) {
 
 
 function sendNewickData() {
-    document.getElementById("container").innerHTML = ""
+    document.getElementById('container').innerHTML = ''
     if (view) view.isDraw = false
     filterTables = {
         name: 'Bar chart',
@@ -1527,7 +1530,7 @@ function sendNewickData() {
                     if (!response.ok) {
                         let err = await response.json()
                         alertMsg(err.message)
-                        return;
+                        return
                     }
                     data = await response.json()
                 } catch (err) {
@@ -1536,12 +1539,12 @@ function sendNewickData() {
             }).then(() => {
                 alertMsg('Tree data updated with success', 'success')
                 //
-                document.getElementById('radButton').style.display = "block"
-                document.getElementById('denButton').style.display = "block"
-                document.getElementById('visualization').style.display = "block"
+                document.getElementById('radButton').style.display = 'block'
+                document.getElementById('denButton').style.display = 'block'
+                document.getElementById('visualization').style.display = 'block'
                 //
-                document.getElementById('idPrfBt').style.display = "block"
-                document.getElementById('formFilePro').style.display = "block"
+                document.getElementById('idPrfBt').style.display = 'block'
+                document.getElementById('formFilePro').style.display = 'block'
             })
             .catch(err => alertMsg(err))
     })
@@ -1549,7 +1552,7 @@ function sendNewickData() {
 
 function sendProfileData() {
     data = null
-    document.getElementById('svg_profile').innerHTML = ""
+    document.getElementById('svg_profile').innerHTML = ''
     names_profiles = []
 
     const err = document.getElementById('errorProfile')
@@ -1581,15 +1584,15 @@ function sendProfileData() {
                 .catch(err => alertMsg(err))
         }).then(() => {
             alertMsg('Profile data updated with success', 'success')
-            document.getElementById('formFileIso').style.display = "block";
-            document.getElementById('idIsoBt').style.display = "block";
+            document.getElementById('formFileIso').style.display = 'block'
+            document.getElementById('idIsoBt').style.display = 'block'
         }).catch(err => alertMsg(err))
     })
 }
 
 function sendIsolateData() {
     data = null
-    document.getElementById('svg_isolate').innerHTML = ""
+    document.getElementById('svg_isolate').innerHTML = ''
     names_isolates = []
 
     const err = document.getElementById('errorIsolate')
@@ -1639,7 +1642,7 @@ function sendNwkData() {
                 if (!response.ok) {
                     let err = await response.json()
                     alertMsg(err.message)
-                    return;
+                    return
                 }
                 data = await response.json()
             } catch (err) {
@@ -1648,9 +1651,9 @@ function sendNwkData() {
         }).then(() => {
         //
         alertMsg('Tree data updated with success', 'success')
-        document.getElementById('radButton').style.display = "block"
-        document.getElementById('denButton').style.display = "block"
-        document.getElementById('visualization').style.display = "block"
+        document.getElementById('radButton').style.display = 'block'
+        document.getElementById('denButton').style.display = 'block'
+        document.getElementById('visualization').style.display = 'block'
         //
     }).catch(err => alertMsg(err))
 }
@@ -1666,9 +1669,9 @@ function alertMsg(message, kind) {
     if (!kind) kind = 'danger'
     document
         .querySelector('.messages')
-        .innerHTML = `<div class="alert alert-${kind} alert-dismissible fade show" role="alert" id="divErr">
-                <button type="button" class="btn" data-dismiss="alert" aria-label="Close" id="buttonErr">
-                    <i class="bi bi-x-lg"></i>
+        .innerHTML = `<div class='alert alert-${kind} alert-dismissible fade show' role='alert' id='divErr'>
+                <button type='button' class='btn' data-dismiss='alert' aria-label='Close' id='buttonErr'>
+                    <i class='bi bi-x-lg'></i>
                 </button>
                 ${message}
             </div>`

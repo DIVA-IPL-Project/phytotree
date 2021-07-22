@@ -1,5 +1,4 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
+const { app, BrowserWindow } = require("electron")
 
 const server = require('./server/server')
 server.build_app('-server')
@@ -21,7 +20,7 @@ app.on("ready", loadMainWindow)
 
 app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        loadMainWindow();
+        loadMainWindow()
     }
 })
 

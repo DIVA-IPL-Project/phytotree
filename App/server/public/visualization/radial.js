@@ -90,40 +90,40 @@ function radialView() {
         }`
 
     function build(input) {
-        if (!input) throw new Error('Please insert tree file first.')
+        if (!input) throw new Error('Please insert tree data first.')
         data.input = input
-        const strat = d3.stratify().id(d => d.target).parentId(d => d.source)(input.links);
-        data.tree = d3.hierarchy(strat, d => d.children);
+        const strat = d3.stratify().id(d => d.target).parentId(d => d.source)(input.links)
+        data.tree = d3.hierarchy(strat, d => d.children)
         context.build = radial()
 
         data.tree = context.build(data.tree)
 
-        return data;
+        return data
     }
 
     function draw(container, tree) {
         canvas.container = d3.select(container)
         svg.element = canvas.container.select('svg')
         if (!svg.element.empty()) {
-            svg.element.select('#graph').remove();
+            svg.element.select('#graph').remove()
         } else {
             svg.element = canvas.container
-                .append("svg")
-                .attr("id", "svg_graph")
-                .attr("width", canvas.width + canvas.margin.left + canvas.margin.right)
-                .attr("height", canvas.height + canvas.margin.top + canvas.margin.bottom)
+                .append('svg')
+                .attr('id', 'svg_graph')
+                .attr('width', canvas.width + canvas.margin.left + canvas.margin.right)
+                .attr('height', canvas.height + canvas.margin.top + canvas.margin.bottom)
         }
 
         // apply css
         svg.element.select('#css').remove()
-        svg.element.append("style").attr('id', 'css').text(css);
+        svg.element.append('style').attr('id', 'css').text(css)
         // apply xmlns
         svg.element.attr('xmlns', 'http://www.w3.org/2000/svg')
 
         graph.element = svg.element
-            .append("g")
-            .attr("id", "graph")
-            .attr("transform", "translate(" + [canvas.zoom.x, canvas.zoom.y] + ")")
+            .append('g')
+            .attr('id', 'graph')
+            .attr('transform', 'translate(' + [canvas.zoom.x, canvas.zoom.y] + ')')
 
         update(tree)
         addRadialZoom()
@@ -149,7 +149,7 @@ function radialView() {
 
         if (!graph.style.barChart) updateLeafLabels()
         else {
-            graph.element.selectAll(".leafLabelIsolates text").remove()
+            graph.element.selectAll('.leafLabelIsolates text').remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -174,7 +174,7 @@ function radialView() {
     }
 
     function search(id) {
-        if (id === "") return
+        if (id === '') return
         let collapsedId = id
         data.tree.each(d => {
             if (d.data.id === id) {
@@ -197,7 +197,7 @@ function radialView() {
 
     /********************* Collapse functions *********************/
     function log(base, number) {
-        return Math.log(number) / Math.log(base);
+        return Math.log(number) / Math.log(base)
     }
 
     function getTriangle(node) {
@@ -215,7 +215,7 @@ function radialView() {
     function collapse(parent, children) {
         parent.visibility = false
         if (!children) return
-        collapseAux(children)
+        collapseChildren(children)
 
         let {point, label} = getTriangle(parent)
 
@@ -233,23 +233,23 @@ function radialView() {
             .attr('dy', '3')
     }
 
-    function collapseAux(children) {
+    function collapseChildren(children) {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
             let id = child.data.id !== undefined ? child.data.id : child.id
             graph.nodes.select(`#node${id}`).remove()
             graph.links.select(`#link${id}`).remove()
             if (child.children) {
-                collapseAux(child.children)
+                collapseChildren(child.children)
             }
-            if (graph.style.linkLabels) graph.element.select(`#label${id}`).remove();
+            if (graph.style.linkLabels) graph.element.select(`#label${id}`).remove()
         }
     }
 
     function expand(parent, children) {
         parent.visibility = true
         if (!children) return
-        expandAux(children)
+        expandChildren(children)
 
         graph.element.select(`#node${parent.data.id}`).remove()
         nodesAttrs(graph.nodes.data(parent))
@@ -260,13 +260,13 @@ function radialView() {
         updateLinkLabels(graph.style.linkLabels)
     }
 
-    function expandAux(children) {
+    function expandChildren(children) {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
             if (child.visibility === undefined)
                 child.visibility = true
             if (child.visibility && child.children) {
-                expandAux(child.children)
+                expandChildren(child.children)
             }
 
             linksAttr(graph.links.data(child))
@@ -409,7 +409,7 @@ function radialView() {
         update(data.tree)
 
         if (graph.style.barChart) {
-            graph.element.selectAll(".leafLabelIsolates").remove()
+            graph.element.selectAll('.leafLabelIsolates').remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -431,7 +431,7 @@ function radialView() {
         update(data.tree)
 
         if (graph.style.barChart) {
-            graph.element.selectAll(".leafLabelIsolates").remove()
+            graph.element.selectAll('.leafLabelIsolates').remove()
             graph.element.selectAll('circle').each(d => addBarCharts(d))
             addLeafLabelsNotIsolates()
         }
@@ -498,15 +498,15 @@ function radialView() {
     function nodesAttrs(nodes) {
         const container = nodes.append('g')
         container
-            .attr("id", d => 'node' + d.data.id)
-            .attr("class", d => "node" + (!d.children ?
-                " node--leaf" : " node--internal") + (d.parent ? " node--norm" : " node--root"))
-            .attr("transform", d => `translate(${[d.x, d.y]})`)
-            .on("click", click)
-        container.append("circle")
-            .attr("r", graph.style.nodes_size || 3)
-            .style("fill", d => d.data.data.color || '#000000')
-            .style("stroke", d => d.data.data.color || '#000000')
+            .attr('id', d => 'node' + d.data.id)
+            .attr('class', d => 'node' + (!d.children ?
+                ' node--leaf' : ' node--internal') + (d.parent ? ' node--norm' : ' node--root'))
+            .attr('transform', d => `translate(${[d.x, d.y]})`)
+            .on('click', click)
+        container.append('circle')
+            .attr('r', graph.style.nodes_size || 3)
+            .style('fill', d => d.data.data.color || '#000000')
+            .style('stroke', d => d.data.data.color || '#000000')
         return container
     }
 
@@ -516,15 +516,15 @@ function radialView() {
             .attr('id', d => 'link' + d.data.id)
             .attr('class', 'gLink')
         container
-            .append("line")
-            .attr("class", "link")
-            .attr("x1", d => d.parent.x)
-            .attr("y1", d => d.parent.y)
-            .attr("x2", d => d.x)
-            .attr("y2", d => d.y)
-            .style("stroke-width", graph.style.links_size)
-            .on("mouseover", mouseOveredRadial(true))
-            .on("mouseout", mouseOveredRadial(false))
+            .append('line')
+            .attr('class', 'link')
+            .attr('x1', d => d.parent.x)
+            .attr('y1', d => d.parent.y)
+            .attr('x2', d => d.x)
+            .attr('y2', d => d.y)
+            .style('stroke-width', graph.style.links_size)
+            .on('mouseover', mouseOveredRadial(true))
+            .on('mouseout', mouseOveredRadial(false))
         return container
     }
 
@@ -533,9 +533,9 @@ function radialView() {
      */
     function addNodeStyle() {
         graph.nodes
-            .selectAll("circle")
-            .style("fill", d => d.data.data.color || '#000000')
-            .style("stroke", d => d.data.data.color || '#000000')
+            .selectAll('circle')
+            .style('fill', d => d.data.data.color || '#000000')
+            .style('stroke', d => d.data.data.color || '#000000')
     }
 
     /**
@@ -545,13 +545,13 @@ function radialView() {
      */
     function changeNodeColor(nodeId, color) {
         graph.nodes
-            .selectAll("circle")
+            .selectAll('circle')
             .each(function (d) {
                 if (d.data.id === nodeId) {
-                    d.data.data.color = color;
-                    addNodeStyle();
+                    d.data.data.color = color
+                    addNodeStyle()
                 }
-            });
+            })
     }
 
     /**
@@ -561,8 +561,8 @@ function radialView() {
     function changeNodeSize(value) {
         graph.style.nodes_size = value
         graph.nodes
-            .selectAll("circle")
-            .attr("r", value);
+            .selectAll('circle')
+            .attr('r', value)
     }
 
     /**
@@ -572,8 +572,8 @@ function radialView() {
     function changeLinkSize(value) {
         graph.style.links_size = value
         graph.links
-            .selectAll(".link")
-            .style("stroke-width", value)
+            .selectAll('.link')
+            .style('stroke-width', value)
     }
 
     /**
@@ -584,8 +584,8 @@ function radialView() {
         graph.style.labels_size = value
 
         graph.element
-            .selectAll("text")
-            .style("font", `${value}px sans-serif`)
+            .selectAll('text')
+            .style('font', `${value}px sans-serif`)
     }
 
     /**
@@ -593,10 +593,10 @@ function radialView() {
      */
     function addLinkStyle() {
         graph.links
-            .selectAll(".link")
-            .style("fill", "none")
-            .style("stroke-width", graph.style.links_size)
-            .style("font", `${graph.style.labels_size}px sans-serif`);
+            .selectAll('.link')
+            .style('fill', 'none')
+            .style('stroke-width', graph.style.links_size)
+            .style('font', `${graph.style.labels_size}px sans-serif`)
     }
 
 
@@ -620,19 +620,19 @@ function radialView() {
      * Adds labels to the leaf nodes that dont have bar charts.
      */
     function addLeafLabelsNotIsolates() {
-        graph.element.selectAll(".node--leaf:not(.isolates) text").remove()
+        graph.element.selectAll('.node--leaf:not(.isolates) text').remove()
 
-        graph.element.selectAll(".node--leaf:not(.isolates)")
-            .append("text")
+        graph.element.selectAll('.node--leaf:not(.isolates)')
+            .append('text')
             .attr('class', 'leafLabelNoIsolates')
-            .attr("dx", 10)
-            .attr("dy", ".31em")
+            .attr('dx', 10)
+            .attr('dy', '.31em')
             .attr('transform', d => `rotate(${d.angle})`)
-            .style("text-anchor", "start")
-            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .style('text-anchor', 'start')
+            .style('font', `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
-            .on("mouseover", mouseOveredRadial(true))
-            .on("mouseout", mouseOveredRadial(false))
+            .on('mouseover', mouseOveredRadial(true))
+            .on('mouseout', mouseOveredRadial(false))
     }
 
 
@@ -640,37 +640,37 @@ function radialView() {
      * Adds labels to the leaf nodes.
      */
     function updateLeafLabels() {
-        graph.nodes.selectAll(".node--leaf text").remove();
+        graph.nodes.selectAll('.node--leaf text').remove()
 
         graph.nodes
-            .selectAll(".node--leaf")
-            .append("text")
+            .selectAll('.node--leaf')
+            .append('text')
             .attr('class', 'leafLabel')
-            .attr("dx", 10)
-            .attr("dy", ".31em")
+            .attr('dx', 10)
+            .attr('dy', '.31em')
             .attr('transform', d => `rotate(${d.angle})`)
-            .style("text-anchor", "start")
-            .style("font", `${graph.style.labels_size}px sans-serif`)
+            .style('text-anchor', 'start')
+            .style('font', `${graph.style.labels_size}px sans-serif`)
             .text(d => d.data.id)
-            .on("mouseover", mouseOveredRadial(true))
-            .on("mouseout", mouseOveredRadial(false))
+            .on('mouseover', mouseOveredRadial(true))
+            .on('mouseout', mouseOveredRadial(false))
     }
 
     /**
      * Adds internal labels on the nodes, after an update.
      */
     function updateInternalLabels(active) {
-        graph.element.selectAll(".internal-label").remove()
+        graph.element.selectAll('.internal-label').remove()
         if (active) {
             graph.element
-                .selectAll(".node--internal")
-                .append("text")
-                .attr("class", "internal-label")
-                .attr("x", -13)
-                .attr("y", 13)
-                .style("text-anchor", "end")
-                .style("font", `${graph.style.labels_size}px sans-serif`)
-                .text(d => d.data.id);
+                .selectAll('.node--internal')
+                .append('text')
+                .attr('class', 'internal-label')
+                .attr('x', -13)
+                .attr('y', 13)
+                .style('text-anchor', 'end')
+                .style('font', `${graph.style.labels_size}px sans-serif`)
+                .text(d => d.data.id)
         }
     }
 
@@ -678,16 +678,16 @@ function radialView() {
      * Adds labels to the links, after an update.
      */
     function updateLinkLabels(active) {
-        graph.element.selectAll(".gLink text").remove()
+        graph.element.selectAll('.gLink text').remove()
         if (active) {
-            graph.element.selectAll(".gLink")
-                .append("text")
-                .attr("x", d => (d.parent.x + d.x) / 2 - 5)
-                .attr("y", d => (d.parent.y + d.y) / 2 - 5)
-                .attr("text-anchor", "middle")
-                .attr("class", "linkLabel")
-                .attr("id", d => "label" + d.data.id)
-                .style("font", `${graph.style.labels_size}px sans-serif`)
+            graph.element.selectAll('.gLink')
+                .append('text')
+                .attr('x', d => (d.parent.x + d.x) / 2 - 5)
+                .attr('y', d => (d.parent.y + d.y) / 2 - 5)
+                .attr('text-anchor', 'middle')
+                .attr('class', 'linkLabel')
+                .attr('id', d => 'label' + d.data.id)
+                .style('font', `${graph.style.labels_size}px sans-serif`)
                 .text(d => d.data.data.value)
         }
     }
@@ -704,25 +704,25 @@ function radialView() {
         if (ruler.container) ruler.container.remove()
 
         ruler.container = svg.element
-            .append("g")
-            .attr("transform", "translate(" + [ruler.y, ruler.x] + ")")
-            .attr("class", "horizontalScale")
+            .append('g')
+            .attr('transform', 'translate(' + [ruler.y, ruler.x] + ')')
+            .attr('class', 'horizontalScale')
 
-        ruler.container.append("path")
-            .attr("d", d => "M" + ruler.padding + ",10L" + (ruler.width + ruler.padding) + ",10")
-            .attr("stroke-width", 1)
-            .attr("stroke", "#000")
+        ruler.container.append('path')
+            .attr('d', d => 'M' + ruler.padding + ',10L' + (ruler.width + ruler.padding) + ',10')
+            .attr('stroke-width', 1)
+            .attr('stroke', '#000')
 
         ruler.element = ruler.container
-            .append("text")
-            .attr("class", "ruler-text")
-            .attr("x", ruler.width / 2 + ruler.padding)
-            .attr("y", 36)
-            .attr("font-family", "sans-serif")
-            .text("")
-            .attr("font-size", "14px")
-            .attr("fill", "#000")
-            .attr("text-anchor", "middle")
+            .append('text')
+            .attr('class', 'ruler-text')
+            .attr('x', ruler.width / 2 + ruler.padding)
+            .attr('y', 36)
+            .attr('font-family', 'sans-serif')
+            .text('')
+            .attr('font-size', '14px')
+            .attr('fill', '#000')
+            .attr('text-anchor', 'middle')
     }
 
     /**
@@ -739,9 +739,9 @@ function radialView() {
                 y: data.tree.children[0].y
             }
 
-            let a = root.x - child.x;
-            let b = root.y - child.y;
-            const dist = Math.sqrt(a * a + b * b);
+            let a = root.x - child.x
+            let b = root.y - child.y
+            const dist = Math.sqrt(a * a + b * b)
 
             let value = data.tree.children[0].data.data.value
             const applyScale = scale ? scale : canvas.zoom.scale
@@ -759,11 +759,11 @@ function radialView() {
     function addSpread() {
         graph.style.spread = !graph.style.spread
         build(data.input)
-        draw("#container", data.tree)
+        draw('#container', data.tree)
         addNodeStyle()
         addLinkStyle()
 
-        canvas.container.select('svg').select('#graph').selectAll(".gLink")
+        canvas.container.select('svg').select('#graph').selectAll('.gLink')
         updateLinkLabels(graph.style.linkLabels)
         updateInternalLabels(graph.style.parentLabels)
     }
@@ -776,10 +776,10 @@ function radialView() {
             root.spread = root.data.data.value
             return root.data.data.value
         } else {
-            root.spread = root.data.data.value || 0;
+            root.spread = root.data.data.value || 0
             root.children.forEach(w => {
                 root.spread += root.data.data.value + spread(w)
-            });
+            })
             root.spread /= parseFloat(root.children.length) // ??
             return root.spread
         }
@@ -801,15 +801,15 @@ function radialView() {
         }
 
         function radToDeg(radian) {
-            let pi = Math.PI;
-            return radian * (180 / pi);
+            let pi = Math.PI
+            return radian * (180 / pi)
         }
 
         function radial(root) {
             //get leaves
             root.eachAfter(node => {
                 if (!node.children)
-                    node.leaves = [node];
+                    node.leaves = [node]
                 else {
                     node.leaves = []
                     node.children.forEach(child => {
@@ -819,15 +819,15 @@ function radialView() {
                             node.leaves.push(...child.leaves)
                     })
                 }
-            });
+            })
 
             if (graph.style.spread) spread(root)
 
-            root.rightBorder = 0;
-            root.alpha = 0;
-            root.wedgeSize = 2 * pi;
-            root.x = 0;
-            root.y = 0;
+            root.rightBorder = 0
+            root.alpha = 0
+            root.wedgeSize = 2 * pi
+            root.x = 0
+            root.y = 0
 
             root.eachBefore(parent => {
                 parent.angle = angle(parent)
@@ -837,48 +837,48 @@ function radialView() {
                     parent.children.sort((a, b) => a.spread - b.spread)
 
                     parent.children.forEach(child => {
-                        child.rightBorder = parent.rightBorder;
+                        child.rightBorder = parent.rightBorder
                         child.wedgeSize = (2 * pi * child.leaves.length) / root.leaves.length
-                        child.alpha = child.rightBorder + (child.wedgeSize / 2);
+                        child.alpha = child.rightBorder + (child.wedgeSize / 2)
 
-                        child.x = parent.x + Math.cos(child.alpha) * child.data.data.value * graph.scale.value;
-                        child.y = parent.y + Math.sin(child.alpha) * child.data.data.value * graph.scale.value;
-                        parent.rightBorder = parent.rightBorder + child.wedgeSize;
+                        child.x = parent.x + Math.cos(child.alpha) * child.data.data.value * graph.scale.value
+                        child.y = parent.y + Math.sin(child.alpha) * child.data.data.value * graph.scale.value
+                        parent.rightBorder = parent.rightBorder + child.wedgeSize
                     })
                 }
             })
 
-            return root;
+            return root
         }
 
-        return radial;
+        return radial
     }
 
     function mouseOveredRadial(active) {
         return function (event, d) {
-            d3.select(this).classed("label--active", active);
+            d3.select(this).classed('label--active', active)
 
-            do d3.select(d.linkNode).classed("link--active", active).raise();
-            while (d = d.parent);
-        };
+            do d3.select(d.linkNode).classed('link--active', active).raise()
+            while (d = d.parent)
+        }
     }
 
     function addRadialZoom() {
-        const zoom = d3.zoom();
-        const transform = d3.zoomIdentity.translate(canvas.zoom.x, canvas.zoom.y).scale(canvas.zoom.scale);
+        const zoom = d3.zoom()
+        const transform = d3.zoomIdentity.translate(canvas.zoom.x, canvas.zoom.y).scale(canvas.zoom.scale)
 
-        graph.element.attr("transform", "translate(" + [canvas.zoom.x, canvas.zoom.y] + ") scale(" + canvas.zoom.scale + ")")
+        graph.element.attr('transform', 'translate(' + [canvas.zoom.x, canvas.zoom.y] + ') scale(' + canvas.zoom.scale + ')')
 
         svg.element
             .call(zoom.transform, transform)
             .call(zoom
                 .scaleExtent([0.1, 100])
-                .on("zoom", function (event) {
+                .on('zoom', function (event) {
                     canvas.zoom.x = event.transform.x
                     canvas.zoom.y = event.transform.y
                     canvas.zoom.scale = event.transform.k
 
-                    graph.element.attr("transform", event.transform)
+                    graph.element.attr('transform', event.transform)
                     applyScaleText()
                 }))
     }
@@ -913,10 +913,10 @@ function radialView() {
      */
     function buildBarChart(name, lines, columns, colors) {
         graph.element.selectAll('rect').remove()
-        graph.element.selectAll(".leafLabel").remove()
-        graph.element.selectAll(".leafLabelIsolates text").remove()
-        graph.element.selectAll(".addBarChartLabel text").remove()
-        graph.element.selectAll(".isolates").selectAll("g").remove()
+        graph.element.selectAll('.leafLabel').remove()
+        graph.element.selectAll('.leafLabelIsolates text').remove()
+        graph.element.selectAll('.addBarChartLabel text').remove()
+        graph.element.selectAll('.isolates').selectAll('g').remove()
         graph.style.barChart = true
 
         const profilesId = lines[0]
@@ -925,7 +925,7 @@ function radialView() {
         const map = new Map()
 
         const stack = d3.stack()
-            .keys(["isolates"])
+            .keys(['isolates'])
             .order(d3.stackOrderNone)
             .offset(d3.stackOffsetNone)
 
@@ -935,7 +935,7 @@ function radialView() {
             }
         }
 
-        if (name === "&") {
+        if (name === '&') {
             let columns_names
             columns.forEach((c, i) => {
                 if (i === 0) columns_names = data.input.metadata[c] + ','
@@ -947,8 +947,8 @@ function radialView() {
             data.input.nodes.forEach(node => {
                 let isolates = [], profiles
                 if (node.isolates && node.isolates.length > 0) {
-                    const currClass = d3.select('#node' + node.key).attr("class")
-                    d3.select('#node' + node.key).attr("class", `${currClass} isolates`)
+                    const currClass = d3.select('#node' + node.key).attr('class')
+                    d3.select('#node' + node.key).attr('class', `${currClass} isolates`)
 
                     node.isolates.forEach(iso => columns.forEach((c, i) => {
                         if (i === 0) isolates.push(iso[c] + ',')
@@ -969,16 +969,16 @@ function radialView() {
                     })
 
                 } else {
-                    const currClass = d3.select('#node' + node.key).attr("class")
-                    d3.select('#node' + node.key).attr("class", `${currClass} not-isolates`)
+                    const currClass = d3.select('#node' + node.key).attr('class')
+                    d3.select('#node' + node.key).attr('class', `${currClass} not-isolates`)
                 }
             })
         } else {
             columns.forEach(col => {
                 data.input.nodes.forEach(node => {
                     if (node.isolates && node.isolates.length > 0) {
-                        const currClass = d3.select('#node' + node.key).attr("class")
-                        d3.select('#node' + node.key).attr("class", `${currClass} isolates`)
+                        const currClass = d3.select('#node' + node.key).attr('class')
+                        d3.select('#node' + node.key).attr('class', `${currClass} isolates`)
 
                         node.isolates.forEach(iso => {
                             columns_data.push({
@@ -988,20 +988,20 @@ function radialView() {
                             })
                         })
                     } else {
-                        const currClass = d3.select('#node' + node.key).attr("class")
-                        d3.select('#node' + node.key).attr("class", `${currClass} not-isolates`)
+                        const currClass = d3.select('#node' + node.key).attr('class')
+                        d3.select('#node' + node.key).attr('class', `${currClass} not-isolates`)
                     }
                 })
             })
         }
 
-        graph.element.selectAll(".isolates").each(d => {
+        graph.element.selectAll('.isolates').each(d => {
             columns_data.forEach(item => {
                 if (d.data.id === item.profiles) order_data.push(item)
             })
         })
 
-        if (name === "&") {
+        if (name === '&') {
             stack(order_data)[0].forEach(d => {
                 const counts = {}
                 d.data.isolates.forEach(x => {
@@ -1048,11 +1048,11 @@ function radialView() {
         }
 
         graph.element
-            .selectAll(".isolates")
-            .append("g")
+            .selectAll('.isolates')
+            .append('g')
             .each(function (d) {
                 d3.select(this)
-                    .selectAll("rect")
+                    .selectAll('rect')
                     .data(map)
                 d.data.data.barChart = null
             })
@@ -1063,36 +1063,36 @@ function radialView() {
             .domain([0.5, 50])
             .range([0, 50])
 
-        if (name === "&") {
+        if (name === '&') {
             map.forEach((isolate, profile) => {
-                const node = d3.select('#node' + profile).select("g")
+                const node = d3.select('#node' + profile).select('g')
                 lastX = 0
                 lastWidth = 5
                 totalW = 0
 
                 graph.nodes
-                    .selectAll("circle")
+                    .selectAll('circle')
                     .each(function (d) {
                         if (d.data.id === profile) rotate = d.angle
                     })
 
                 isolate.isolates.forEach(item => {
-                    const rect = node.append("rect")
-                    rect.attr("y", "-5")
-                    rect.attr("height", "11")
-                    rect.attr("class", "barChart")
+                    const rect = node.append('rect')
+                    rect.attr('y', '-5')
+                    rect.attr('height', '11')
+                    rect.attr('class', 'barChart')
                     rect.attr('transform', `rotate(${rotate})`)
-                    rect.attr("fill", getColor(item.isolate))
+                    rect.attr('fill', getColor(item.isolate))
 
                     lastX += lastWidth
-                    rect.attr("x", lastX.toString())
+                    rect.attr('x', lastX.toString())
 
                     lastWidth = xScale(item.counter * w)
                     totalW += lastWidth
-                    rect.attr("width", lastWidth.toString())
+                    rect.attr('width', lastWidth.toString())
 
                     graph.nodes
-                        .selectAll("circle")
+                        .selectAll('circle')
                         .each(function (d) {
                             if (d.data.id === profile) {
                                 rectOf(d, rect)
@@ -1101,47 +1101,47 @@ function radialView() {
                 })
 
                 node
-                    .append("text")
-                    .attr("class", "leafLabelIsolates")
-                    .attr("dx", totalW + 10)
-                    .attr("dy", ".31em")
+                    .append('text')
+                    .attr('class', 'leafLabelIsolates')
+                    .attr('dx', totalW + 10)
+                    .attr('dy', '.31em')
                     .attr('transform', d => `rotate(${d.angle})`)
-                    .style("text-anchor", "start")
-                    .style("font", `${graph.style.labels_size}px sans-serif`)
+                    .style('text-anchor', 'start')
+                    .style('font', `${graph.style.labels_size}px sans-serif`)
                     .text(d => d.data.id)
-                    .on("mouseover", mouseOveredRadial(true))
-                    .on("mouseout", mouseOveredRadial(false))
+                    .on('mouseover', mouseOveredRadial(true))
+                    .on('mouseout', mouseOveredRadial(false))
             })
         } else {
             map.forEach((isolate, profile) => {
-                const node = d3.select('#node' + profile).select("g")
+                const node = d3.select('#node' + profile).select('g')
                 lastX = 0
                 lastWidth = 5
                 totalW = 0
 
                 graph.nodes
-                    .selectAll("circle")
+                    .selectAll('circle')
                     .each(function (d) {
                         if (d.data.id === profile) rotate = d.angle
                     })
 
                 isolate.forEach(item => {
-                    const rect = node.append("rect")
-                    rect.attr("y", "-5")
-                    rect.attr("height", "11")
-                    rect.attr("class", "barChart")
+                    const rect = node.append('rect')
+                    rect.attr('y', '-5')
+                    rect.attr('height', '11')
+                    rect.attr('class', 'barChart')
                     rect.attr('transform', `rotate(${rotate})`)
-                    rect.attr("fill", getColor(item.isolates))
+                    rect.attr('fill', getColor(item.isolates))
 
                     lastX += lastWidth
-                    rect.attr("x", lastX.toString())
+                    rect.attr('x', lastX.toString())
 
                     lastWidth = xScale(item.numberOfIsolates * w)
                     totalW += lastWidth
-                    rect.attr("width", lastWidth.toString())
+                    rect.attr('width', lastWidth.toString())
 
                     graph.nodes
-                        .selectAll("circle")
+                        .selectAll('circle')
                         .each(function (d) {
                             if (d.data.id === profile) {
                                 rectOf(d, rect)
@@ -1150,16 +1150,16 @@ function radialView() {
                 })
 
                 node
-                    .append("text")
+                    .append('text')
                     .attr('class', 'leafLabelIsolates')
-                    .attr("dx", totalW + 10)
-                    .attr("dy", ".31em")
+                    .attr('dx', totalW + 10)
+                    .attr('dy', '.31em')
                     .attr('transform', d => `rotate(${d.angle})`)
-                    .style("text-anchor", "start")
-                    .style("font", `${graph.style.labels_size}px sans-serif`)
+                    .style('text-anchor', 'start')
+                    .style('font', `${graph.style.labels_size}px sans-serif`)
                     .text(d => d.data.id)
-                    .on("mouseover", mouseOveredRadial(true))
-                    .on("mouseout", mouseOveredRadial(false))
+                    .on('mouseover', mouseOveredRadial(true))
+                    .on('mouseout', mouseOveredRadial(false))
             })
         }
     }
@@ -1182,44 +1182,44 @@ function radialView() {
      * @param node the node to add the bar chart
      */
     function addBarCharts(node) {
-        graph.element.selectAll(".addBarChartLabel text").remove()
+        graph.element.selectAll('.addBarChartLabel text').remove()
 
         if (!node.children && node.data.data.barChart) {
             if (!graph.element.select(`#node${node.data.id}`).selectAll('g').empty()) {
                 graph.element.select(`#node${node.data.id}`).selectAll('g').remove()
             }
             const nodeElement = graph.element.select(`#node${node.data.id}`)
-                .attr("class", "node node--leaf node--norm isolates")
-                .append("g")
+                .attr('class', 'node node--leaf node--norm isolates')
+                .append('g')
 
             let totalWidth = 0
             for (let i = 0; i < node.data.data.barChart.length; i++) {
                 const rect = node.data.data.barChart[i]
                 nodeElement
-                    .append("rect")
-                    .attr("width", d => {
+                    .append('rect')
+                    .attr('width', d => {
                         totalWidth += Number.parseInt(rect.width)
                         return rect.width
                     })
-                    .attr("height", rect.height)
-                    .attr("fill", rect.fill)
-                    .attr("x", rect.x)
-                    .attr("y", rect.y)
-                    .attr("transform", `rotate(${node.angle})`)
-                    .attr("class", "barChart")
+                    .attr('height', rect.height)
+                    .attr('fill', rect.fill)
+                    .attr('x', rect.x)
+                    .attr('y', rect.y)
+                    .attr('transform', `rotate(${node.angle})`)
+                    .attr('class', 'barChart')
 
                 if (i === node.data.data.barChart.length - 1) {
                     nodeElement
-                        .append("text")
-                        .attr("class", "addBarChartLabel")
-                        .attr("dx", totalWidth + 10)
-                        .attr("dy", ".31em")
+                        .append('text')
+                        .attr('class', 'addBarChartLabel')
+                        .attr('dx', totalWidth + 10)
+                        .attr('dy', '.31em')
                         .attr('transform', d => `rotate(${d.angle})`)
-                        .style("text-anchor", "start")
-                        .style("font", `${graph.style.labels_size}px sans-serif`)
+                        .style('text-anchor', 'start')
+                        .style('font', `${graph.style.labels_size}px sans-serif`)
                         .text(d => d.data.id)
-                        .on("mouseover", mouseOveredRadial(true))
-                        .on("mouseout", mouseOveredRadial(false))
+                        .on('mouseover', mouseOveredRadial(true))
+                        .on('mouseout', mouseOveredRadial(false))
                 }
             }
         }
@@ -1259,7 +1259,7 @@ function radialView() {
 
     function load(container, save) {
         if (!save.graph || !save.data || !save.canvas)
-            throw new Error("Save does not contain all needed properties {data, graph, canvas}.")
+            throw new Error('Save does not contain all needed properties {data, graph, canvas}.')
 
         Object.assign(graph.style, save.graph.style || {})
         Object.assign(canvas.zoom, save.canvas.zoom || {})
@@ -1269,7 +1269,7 @@ function radialView() {
         graph.scale = scaler.linear
 
         if (!save.data.input)
-            throw new Error("Data must contain an input property.")
+            throw new Error('Data must contain an input property.')
         let view = build(save.data.input)
         draw(container, view.tree)
 

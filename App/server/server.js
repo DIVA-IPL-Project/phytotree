@@ -1,10 +1,10 @@
-const path = require('path');
-const express = require('express');
+const path = require('path')
+const express = require('express')
 const bodyParser = require('body-parser')
-const routesApi = require('./lib/routes/api-routes');
-const routesWeb = require('./lib/routes/web-routes');
-const PORT = 8000;
-const app = express();
+const routesApi = require('./lib/routes/api-routes')
+const routesWeb = require('./lib/routes/web-routes')
+const PORT = 8000
+const app = express()
 
 
 function build_app(arg){
@@ -21,8 +21,8 @@ function build_app(arg){
             app.use(routesWeb.init_path(homeUri).init_router())
 
             app.listen(PORT, function (err) {
-                if (err) console.log(err);
-                console.log("Server listening on PORT", PORT);
+                if (err) console.log(err)
+                console.log("Server listening on PORT", PORT)
             })
 
             break
@@ -39,8 +39,8 @@ function build_app(arg){
             app.use(routesWeb.init_path(homeUri).init_router())
 
             app.listen(PORT, function (err) {
-                if (err) console.log(err);
-                console.log("Server listening on PORT", PORT);
+                if (err) console.log(err)
+                console.log("Server listening on PORT", PORT)
             })
 
             break

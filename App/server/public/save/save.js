@@ -2,7 +2,7 @@
 function downloadReport(filename, title) {
     // Create the pdf document
     const doc = new jsPDF('p', 'pt', 'a4')
-    doc.setProperties({title: "Report"})
+    doc.setProperties({title: 'Report'})
     doc.setFontSize(24)
     doc.text(title, 290, 40, {align: 'center'})
     doc.setFontSize(10)
@@ -11,7 +11,7 @@ function downloadReport(filename, title) {
 
     const svg = document.getHTML(view.context.svg.element.node(), true)
     const parser = new DOMParser()
-    const elem = parser.parseFromString(svg, "text/html").body
+    const elem = parser.parseFromString(svg, 'text/html').body
     const graph = elem.children[0]
 
     const clone = graph.cloneNode(true)
@@ -21,8 +21,8 @@ function downloadReport(filename, title) {
 
     // Add the tree to the report
     svgAsPngUri(clone, null).then(uri => {
-        const imgPropsW = document.getElementById("graph").getAttribute("width")
-        const imgPropsH = document.getElementById("graph").getAttribute("height")
+        const imgPropsW = document.getElementById('graph').getAttribute('width')
+        const imgPropsH = document.getElementById('graph').getAttribute('height')
 
         const pdfWidth = doc.internal.pageSize.width
         const pdfHeight = doc.internal.pageSize.height
@@ -34,40 +34,40 @@ function downloadReport(filename, title) {
     })
 
     // Add pie chart and legend to the report
-    svgAsPngUri(document.getElementById("svg_isolate"), null).then(uri => {
+    svgAsPngUri(document.getElementById('svg_isolate'), null).then(uri => {
         doc.addImage(uri, 'PNG', 100, 650, 700, 200)
         doc.save(filename)
     })
-    document.getElementById("downloadSVG").style.display = "block"
-    document.getElementById("reportName").style.display = "none"
-    document.getElementById("labelReport").style.display = "none"
-    document.getElementById("reportName").value = ""
+    document.getElementById('downloadSVG').style.display = 'block'
+    document.getElementById('reportName').style.display = 'none'
+    document.getElementById('labelReport').style.display = 'none'
+    document.getElementById('reportName').value = ''
 }
 
 function downloadFile(filename, text) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
+    var pom = document.createElement('a')
+    pom.setAttribute('href', 'data:text/plaincharset=utf-8,' + encodeURIComponent(text))
+    pom.setAttribute('download', filename)
 
     if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
+        var event = document.createEvent('MouseEvents')
+        event.initEvent('click', true, true)
+        pom.dispatchEvent(event)
     }
     else {
-        pom.click();
+        pom.click()
     }
 }
 
 document.getHTML = function (who, deep) {
-    if (!who || !who.tagName) return '';
-    var txt, ax, el = document.createElement("div");
-    el.appendChild(who.cloneNode(false));
-    txt = el.innerHTML;
+    if (!who || !who.tagName) return ''
+    var txt, ax, el = document.createElement('div')
+    el.appendChild(who.cloneNode(false))
+    txt = el.innerHTML
     if (deep) {
-        ax = txt.indexOf('>') + 1;
-        txt = txt.substring(0, ax) + who.innerHTML + txt.substring(ax);
+        ax = txt.indexOf('>') + 1
+        txt = txt.substring(0, ax) + who.innerHTML + txt.substring(ax)
     }
-    el = null;
-    return txt;
+    el = null
+    return txt
 }

@@ -272,6 +272,8 @@ async function getRenderData() {
 /* Aux function */
 
 function split_tabular_data(data) {
+
+
     return data.split('\r\n').map(str => {
         return str.split('\t')
     })

@@ -6,11 +6,11 @@ function read_tree_file(){
 }
 
 function read_profile_file(){
-    return fs.readFile(path.join(__dirname, 'test_files', 'profiles.tab'))
+    return fs.readFile(path.join(__dirname, 'test_files', 'profiles.tsv'))
 }
 
 function read_isolate_file(){
-    return fs.readFile(path.join(__dirname, 'test_files', 'isolates.tab'))
+    return fs.readFile(path.join(__dirname, 'test_files', 'isolates.tsv'))
 }
 
 module.exports = {

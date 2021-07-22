@@ -1069,7 +1069,9 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         d3.select(id).selectAll('g').remove()
     }
 
-    const g = d3.select(id).append('g').attr('transform', `${transform}`).attr('id', 'pieChart')
+    const pieName = id.replace('#', '-')
+
+    const g = d3.select(id).append('g').attr('transform', `${transform}`).attr('id', 'pieChart' + pieName)
     const pie = d3.pie().value(d => d.value)
     const path = d3.arc().outerRadius(150).innerRadius(30)
 

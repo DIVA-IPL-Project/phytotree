@@ -1213,7 +1213,7 @@ function dendrogramView() {
                 d3.select(this)
                     .selectAll('rect')
                     .data(map)
-                d.data.barChart = null
+                d.data.data.barChart = null
             })
 
         let w = 30, lastX = 0, lastWidth = 5, totalW = 0

@@ -273,6 +273,11 @@ function setupData() {
                     case 'dendrogram':
                         try {
                             loadView(dendrogram, save)
+                            document.getElementById('radButton').style.display = 'block'
+                            document.getElementById('denButton').style.display = 'block'
+                            document.getElementById('visualization').style.display = 'block'
+                            document.getElementById('downloadSVG').style.display = 'block'
+                            document.getElementById('save').style.display = 'block'
                         } catch (e) {
                             alertMsg(e.message)
                             return
@@ -282,6 +287,11 @@ function setupData() {
                     case 'radial':
                         try {
                             loadView(radial, save)
+                            document.getElementById('radButton').style.display = 'block'
+                            document.getElementById('denButton').style.display = 'block'
+                            document.getElementById('visualization').style.display = 'block'
+                            document.getElementById('downloadSVG').style.display = 'block'
+                            document.getElementById('save').style.display = 'block'
                         } catch (e) {
                             alertMsg(e.message)
                             return
@@ -298,13 +308,10 @@ function setupData() {
 function loadView(vis, save) {
     view = vis
     data = vis.load('#container', save)
-    console.log(data)
     changeNodeColor(vis.changeNodeColor, vis.getNodes())
     changeNodeSize(vis.changeNodeSize)
     changeLinkSize(vis.changeLinkSize)
     changeLabelsSize(vis.changeLabelsSize)
-    document.getElementById('downloadSVG').style.display = 'block'
-    document.getElementById('save').style.display = 'block'
 }
 
 /********************* Setup Navbar UI *********************/

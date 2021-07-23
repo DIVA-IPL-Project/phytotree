@@ -8,6 +8,7 @@ It was created an Electron App, that uses the visualization modules.
 + ### [Radial and Dendrogram Visualization Docs](https://github.com/AdrVB/Radial-Dendrogram-Visualization/wiki/Radial-and-Dendrogram-Visualization-for-Phylogenetic-Trees)
 + ### [How to integrate the framework Electron in a Javascript App](https://github.com/AdrVB/Radial-Dendrogram-Visualization/wiki/How-to-use-Electron-in-a-Javascript-application)
 + ### [Run the Electron App](https://github.com/AdrVB/Radial-Dendrogram-Visualization/wiki/Run-the-Electron-App)
++ ### [Example videos for the Electron App](https://www.youtube.com/playlist?list=PLSZMwhUOJwPXGFFd7k0HWOL-mA2X_6gxp)
 
 ## Visualization Examples
 ### Dendrogram  

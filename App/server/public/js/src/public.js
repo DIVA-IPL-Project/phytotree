@@ -108,7 +108,8 @@ async function set_up_test_data() {
     let headers = {'Content-Type': 'application/json'}
     let response = await fetch('/api/default_data', {headers: headers})
     data = await response.json()
-
+    setupProfileTab()
+    setupIsolateTab()
 }
 
 function reset_data() {
@@ -131,6 +132,47 @@ function reset_data() {
     document.getElementById('formFilePro').style.display = 'none'
     document.getElementById('idIsoBt').style.display = 'none'
     document.getElementById('idPrfBt').style.display = 'none'
+    document.getElementById('table_profile').innerHTML = ''
+    document.getElementById('table_isolate').innerHTML = ''
+}
+
+function setupProfileTab() {
+    if (!is_table_profile_create) {
+        try {
+            create_table_profile(data)
+            document.getElementById('profileDiv').style.display = 'block'
+            document.getElementById('svg_profile').style.display = 'block'
+            is_table_profile_create = true
+        } catch (err) {
+            document.getElementById('profileDiv').style.display = 'none'
+            document.getElementById('svg_profile').style.display = 'none'
+            setUpError(err.message, 'errorProfile', 'profileContent')
+        }
+    } else {
+        addListenersToTables()
+    }
+}
+
+function setupIsolateTab() {
+    if (!is_table_isolate_create) {
+        try {
+            document.getElementById('linktreebuttonD').style.display = 'none'
+            document.getElementById('linktreebuttonR').style.display = 'none'
+
+            create_table_isolate(data)
+            document.getElementById('isolateDiv').style.display = 'block'
+            document.getElementById('svg_isolate').style.display = 'block'
+            is_table_isolate_create = true
+        } catch (err) {
+            document.getElementById('isolateDiv').style.display = 'none'
+            document.getElementById('linktreebuttonD').style.display = 'none'
+            document.getElementById('linktreebuttonR').style.display = 'none'
+            document.getElementById('svg_isolate').style.display = 'none'
+            setUpError(err.message, 'errorIsolate', 'isolateContent')
+        }
+    } else {
+        addListenersToTables()
+    }
 }
 
 function setupTabs() {
@@ -138,44 +180,9 @@ function setupTabs() {
         addListenersToTables()
     })
 
-    document.getElementById('profile-tab').addEventListener('click', () => {
-        if (!is_table_profile_create) {
-            try {
-                create_table_profile(data)
-                document.getElementById('profileDiv').style.display = 'block'
-                document.getElementById('svg_profile').style.display = 'block'
-                is_table_profile_create = true
-            } catch (err) {
-                document.getElementById('profileDiv').style.display = 'none'
-                document.getElementById('svg_profile').style.display = 'none'
-                setUpError(err.message, 'errorProfile', 'profileContent')
-            }
-        } else {
-            addListenersToTables()
-        }
-    })
+    document.getElementById('profile-tab').addEventListener('click', () => setupProfileTab)
 
-    document.getElementById('isolate-tab').addEventListener('click', () => {
-        if (!is_table_isolate_create) {
-            try {
-                document.getElementById('linktreebuttonD').style.display = 'none'
-                document.getElementById('linktreebuttonR').style.display = 'none'
-
-                create_table_isolate(data)
-                document.getElementById('isolateDiv').style.display = 'block'
-                document.getElementById('svg_isolate').style.display = 'block'
-                is_table_isolate_create = true
-            } catch (err) {
-                document.getElementById('isolateDiv').style.display = 'none'
-                document.getElementById('linktreebuttonD').style.display = 'none'
-                document.getElementById('linktreebuttonR').style.display = 'none'
-                document.getElementById('svg_isolate').style.display = 'none'
-                setUpError(err.message, 'errorIsolate', 'isolateContent')
-            }
-        } else {
-            addListenersToTables()
-        }
-    })
+    document.getElementById('isolate-tab').addEventListener('click', () => setupIsolateTab)
 }
 
 function setupRepresentationButtons() {
@@ -187,6 +194,7 @@ function setupRepresentationButtons() {
             view = radial
             radial.draw('#container', graph.tree)
 
+            //changeZoom(radial.applyLinearScale, 'Zoom')
             changeNodeColor(radial.changeNodeColor, radial.getNodes())
             changeNodeSize(radial.changeNodeSize)
             changeLinkSize(radial.changeLinkSize)
@@ -209,6 +217,15 @@ function setupRepresentationButtons() {
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
 
+            if(view.type === 'dendogram'){
+                setupScaleBtn(up, () => dendrogram.verticalRescale(true))
+                setupScaleBtn(down, () => dendrogram.verticalRescale(false))
+                setupScaleBtn(left, () => dendrogram.horizontalRescale(false))
+                setupScaleBtn(right, () => dendrogram.horizontalRescale(true))
+            }
+
+            //changeZoom(dendrogram.horizontalRescale, 'Horizontal Zoom')
+            //changeZoom(dendrogram.verticalRescale, 'Vertical Zoom')
             changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
@@ -261,6 +278,7 @@ function setupData() {
     document.getElementById('save')
         .addEventListener('click', () => {
             let save = view.save()
+            save.isolatePieChart = d3.select('#svg-extra').html()
             downloadFile('save.json', JSON.stringify(save))
         })
     document.getElementById('load')
@@ -304,6 +322,24 @@ function setupData() {
                         break
                     default:
                         alertMsg('Invalid save file. No tree type specified.')
+                }
+
+                if (!is_table_profile_create) {
+                    setupProfileTab()
+                }
+
+                if (!is_table_isolate_create) {
+                    setupIsolateTab()
+                }
+
+                if(save.isolatePieChart){
+                    addPieChartHTML(save.isolatePieChart)
+                    document.getElementById('svg-extra').setAttribute('width', 700)
+                    let isolate_value = document.getElementById('isolateFilter').innerHTML
+                    isolate_value.split(', ').forEach(iso => {
+                        let elem = document.getElementById(iso.concat('_isolate'))
+                        clickHeaderIsolates(elem, '#svg_isolate', categories.categoriesIsolate)
+                    })
                 }
             })
         })
@@ -501,6 +537,45 @@ function changeNodeColor(func, nodes) {
     })
 }
 
+function changeZoom(func, label) {
+    if (document.querySelector('.nodeZoom') != null) {
+        document.querySelector('.nodeZoom').remove()
+    }
+
+    const nodeZoomDiv = document.createElement('div')
+    nodeZoomDiv.setAttribute('class', 'nodeZoom justify-content-center mt-4')
+    let id = view.type
+
+    const title = document.createElement('p')
+    title.setAttribute('class', 'text-center')
+    title.setAttribute('id', id.concat(' ' + label))
+    const text = document.createTextNode(label)
+    title.appendChild(text)
+
+    const rangeInput = document.createElement('input')
+    rangeInput.setAttribute('id', 'rangeInputId')
+    rangeInput.setAttribute('type', 'range')
+    rangeInput.setAttribute('class', 'form-range')
+    rangeInput.setAttribute('min', '1')
+    rangeInput.setAttribute('max', '100')
+    rangeInput.setAttribute('value', '50')
+
+    
+
+    rangeInput.addEventListener('change', (event) => func(event.target.value))
+
+    if(view.type === 'radial'){
+        setupScaleBtn(left, () => radial.rescale(false))
+        setupScaleBtn(right, () => radial.rescale(true))
+    }
+
+    nodeZoomDiv.appendChild(title)
+    nodeZoomDiv.appendChild(rangeInput)
+
+    document.getElementById('graphConfig').appendChild(nodeZoomDiv)
+
+}
+
 function changeNodeSize(func) {
     if (document.querySelector('.nodeSize') != null) {
         document.querySelector('.nodeSize').remove()
@@ -512,7 +587,7 @@ function changeNodeSize(func) {
     const title = document.createElement('p')
     title.setAttribute('class', 'text-center')
     title.setAttribute('id', 'nodeSizeId')
-    const text = document.createTextNode('Node size')
+    const text = document.createTextNode('Node Size')
     title.appendChild(text)
 
     const rangeInput = document.createElement('input')
@@ -926,6 +1001,8 @@ function clickHeaderProfiles(header, id, categories) {
     constructPieChart(counts_ordered, names_profiles, id)
 }
 
+let isolateHTML
+
 /**
  *
  * @param header {}
@@ -1006,6 +1083,7 @@ function clickHeaderIsolates(header, id, categories) {
 
     sections = counts
     constructPieChart(counts_ordered, names_isolates, id)
+    isolateHTML = d3.select('#svg_isolate').html()
 }
 
 function addColumn(tdElements, HeaderId, array, categories) {
@@ -1209,8 +1287,6 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         .attr('alignment-baseline', 'middle')
 }
 
-let isolateHTML
-
 function constructPieChart(data, names, id) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
@@ -1385,6 +1461,7 @@ function constructPieChart(data, names, id) {
     legend.append('text')
         .attr('y', label_y)
         .attr('x', label_x)
+        .attr('id', 'isolateFilter')
         .text(formatArray(names))
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
@@ -1395,8 +1472,6 @@ function constructPieChart(data, names, id) {
         .text('Categories: ' + data.length)
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
-    
-    isolateHTML = d3.select('#svg_isolate').html()
 }
 
 function linkToTree() {
@@ -1427,7 +1502,7 @@ function linkToTree() {
         dendrogram.applyFilter(filterTables)
 
         hideButton()
-        addPieChart()
+        addPieChartHTML(isolateHTML)
 
         // go to tree tab
         document.getElementById('home-tab').click()
@@ -1458,16 +1533,16 @@ function linkToTree() {
         radial.applyFilter(filterTables)
 
         hideButton()
-        addPieChart()
+        addPieChartHTML(isolateHTML)
 
         document.getElementById('home-tab').click()
     })
 }
 
-function addPieChart(){
+function addPieChartHTML(html){
     d3.select('#container').select('#svg-extra').select('#g_isolate').remove()
 
-    let split = isolateHTML.split('Categories: ')[1].split('<')[0]
+    let split = html.split('Categories: ')[1].split('<')[0]
     let height
     if(split < 16)
         height = 40 + 18 * 15
@@ -1478,7 +1553,7 @@ function addPieChart(){
         .select('#svg-extra')
         .append('g')
         .attr('id','g_isolate')
-        .html(isolateHTML)
+        .html(html)
 
     document.getElementById('svg-extra').setAttribute('height', height)
 }
@@ -1579,12 +1654,6 @@ function sendProfileData() {
     let headers = {'Content-Type': 'application/json'}
     let profile = document.getElementById('formFilePro').files[0]
 
-    const ext = profile.name.split('.')
-    if (ext[1] !== 'tab') {
-        alertMsg('Extension for profile file must be tab.')
-        return
-    }
-
     profile.text().then(prof => {
         let body = JSON.stringify({data: prof})
         fetch('/api/update/profiles', {method: 'post', body: body, headers: headers}).then(() => {
@@ -1618,12 +1687,6 @@ function sendIsolateData() {
 
     let headers = {'Content-Type': 'application/json'}
     let isolate = document.getElementById('formFileIso').files[0]
-
-    const ext = isolate.name.split('.')
-    if (ext[1] !== 'tab') {
-        alertMsg('Extension for isolate file must be tab.')
-        return
-    }
 
     isolate.text().then(iso => {
         let body = JSON.stringify({data: iso})

@@ -5,9 +5,13 @@ let data
 let is_table_profile_create = false
 let is_table_isolate_create = false
 let view
+let lastHValue = 5, lastVValue = 5, lastRValue = 5
 
 /********************* Load Page *********************/
 
+/**
+ * Loads page.
+ */
 function load() {
     dendrogram = dendrogramView()
     radial = radialView()
@@ -18,6 +22,9 @@ function load() {
 
 /********************* Setup UI *********************/
 
+/**
+ * Displays test app or normal app.
+ */
 function test_input_handler() {
     const checkBox = document.getElementById('flexCheckDefault')
     if (checkBox.checked === true) {
@@ -27,12 +34,17 @@ function test_input_handler() {
     }
 }
 
+/**
+ * Hides the configuration of graph.
+ */
 function hideGraphConfig() {
     document.getElementById('graphConfig').style.display = 'none'
 }
 
+/**
+ * Defines app display.
+ */
 function display_app() {
-
     document.getElementById('container').innerHTML = ''
     document.getElementById('nwk').style.display = 'block'
     document.getElementById('nwkBtn').style.display = 'block'
@@ -57,6 +69,9 @@ function display_app() {
     reset_data()
 }
 
+/**
+ * Defines test app display.
+ */
 function display_test_app() {
     reset_data()
 
@@ -102,6 +117,9 @@ function display_test_app() {
     set_up_test_data()
 }
 
+/**
+ * Sets up test data.
+ */
 async function set_up_test_data() {
     is_table_profile_create = false
     is_table_isolate_create = false
@@ -112,6 +130,9 @@ async function set_up_test_data() {
     setupIsolateTab()
 }
 
+/**
+ * Resets all app variables.
+ */
 function reset_data() {
     data = undefined
     is_table_profile_create = false
@@ -136,6 +157,9 @@ function reset_data() {
     document.getElementById('table_isolate').innerHTML = ''
 }
 
+/**
+ * Sets up profile tab display.
+ */
 function setupProfileTab() {
     if (!is_table_profile_create) {
         try {
@@ -153,6 +177,9 @@ function setupProfileTab() {
     }
 }
 
+/**
+ * Sets up isoalte tab display.
+ */
 function setupIsolateTab() {
     if (!is_table_isolate_create) {
         try {
@@ -175,16 +202,22 @@ function setupIsolateTab() {
     }
 }
 
+/**
+ * Sets up tabs.
+ */
 function setupTabs() {
     document.getElementById('home-tab').addEventListener('click', () => {
         addListenersToTables()
     })
 
-    document.getElementById('profile-tab').addEventListener('click', () => setupProfileTab)
+    document.getElementById('profile-tab').addEventListener('click', () => setupProfileTab())
 
-    document.getElementById('isolate-tab').addEventListener('click', () => setupIsolateTab)
+    document.getElementById('isolate-tab').addEventListener('click', () => setupIsolateTab())
 }
 
+/**
+ * Sets up representation and action of buttons.
+ */
 function setupRepresentationButtons() {
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
@@ -194,7 +227,7 @@ function setupRepresentationButtons() {
             view = radial
             radial.draw('#container', graph.tree)
 
-            //changeZoom(radial.applyLinearScale, 'Zoom')
+            addRadialZoom()
             changeNodeColor(radial.changeNodeColor, radial.getNodes())
             changeNodeSize(radial.changeNodeSize)
             changeLinkSize(radial.changeLinkSize)
@@ -217,15 +250,7 @@ function setupRepresentationButtons() {
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
 
-            if(view.type === 'dendogram'){
-                setupScaleBtn(up, () => dendrogram.verticalRescale(true))
-                setupScaleBtn(down, () => dendrogram.verticalRescale(false))
-                setupScaleBtn(left, () => dendrogram.horizontalRescale(false))
-                setupScaleBtn(right, () => dendrogram.horizontalRescale(true))
-            }
-
-            //changeZoom(dendrogram.horizontalRescale, 'Horizontal Zoom')
-            //changeZoom(dendrogram.verticalRescale, 'Vertical Zoom')
+            addDendogramZoom()
             changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
@@ -239,7 +264,7 @@ function setupRepresentationButtons() {
 }
 
 /**
- *
+ * Sets up error message display.
  * @param message {string}
  * @param id {string}
  * @param contentId {string}
@@ -256,6 +281,9 @@ function setUpError(message, id, contentId) {
         .appendChild(elem)
 }
 
+/**
+ * Sets up data buttons display and actions.
+ */
 function setupData() {
     document.getElementById('flexCheckDefault').addEventListener('click', test_input_handler)
     document.getElementById('nwkBtn')
@@ -323,7 +351,6 @@ function setupData() {
                     default:
                         alertMsg('Invalid save file. No tree type specified.')
                 }
-
                 if (!is_table_profile_create) {
                     setupProfileTab()
                 }
@@ -345,6 +372,11 @@ function setupData() {
         })
 }
 
+/**
+ * Loads a visualization
+ * @param {*} vis 
+ * @param {*} save 
+ */
 function loadView(vis, save) {
     view = vis
     data = vis.load('#container', save)
@@ -363,6 +395,11 @@ function showGraphConfig() {
     document.getElementById('graphConfig').style.display = 'grid'
 }
 
+/**
+ * Applies func to search for elem.
+ * @param {*} elem 
+ * @param {*} func 
+ */
 function search(elem, func) {
     let event = events()
     elem.addEventListener('keyup', () => event())
@@ -379,6 +416,9 @@ function search(elem, func) {
     }
 }
 
+/**
+ * Sets up dendogram graph configuration.
+ */
 function setupDendrogramGraphConfiguration() {
     showGraphConfig()
     const input = document.getElementById('search')
@@ -407,23 +447,11 @@ function setupDendrogramGraphConfiguration() {
 
     linearScale.addEventListener('click', dendrogram.applyLinearScale)
     logScale.addEventListener('click', dendrogram.applyLogScale)
-
-    let up = document.getElementById('upButton')
-    let down = document.getElementById('downButton')
-    let left = document.getElementById('leftButton')
-    let right = document.getElementById('rightButton')
-
-    up.style.display = ''
-    down.style.display = ''
-    right.style.display = ''
-    left.style.display = ''
-
-    setupScaleBtn(up, () => dendrogram.verticalRescale(true))
-    setupScaleBtn(down, () => dendrogram.verticalRescale(false))
-    setupScaleBtn(left, () => dendrogram.horizontalRescale(false))
-    setupScaleBtn(right, () => dendrogram.horizontalRescale(true))
 }
 
+/**
+ * Sets up radial graph configuration.
+ */
 function setupRadialGraphConfiguration() {
     showGraphConfig()
 
@@ -453,22 +481,15 @@ function setupRadialGraphConfiguration() {
     logScale.style.display = 'block'
     spread.style.display = 'block'
 
-    document.getElementById('upButton').style.display = 'none'
-    document.getElementById('downButton').style.display = 'none'
-    let left = document.getElementById('leftButton')
-    let right = document.getElementById('rightButton')
-
-    right.style.display = ''
-    left.style.display = ''
-
-    setupScaleBtn(left, () => radial.rescale(false))
-    setupScaleBtn(right, () => radial.rescale(true))
-
 }
-
 
 /********************* Graph Style Aux *********************/
 
+/**
+ * Changes the colour of a specific node to a colour of choice.
+ * @param {*} func 
+ * @param {*} nodes 
+ */
 function changeNodeColor(func, nodes) {
     if (document.querySelector('.color') != null) {
         document.querySelector('.color').remove()
@@ -537,45 +558,120 @@ function changeNodeColor(func, nodes) {
     })
 }
 
-function changeZoom(func, label) {
+/**
+ * Adds zoom buttons and behaviour to dendogram graph configuration.
+ */
+function addDendogramZoom() {
     if (document.querySelector('.nodeZoom') != null) {
         document.querySelector('.nodeZoom').remove()
     }
 
     const nodeZoomDiv = document.createElement('div')
     nodeZoomDiv.setAttribute('class', 'nodeZoom justify-content-center mt-4')
-    let id = view.type
+    let viewId = view.type
+
+    const verticalTitle = document.createElement('p')
+    verticalTitle.setAttribute('class', 'text-center')
+    verticalTitle.setAttribute('id', viewId.concat(' Vertical Zoom'))
+    let text = document.createTextNode('Vertical Zoom')
+    verticalTitle.appendChild(text)
+
+    const rangeVerticalInput = document.createElement('input')
+    rangeVerticalInput.setAttribute('id', 'rangeVerticalInputId')
+    rangeVerticalInput.setAttribute('type', 'range')
+    rangeVerticalInput.setAttribute('class', 'form-range')
+    rangeVerticalInput.setAttribute('min', '0')
+    rangeVerticalInput.setAttribute('max', '10')
+    rangeVerticalInput.setAttribute('step', '1')
+    rangeVerticalInput.setAttribute('value', '5')
+
+    rangeVerticalInput.addEventListener('change', (event) => {
+        let rate = Math.abs(event.target.value - lastVValue)
+        if(lastVValue <= event.target.value)
+            dendrogram.verticalRescale(true, rate)
+        else
+            dendrogram.verticalRescale(false, rate)
+        lastVValue = event.target.value
+    })
+
+    const horizontalTitle = document.createElement('p')
+    horizontalTitle.setAttribute('class', 'text-center')
+    horizontalTitle.setAttribute('id', viewId.concat(' Horizontal Zoom'))
+    text = document.createTextNode('Horizontal Zoom')
+    horizontalTitle.appendChild(text)
+
+    const rangeHorizontalInput = document.createElement('input')
+    rangeHorizontalInput.setAttribute('id', 'rangeHorizontalInputId')
+    rangeHorizontalInput.setAttribute('type', 'range')
+    rangeHorizontalInput.setAttribute('class', 'form-range')
+    rangeHorizontalInput.setAttribute('min', '0')
+    rangeHorizontalInput.setAttribute('max', '10')
+    rangeHorizontalInput.setAttribute('step', '1')
+    rangeHorizontalInput.setAttribute('value', '5')
+
+    rangeHorizontalInput.addEventListener('change', (event) => {
+        let rate = Math.abs(event.target.value - lastHValue)
+        if(lastHValue <= event.target.value)
+            dendrogram.horizontalRescale(true, rate)
+        else
+            dendrogram.horizontalRescale(false, rate)
+        lastHValue = event.target.value
+    })
+
+    nodeZoomDiv.appendChild(verticalTitle)
+    nodeZoomDiv.appendChild(rangeVerticalInput)
+    nodeZoomDiv.appendChild(horizontalTitle)
+    nodeZoomDiv.appendChild(rangeHorizontalInput)
+
+    document.getElementById('graphConfig').appendChild(nodeZoomDiv)
+}
+
+/**
+ * Adds zoom buttons and behaviour to radial graph configuration.
+ */
+function addRadialZoom() {
+    if (document.querySelector('.nodeZoom') != null) {
+        document.querySelector('.nodeZoom').remove()
+    }
+
+    const nodeZoomDiv = document.createElement('div')
+    nodeZoomDiv.setAttribute('class', 'nodeZoom justify-content-center mt-4')
+    let viewId = view.type
 
     const title = document.createElement('p')
     title.setAttribute('class', 'text-center')
-    title.setAttribute('id', id.concat(' ' + label))
-    const text = document.createTextNode(label)
+    title.setAttribute('id', viewId.concat('Zoom'))
+    const text = document.createTextNode('Radial Zoom')
     title.appendChild(text)
 
     const rangeInput = document.createElement('input')
     rangeInput.setAttribute('id', 'rangeInputId')
     rangeInput.setAttribute('type', 'range')
     rangeInput.setAttribute('class', 'form-range')
-    rangeInput.setAttribute('min', '1')
-    rangeInput.setAttribute('max', '100')
-    rangeInput.setAttribute('value', '50')
+    rangeInput.setAttribute('min', '0')
+    rangeInput.setAttribute('max', '10')
+    rangeInput.setAttribute('step', '1')
+    rangeInput.setAttribute('value', '5')
 
-    
-
-    rangeInput.addEventListener('change', (event) => func(event.target.value))
-
-    if(view.type === 'radial'){
-        setupScaleBtn(left, () => radial.rescale(false))
-        setupScaleBtn(right, () => radial.rescale(true))
-    }
+    rangeInput.addEventListener('change', (event) => {
+        let rate = Math.abs(event.target.value - lastRValue)
+        if(lastRValue <= event.target.value)
+            radial.rescale(true, rate)
+        else
+            radial.rescale(false, rate)
+        lastRValue = event.target.value
+    })
 
     nodeZoomDiv.appendChild(title)
     nodeZoomDiv.appendChild(rangeInput)
 
     document.getElementById('graphConfig').appendChild(nodeZoomDiv)
-
 }
 
+/**
+ * Changes nodes size according to visualization function.
+ * @param {*} func 
+ */
 function changeNodeSize(func) {
     if (document.querySelector('.nodeSize') != null) {
         document.querySelector('.nodeSize').remove()
@@ -607,6 +703,10 @@ function changeNodeSize(func) {
 
 }
 
+/**
+ * Changes links size according to visualization function.
+ * @param {*} func 
+ */
 function changeLinkSize(func) {
     if (document.querySelector('.linkSize') != null) {
         document.querySelector('.linkSize').remove()
@@ -637,6 +737,10 @@ function changeLinkSize(func) {
 
 }
 
+/**
+ * Changes labels size according to visualization function.
+ * @param {*} func 
+ */
 function changeLabelsSize(func) {
     if (document.querySelector('.labelsSize') != null) {
         document.querySelector('.labelsSize').remove()
@@ -667,6 +771,9 @@ function changeLabelsSize(func) {
 
 }
 
+/**
+ * Changes pie colours.
+ */
 function changePieColor() {
     if (document.querySelector('.pieColor') != null) {
         document.querySelector('.pieColor').remove()
@@ -757,33 +864,6 @@ function changePieColor() {
     })
 }
 
-/********************* Navbar UI Aux *********************/
-
-function setupScaleBtn(elem, func) {
-    const new_element = elem.cloneNode(true)
-    elem.parentNode.replaceChild(new_element, elem)
-
-    let event = events()
-    new_element.addEventListener('mousedown', event.mDown)
-    new_element.addEventListener('mouseup', event.mUp)
-    new_element.addEventListener('mouseleave', event.mUp)
-
-    function events() {
-        let id
-
-        function mDown() {
-            func()
-            id = setInterval(func, 100)
-        }
-
-        function mUp() {
-            clearInterval(id)
-        }
-
-        return {mDown, mUp}
-    }
-}
-
 /********************* Tables *********************/
 
 let filterTables = {
@@ -792,6 +872,10 @@ let filterTables = {
     column: [],
 }
 
+/**
+ * Creates profile data table.
+ * @param {*} data 
+ */
 function create_table_profile(data) {
     document.getElementById('table_profile').innerHTML = ''
 
@@ -838,6 +922,10 @@ function create_table_profile(data) {
     addListenersToTables()
 }
 
+/**
+ * Creates isolate data table.
+ * @param {*} data 
+ */
 function create_table_isolate(data) {
     document.getElementById('table_isolate').innerHTML = ''
 
@@ -894,6 +982,9 @@ function create_table_isolate(data) {
     linkToTree()
 }
 
+/**
+ * Adds listeners to profile and isolate tables
+ */
 function addListenersToTables() {
     if (document.querySelector('.prof') !== null) {
         document.querySelectorAll('.prof').forEach(elem => {
@@ -910,7 +1001,6 @@ function addListenersToTables() {
         })
     }
 }
-
 
 let categories = {
     categoriesProfile: new Map(),
@@ -933,7 +1023,7 @@ function contains(id, map) {
 }
 
 /**
- *
+ * Highlights a column in profile table and builds pieChart with that column values.
  * @param header {}
  * @param id {string}
  * @param categories {Map}
@@ -1004,7 +1094,7 @@ function clickHeaderProfiles(header, id, categories) {
 let isolateHTML
 
 /**
- *
+ * Highlights a column in isolate table and builds pieChart with that column values.
  * @param header {}
  * @param id {string}
  * @param categories {Map}
@@ -1086,6 +1176,13 @@ function clickHeaderIsolates(header, id, categories) {
     isolateHTML = d3.select('#svg_isolate').html()
 }
 
+/**
+ * Auxiliar method to add a column.
+ * @param {*} tdElements 
+ * @param {*} HeaderId 
+ * @param {*} array 
+ * @param {*} categories 
+ */
 function addColumn(tdElements, HeaderId, array, categories) {
     for (let i = 0; i < tdElements.length; i++) {
         if (tdElements[i].cellIndex === HeaderId || contains(tdElements[i].cellIndex.toString(), categories)) {
@@ -1103,6 +1200,12 @@ function addColumn(tdElements, HeaderId, array, categories) {
     return array.length
 }
 
+/**
+ * Auxiliar method to remove a column.
+ * @param {*} tdElements 
+ * @param {*} HeaderId 
+ * @param {*} categories 
+ */
 function removeColumn(tdElements, HeaderId, categories) {
     for (let i = 0; i < tdElements.length; i++) {
         if (tdElements[i].cellIndex === HeaderId || !contains(tdElements[i].cellIndex.toString(), categories)) {
@@ -1113,10 +1216,18 @@ function removeColumn(tdElements, HeaderId, categories) {
     }
 }
 
+/**
+ * Auxiliar method to add column name to highlighted profile list.
+ * @param {*} name 
+ */
 function addColumnNameProfiles(name) {
     names_profiles.push(name)
 }
 
+/**
+ * Auxiliar method to remove column name from highlighted profile list.
+ * @param {*} name 
+ */
 function removeColumnNameProfiles(name) {
     for (let i = 0; i < names_profiles.length; i++) {
         if (names_profiles[i] === name) {
@@ -1125,10 +1236,18 @@ function removeColumnNameProfiles(name) {
     }
 }
 
+/**
+ * Auxiliar method to add column name to highlighted isolate list.
+ * @param {*} name 
+ */
 function addColumnNameIsolates(name) {
     names_isolates.push(name)
 }
 
+/**
+ * Auxiliar method to remove column name from highlighted isolate list.
+ * @param {*} name 
+ */
 function removeColumnNameIsolates(name) {
     for (let i = 0; i < names_isolates.length; i++) {
         if (names_isolates[i] === name) {
@@ -1136,7 +1255,6 @@ function removeColumnNameIsolates(name) {
         }
     }
 }
-
 
 const colorsRange = [
     '#1b70fc', '#33f0ff', '#718a90', '#b21bff', '#fe6616',
@@ -1156,6 +1274,14 @@ const colorsRange = [
 
 let categories_colors = []
 
+/**
+ * Method to change the colour of pieChart and its legend.
+ * @param {*} data 
+ * @param {*} names 
+ * @param {*} transform 
+ * @param {*} id 
+ * @param {*} legendTransform 
+ */
 function changePieChartColor(data, names, transform, id, legendTransform) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
@@ -1287,6 +1413,12 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         .attr('alignment-baseline', 'middle')
 }
 
+/**
+ * Builds the pieChart.
+ * @param {*} data 
+ * @param {*} names 
+ * @param {*} id 
+ */
 function constructPieChart(data, names, id) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
@@ -1474,6 +1606,9 @@ function constructPieChart(data, names, id) {
         .attr('alignment-baseline', 'middle')
 }
 
+/**
+ * Defines buttons behaviour in isolate tab when a pie chart is seen.
+ */
 function linkToTree() {
 
     document.getElementById('linktreebuttonD').addEventListener('click', () => {
@@ -1539,6 +1674,10 @@ function linkToTree() {
     })
 }
 
+/**
+ * Auxiliar method to place the pieChart on the tree tab.
+ * @param {*} html 
+ */
 function addPieChartHTML(html){
     d3.select('#container').select('#svg-extra').select('#g_isolate').remove()
 
@@ -1558,6 +1697,9 @@ function addPieChartHTML(html){
     document.getElementById('svg-extra').setAttribute('height', height)
 }
 
+/**
+ * Auxiliar method to hide buttons.
+ */
 function hideButton(){
     const hide = document.getElementById('btnHide')
     hide.style.display = 'block'
@@ -1582,7 +1724,68 @@ function formatArray(names) {
 
 /********************* API data functions *********************/
 
+function sendNewickFile() {
+    document.getElementById('container').innerHTML = ''
+    if (view) view.isDraw = false
+    filterTables = {
+        name: 'Bar chart',
+        line: [],
+        column: [],
+    }
 
+    const err = document.getElementById('treeError')
+    if (err != null) {
+        err.remove()
+    }
+
+
+    let headers = {'Content-Type': 'application/json'}
+    let nwk = document.getElementById('formFileNw').files[0]
+
+    const ext = nwk.name.split('.')
+    if (ext[1] !== 'txt') {
+        alertMsg('Extension for tree file must be txt.')
+        return
+    }
+
+    const formData = new FormData()
+    formData.append('nwkFile', nwk)
+    
+    /*for (var key of formData.entries()) {
+        console.log(key[0] + ', ' + key[1]);
+    }*/
+
+    return fetch('/api/update/newick', {method: 'post', body: formData })
+        .then(async res => {
+            try {
+                if(res.status === 400) alertMsg(res.message)
+                if (res.status === 500) alertMsg('error')
+                let response = await fetch('/api/data', {headers: headers})
+                if (!response.ok) {
+                    let err = await response.json()
+                    alertMsg(err.message)
+                    return
+                }
+                data = await response.json()
+            } catch (err) {
+                alertMsg(err)
+            }
+        }).then(() => {
+            alertMsg('Tree data updated with success', 'success')
+            //
+            document.getElementById('radButton').style.display = 'block'
+            document.getElementById('denButton').style.display = 'block'
+            document.getElementById('visualization').style.display = 'block'
+            //
+            document.getElementById('idPrfBt').style.display = 'block'
+            document.getElementById('formFilePro').style.display = 'block'
+        })
+        .catch(err => alertMsg(err))
+}
+
+/**
+ * Fetches newick data according to loaded file.
+ */
 function sendNewickData() {
     document.getElementById('container').innerHTML = ''
     if (view) view.isDraw = false
@@ -1637,6 +1840,9 @@ function sendNewickData() {
     })
 }
 
+/**
+ * Fetches profile data according to loaded file. Columns must be tab separated. 
+ */
 function sendProfileData() {
     data = null
     document.getElementById('svg_profile').innerHTML = ''
@@ -1671,6 +1877,9 @@ function sendProfileData() {
     })
 }
 
+/**
+ * Fetches isolate data according to loaded file. Columns must be tab separated.
+ */
 function sendIsolateData() {
     data = null
     document.getElementById('svg_isolate').innerHTML = ''
@@ -1703,6 +1912,9 @@ function sendIsolateData() {
     })
 }
 
+/**
+ * Fetches newick data according to inserted text data.
+ */
 function sendNwkData() {
     let nwk = document.getElementById('nwk').value
     let body = JSON.stringify({data: nwk})
@@ -1732,6 +1944,10 @@ function sendNwkData() {
     }).catch(err => alertMsg(err))
 }
 
+/**
+ * Resets views and all data.
+ * @param {*} func 
+ */
 function resetViewsOnDataRequest(func) {
     func()
     clearVisualizations()
@@ -1740,6 +1956,11 @@ function resetViewsOnDataRequest(func) {
 
 /********************* Aux function *********************/
 
+/**
+ * Shows an alert message.
+ * @param {*} message 
+ * @param {*} kind 
+ */
 function alertMsg(message, kind) {
     if (!kind) kind = 'danger'
     document
@@ -1755,6 +1976,9 @@ function alertMsg(message, kind) {
     })
 }
 
+/**
+ * Clears the container.
+ */
 function clearVisualizations() {
     document.getElementById('container').innerHTML = ''
     dendrogram = dendrogramView()

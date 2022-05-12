@@ -13,8 +13,8 @@ function read_isolate_file(){
     return fs.readFile(path.join(__dirname, 'test_files', 'isolates.tab'))
 }
 
-function read_file(filename){
-    return fs.readFile(path.join(__dirname, 'files', filename))
+function read_file(file){
+    return file.text()
 }
 
 module.exports = {

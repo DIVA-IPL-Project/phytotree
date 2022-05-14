@@ -250,7 +250,7 @@ function setupRepresentationButtons() {
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
 
-            addDendogramZoom()
+            addDendrogramZoom()
             changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
@@ -417,7 +417,7 @@ function search(elem, func) {
 }
 
 /**
- * Sets up dendogram graph configuration.
+ * Sets up dendrogram graph configuration.
  */
 function setupDendrogramGraphConfiguration() {
     showGraphConfig()
@@ -559,9 +559,9 @@ function changeNodeColor(func, nodes) {
 }
 
 /**
- * Adds zoom buttons and behaviour to dendogram graph configuration.
+ * Adds zoom buttons and behaviour to dendrogram graph configuration.
  */
-function addDendogramZoom() {
+function addDendrogramZoom() {
     if (document.querySelector('.nodeZoom') != null) {
         document.querySelector('.nodeZoom').remove()
     }

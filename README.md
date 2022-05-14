@@ -20,6 +20,14 @@ It was created an Electron App, that uses the visualization modules.
 <img src="https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/radial_isolates.png" width="400">
 </p>
 
+### Profile Data
+
+<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/profile_data_with_filter.png">
+
+### Isolate Data
+
+<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/isolate_data_with_filter.png">
+
 ## Features
 + Tree visualization in Dendrogram and Radial formats
 + Add labels to the nodes and links

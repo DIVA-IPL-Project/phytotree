@@ -11,13 +11,13 @@ It was created an Electron App, that uses the visualization modules.
 ## Visualization Examples
 ### Dendrogram  
 
-<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/main/Docs/dendrogram.png">
-<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/main/Docs/dendrogram_isolates.png">
+<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/dendrogram.png">
+<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/dendrogram_isolates.png">
 
 ### Radial  
 <p float="left">
- <img src="https://github.com/DIVA-IPL-Project/Visualization/blob/main/Docs/radial.png" width="400">
-<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/main/Docs/radial_isolates.png" width="400">
+ <img src="https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/radial.png" width="400">
+<img src="https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/radial_isolates.png" width="400">
 </p>
 
 ## Features

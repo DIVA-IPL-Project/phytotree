@@ -93,8 +93,8 @@ F	United-Kingdom	2012
 ```
 
 To test the app with test files, download one of the following:
-- [small tree](https://github.com/DIVA-IPL-Project/Visualization/blob/main/Docs/example1-small%20tree.zip)
-- [big tree](https://github.com/DIVA-IPL-Project/Visualization/blob/main/Docs/example2-big%20tree.zip)
+- [small tree](https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/example1-small%20tree.zip)
+- [big tree](https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/example2-big%20tree.zip)
 
 # Example Videos
 [Playlist with tutorial of how to use the app](https://youtube.com/playlist?list=PLSZMwhUOJwPXGFFd7k0HWOL-mA2X_6gxp)
@@ -110,6 +110,7 @@ To test the app with test files, download one of the following:
 + [Integration of complementary data (year, location, sex, etc)](#tree-filters)
 + [Rescale the tree](#rescale-tree)
 + [Save the current study (in a JSON file)](#save-study)
++ [Download report](#download-report)
 
 ## **Construct the tree**
 To view the radial or dendrogram, first, you need to build the tree, by passing the JSON data. Then you can draw it where you want. Each of these steps is a method as specified below:
@@ -239,28 +240,28 @@ To use the logarithmic scale.
 ```javascript
 horizontalRescale(increment)
 ```
-Rescales the tree horizontally, according to the appllied scale. The parameter increment indicates if the rescale is to increment or to decrement.
+Rescales the tree horizontally, according to the applied scale. The parameter increment indicates if the rescale is to increment or to decrement.
 
-## **Dendrogram only**
+```javascript
+verticalRescale(increment)
+```
+(Dendrogram only) Rescales the tree vertically, according to the applied scale. The parameter increment indicates if the rescale is to increment or to decrement.
+
+## **Align nodes** (Dendrogram only)
 
 ```javascript
 alignNodes()
 ```
 Ignores the link size and draws the dendrogram with the nodes aligned by dept.
 
-```javascript
-verticalRescale(increment)
-```
-Rescales the tree vertically, according to the appllied scale. The parameter increment indicates if the rescale is to increment or to decrement.
-
-## **Radial only**
+## **Spread Tree** (Radial only)
 
 ```javascript
 addSpread()
 ```
 Separates the nodes and links, by appling a spread function to the radial algorithm. Increases the algorithm time to O(v^2), where v is the number of nodes.
 
-## **Save study**
+## **Save and load study**
 
 ```javascript
 const json = save()
@@ -271,6 +272,13 @@ Saves the current study in a JSON object.
 load('#container', json)
 ```
 Loads the saved study from a json object. The json object is the return of the `save` function.
+
+## **Download report**
+
+```
+downloadReport(filename, title)
+```
+The report produced, in PDF format, consists of a title, the phylogenetic tree and, if filters are applied, it also consists of a pie chart, with statistics applied to the tree.
 
 ## Other functions
 

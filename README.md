@@ -31,6 +31,7 @@ It was created an Electron App, that uses the visualization modules.
 + Integration of complementary data (year, location, sex, etc)
 + Save a report with the tree and statistics (in pdf format)
 + Save the current study (in a JSON file)
++ Download report
 
 ## Contacts
 + Adriano Baptista, a46072@alunos.isel.pt

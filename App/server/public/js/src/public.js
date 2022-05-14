@@ -46,6 +46,8 @@ function hideGraphConfig() {
  */
 function display_app() {
     document.getElementById('container').innerHTML = ''
+    document.getElementById('newStudyDiv').style.display = 'block'
+
     document.getElementById('nwk').style.display = 'block'
     document.getElementById('nwkBtn').style.display = 'block'
     document.getElementById('formFileNw').style.display = 'block'
@@ -102,6 +104,9 @@ function display_test_app() {
     document.getElementById('formFileNw').style.display = 'block'
     document.getElementById('idNwkBt').style.display = 'block'
     document.getElementById('textData').style.display = 'block'
+
+    document.getElementById('newStudyDiv').style.display = 'block'
+    document.getElementById('loadStudyDiv').style.display = 'block'
 
     document.getElementById('nwk').style.display = 'none'
     document.getElementById('nwkBtn').style.display = 'none'
@@ -1832,6 +1837,7 @@ function sendNewickData() {
                 document.getElementById('radButton').style.display = 'block'
                 document.getElementById('denButton').style.display = 'block'
                 document.getElementById('visualization').style.display = 'block'
+                document.getElementById('newStudyDiv').style.display = 'none'
                 //
                 document.getElementById('idPrfBt').style.display = 'block'
                 document.getElementById('formFilePro').style.display = 'block'
@@ -1940,6 +1946,7 @@ function sendNwkData() {
         document.getElementById('radButton').style.display = 'block'
         document.getElementById('denButton').style.display = 'block'
         document.getElementById('visualization').style.display = 'block'
+        document.getElementById('newStudyDiv').style.display = 'none'
         //
     }).catch(err => alertMsg(err))
 }

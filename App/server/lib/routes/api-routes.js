@@ -20,15 +20,6 @@ router.get('/data', (req, res, next) =>{
     })
 })
 
-/*router.post('/update/newick', (req, res, next) => {
-    //if (!req.files)
-        //return res.status(400).send('No file was uploaded.');
-    let newickFile = req.files.nwkFile
-    let newick = JSON.stringify({data: newickFile.text()})
-    render.set_tree_data(newick)
-    res.json()
-})*/
-
 router.post('/update/newick', (req, res, next) => {
     let newick = req.body.data
     render.set_tree_data(newick)

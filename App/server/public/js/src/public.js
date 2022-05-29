@@ -5,7 +5,7 @@ let data
 let is_table_profile_create = false
 let is_table_isolate_create = false
 let view
-let lastHValue = 5, lastVValue = 5, lastRValue = 5
+let lastHValue = 50, lastVValue = 50, lastRValue = 50
 
 /********************* Load Page *********************/
 
@@ -213,11 +213,18 @@ function setupIsolateTab() {
 function setupTabs() {
     document.getElementById('home-tab').addEventListener('click', () => {
         addListenersToTables()
+        document.getElementById('tab_content').style.display = 'block'
     })
 
-    document.getElementById('profile-tab').addEventListener('click', () => setupProfileTab())
+    document.getElementById('profile-tab').addEventListener('click', () => {
+        setupProfileTab()
+        document.getElementById('tab_content').style.display = 'none'
+    })
 
-    document.getElementById('isolate-tab').addEventListener('click', () => setupIsolateTab())
+    document.getElementById('isolate-tab').addEventListener('click', () => {
+        setupIsolateTab()
+        document.getElementById('tab_content').style.display = 'none'
+    })
 }
 
 /**
@@ -586,9 +593,9 @@ function addDendrogramZoom() {
     rangeVerticalInput.setAttribute('type', 'range')
     rangeVerticalInput.setAttribute('class', 'form-range')
     rangeVerticalInput.setAttribute('min', '0')
-    rangeVerticalInput.setAttribute('max', '10')
-    rangeVerticalInput.setAttribute('step', '1')
-    rangeVerticalInput.setAttribute('value', '5')
+    rangeVerticalInput.setAttribute('max', '100')
+    rangeVerticalInput.setAttribute('step', '10')
+    rangeVerticalInput.setAttribute('value', '50')
 
     rangeVerticalInput.addEventListener('change', (event) => {
         let rate = Math.abs(event.target.value - lastVValue)
@@ -610,9 +617,9 @@ function addDendrogramZoom() {
     rangeHorizontalInput.setAttribute('type', 'range')
     rangeHorizontalInput.setAttribute('class', 'form-range')
     rangeHorizontalInput.setAttribute('min', '0')
-    rangeHorizontalInput.setAttribute('max', '10')
-    rangeHorizontalInput.setAttribute('step', '1')
-    rangeHorizontalInput.setAttribute('value', '5')
+    rangeHorizontalInput.setAttribute('max', '100')
+    rangeHorizontalInput.setAttribute('step', '10')
+    rangeHorizontalInput.setAttribute('value', '50')
 
     rangeHorizontalInput.addEventListener('change', (event) => {
         let rate = Math.abs(event.target.value - lastHValue)
@@ -654,9 +661,9 @@ function addRadialZoom() {
     rangeInput.setAttribute('type', 'range')
     rangeInput.setAttribute('class', 'form-range')
     rangeInput.setAttribute('min', '0')
-    rangeInput.setAttribute('max', '10')
-    rangeInput.setAttribute('step', '1')
-    rangeInput.setAttribute('value', '5')
+    rangeInput.setAttribute('max', '100')
+    rangeInput.setAttribute('step', '10')
+    rangeInput.setAttribute('value', '50')
 
     rangeInput.addEventListener('change', (event) => {
         let rate = Math.abs(event.target.value - lastRValue)
@@ -849,9 +856,11 @@ function changePieColor() {
             const legendTransform = 'translate(510, 400) scale(0.7)'
             changePieChartColor(sections, names_isolates, pieChartTransform, '#tree_pieChart', legendTransform)
 
-            const pieChartIsolatesTransform = 'translate(340, 170) scale(0.7)'
+            const pieChartIsolatesTransform = 'translate(340, 140) scale(0.7)'
             const legendTransformIsolates = 'translate(100, 50) scale(0.7)'
             changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, '#svg_isolate', legendTransformIsolates)
+
+            changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, '#g_extra', legendTransformIsolates)
 
             filterTables.colors = categories_colors
 
@@ -1728,65 +1737,6 @@ function formatArray(names) {
 }
 
 /********************* API data functions *********************/
-
-function sendNewickFile() {
-    document.getElementById('container').innerHTML = ''
-    if (view) view.isDraw = false
-    filterTables = {
-        name: 'Bar chart',
-        line: [],
-        column: [],
-    }
-
-    const err = document.getElementById('treeError')
-    if (err != null) {
-        err.remove()
-    }
-
-
-    let headers = {'Content-Type': 'application/json'}
-    let nwk = document.getElementById('formFileNw').files[0]
-
-    const ext = nwk.name.split('.')
-    if (ext[1] !== 'txt') {
-        alertMsg('Extension for tree file must be txt.')
-        return
-    }
-
-    const formData = new FormData()
-    formData.append('nwkFile', nwk)
-    
-    /*for (var key of formData.entries()) {
-        console.log(key[0] + ', ' + key[1]);
-    }*/
-
-    return fetch('/api/update/newick', {method: 'post', body: formData })
-        .then(async res => {
-            try {
-                if(res.status === 400) alertMsg(res.message)
-                if (res.status === 500) alertMsg('error')
-                let response = await fetch('/api/data', {headers: headers})
-                if (!response.ok) {
-                    let err = await response.json()
-                    alertMsg(err.message)
-                    return
-                }
-                data = await response.json()
-            } catch (err) {
-                alertMsg(err)
-            }
-        }).then(() => {
-            alertMsg('Tree data updated with success', 'success')
-            //
-            document.getElementById('radButton').style.display = 'block'
-            document.getElementById('denButton').style.display = 'block'
-            document.getElementById('visualization').style.display = 'block'
-            //
-            document.getElementById('idPrfBt').style.display = 'block'
-            document.getElementById('formFilePro').style.display = 'block'
-        })
-        .catch(err => alertMsg(err))
-}
 
 /**
  * Fetches newick data according to loaded file.

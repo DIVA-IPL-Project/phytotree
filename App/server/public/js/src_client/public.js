@@ -5,7 +5,7 @@ let data
 let is_table_profile_create = false
 let is_table_isolate_create = false
 let view
-let lastHValue = 5, lastVValue = 5, lastRValue = 5
+let lastHValue = 50, lastVValue = 50, lastRValue = 50
 
 /********************* Load Page *********************/
 
@@ -47,6 +47,7 @@ function hideGraphConfig() {
 function display_app() {
 
     document.getElementById('container').innerHTML = ''
+
     document.getElementById('nwk').style.display = 'block'
     document.getElementById('nwkBtn').style.display = 'block'
     document.getElementById('formFileNw').style.display = 'block'
@@ -92,7 +93,6 @@ function display_test_app() {
     document.getElementById('reportName').style.display = 'none'
     document.getElementById('labelReport').style.display = 'none'
     document.getElementById('reportName').value = ''
-
 
     document.getElementById('svg_profile').innerHTML = ''
     document.getElementById('svg_isolate').innerHTML = ''
@@ -211,9 +211,13 @@ function setupTabs() {
         addListenersToTables()
     })
 
-    document.getElementById('profile-tab').addEventListener('click', () => setupProfileTab())
+    document.getElementById('profile-tab').addEventListener('click', () => {
+        setupProfileTab()
+    })
 
-    document.getElementById('isolate-tab').addEventListener('click', () => setupIsolateTab())
+    document.getElementById('isolate-tab').addEventListener('click', () => {
+        setupIsolateTab()
+    })
 }
 
 /**
@@ -251,7 +255,7 @@ function setupRepresentationButtons() {
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
 
-            addDendogramZoom()
+            addDendrogramZoom()
             changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
@@ -418,7 +422,7 @@ function search(elem, func) {
 }
 
 /**
- * Sets up dendogram graph configuration.
+ * Sets up dendrogram graph configuration.
  */
 function setupDendrogramGraphConfiguration() {
     showGraphConfig()
@@ -487,9 +491,9 @@ function setupRadialGraphConfiguration() {
 /********************* Graph Style Aux *********************/
 
 /**
- * Adds zoom buttons and behaviour to dendogram graph configuration.
+ * Adds zoom buttons and behaviour to dendrogram graph configuration.
  */
-function addDendogramZoom() {
+function addDendrogramZoom() {
     if (document.querySelector('.nodeZoom') != null) {
         document.querySelector('.nodeZoom').remove()
     }
@@ -509,16 +513,16 @@ function addDendogramZoom() {
     rangeVerticalInput.setAttribute('type', 'range')
     rangeVerticalInput.setAttribute('class', 'form-range')
     rangeVerticalInput.setAttribute('min', '0')
-    rangeVerticalInput.setAttribute('max', '10')
-    rangeVerticalInput.setAttribute('step', '1')
-    rangeVerticalInput.setAttribute('value', '5')
+    rangeVerticalInput.setAttribute('max', '100')
+    rangeVerticalInput.setAttribute('step', '10')
+    rangeVerticalInput.setAttribute('value', '50')
 
     rangeVerticalInput.addEventListener('change', (event) => {
         let rate = Math.abs(event.target.value - lastVValue)
         if(lastVValue <= event.target.value)
-            dendrogram.verticalRescale(false, rate)
-        else
             dendrogram.verticalRescale(true, rate)
+        else
+            dendrogram.verticalRescale(false, rate)
         lastVValue = event.target.value
     })
 
@@ -533,9 +537,9 @@ function addDendogramZoom() {
     rangeHorizontalInput.setAttribute('type', 'range')
     rangeHorizontalInput.setAttribute('class', 'form-range')
     rangeHorizontalInput.setAttribute('min', '0')
-    rangeHorizontalInput.setAttribute('max', '10')
-    rangeHorizontalInput.setAttribute('step', '1')
-    rangeHorizontalInput.setAttribute('value', '5')
+    rangeHorizontalInput.setAttribute('max', '100')
+    rangeHorizontalInput.setAttribute('step', '10')
+    rangeHorizontalInput.setAttribute('value', '50')
 
     rangeHorizontalInput.addEventListener('change', (event) => {
         let rate = Math.abs(event.target.value - lastHValue)
@@ -577,9 +581,9 @@ function addRadialZoom() {
     rangeInput.setAttribute('type', 'range')
     rangeInput.setAttribute('class', 'form-range')
     rangeInput.setAttribute('min', '0')
-    rangeInput.setAttribute('max', '10')
-    rangeInput.setAttribute('step', '1')
-    rangeInput.setAttribute('value', '5')
+    rangeInput.setAttribute('max', '100')
+    rangeInput.setAttribute('step', '10')
+    rangeInput.setAttribute('value', '50')
 
     rangeInput.addEventListener('change', (event) => {
         let rate = Math.abs(event.target.value - lastRValue)
@@ -684,7 +688,7 @@ function changeNodeSize(func) {
     const title = document.createElement('p')
     title.setAttribute('class', 'text-center')
     title.setAttribute('id', 'nodeSizeId')
-    const text = document.createTextNode('Node size')
+    const text = document.createTextNode('Node Size')
     title.appendChild(text)
 
     const rangeInput = document.createElement('input')
@@ -845,9 +849,11 @@ function changePieColor() {
             const legendTransform = 'translate(510, 400) scale(0.7)'
             changePieChartColor(sections, names_isolates, pieChartTransform, '#tree_pieChart', legendTransform)
 
-            const pieChartIsolatesTransform = 'translate(340, 170) scale(0.7)'
+            const pieChartIsolatesTransform = 'translate(340, 140) scale(0.7)'
             const legendTransformIsolates = 'translate(100, 50) scale(0.7)'
             changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, '#svg_isolate', legendTransformIsolates)
+
+            changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, '#g_isolate', legendTransformIsolates)
 
             filterTables.colors = categories_colors
 
@@ -1003,7 +1009,6 @@ function addListenersToTables() {
     }
 }
 
-
 let categories = {
     categoriesProfile: new Map(),
     categoriesIsolate: new Map()
@@ -1061,7 +1066,7 @@ function clickHeaderProfiles(header, id, categories) {
     }
 
     if (length > 0) {
-        for (let i = 0; i < length;i++) {
+        for (let i = 0; i < length; i++) {
             let str = ''
             categories.forEach((value, key) => {
                 if (str === '') {
@@ -1256,7 +1261,6 @@ function removeColumnNameIsolates(name) {
     }
 }
 
-
 const colorsRange = [
     '#1b70fc', '#33f0ff', '#718a90', '#b21bff', '#fe6616',
     '#f9bc0f', '#b65d66', '#07a2e6', '#c091ae', '#10b437',
@@ -1292,13 +1296,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
     const g = d3.select(id).append('g').attr('transform', `${transform}`).attr('id', 'pieChart' + pieName)
     const pie = d3.pie().value(d => d.value)
-    const path = d3.arc().outerRadius(150).innerRadius(30)
-
-    function color(name) {
-        for (let i = 0; i < categories_colors.length; i++) {
-            if (categories_colors[i].name === name) return categories_colors[i].color
-        }
-    }
+    const path = d3.arc().outerRadius(130).innerRadius(30)
 
     if (data.length > 20) {
         const piesInvisible = g.selectAll('.arc')
@@ -1311,7 +1309,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
         piesInvisible.append('path')
             .attr('d', d => path(d))
-            .attr('fill', d => color(d.data.name))
+            .attr('fill', d => getColor(d.data.name))
             .attr('id', d => d.data.name)
             .style('display', 'none')
     }
@@ -1324,25 +1322,32 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
     pies.append('path')
         .attr('d', d => path(d))
-        .attr('fill', d => color(d.data.name))
+        .attr('fill', d => getColor(d.data.name))
         .attr('id', d => d.data.name)
 
+    function getColor(name) {
+        for (let i = 0; i < categories_colors.length; i++) {
+            if (categories_colors[i].name === name) return categories_colors[i].color
+        }
+    }
+        
     const pieChart = d3.select(id).append('g')
 
-    let position = 30, othersPosition = 30, xOthersPosition = 750
+    let position = 40, yOthersPosition = 40, xOthersPosition = 750
+    let x_coordinate_legend = 500
     const total = counts_ordered[0].total
 
     data.forEach((item, i) => {
         if (i < 20) {
             pieChart.append('circle')
                 .attr('cy', position)
-                .attr('cx', 550)
+                .attr('cx', x_coordinate_legend)
                 .attr('r', 6)
-                .style('fill', () => color(item.name))
+                .style('fill', () => getColor(item.name))
 
             pieChart.append('text')
                 .attr('y', position + 5)
-                .attr('x', 560)
+                .attr('x', x_coordinate_legend + 10)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
                 .style('font-size', '15px')
                 .attr('alignment-baseline', 'middle')
@@ -1350,9 +1355,9 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         } else if (i === 20) {
             pieChart.append('circle')
                 .attr('cy', position)
-                .attr('cx', 550)
+                .attr('cx', x_coordinate_legend)
                 .attr('r', 6)
-                .style('fill', () => color(item.name))
+                .style('fill', () => getColor(item.name))
                 .attr('class', 'showOthers')
 
             if (document.querySelector('.showOthers')) {
@@ -1364,7 +1369,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
             pieChart.append('text')
                 .attr('y', position + 5)
-                .attr('x', 560)
+                .attr('x', x_coordinate_legend + 10)
                 .text('Others')
                 .style('font-size', '15px')
                 .attr('alignment-baseline', 'middle')
@@ -1372,11 +1377,11 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
         } else {
             pieChart.append('circle')
-                .attr('cy', othersPosition)
+                .attr('cy', yOthersPosition)
                 .attr('cx', xOthersPosition)
                 .attr('r', 6)
                 .attr('class', 'others')
-                .style('fill', () => color(item.name))
+                .style('fill', () => getColor(item.name))
                 .style('display', 'none')
 
             pieChart.append('text')
@@ -1389,26 +1394,28 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
                 .style('display', 'none')
 
             if (i % 20 === 0) {
-                othersPosition = 30
+                yOthersPosition = 30
                 xOthersPosition += 200
-            } else othersPosition += 20
+            } else yOthersPosition += 20
         }
         position += 20
     })
 
+    //labels
+    let label_x = 250, label_y = 300
     const legend = legendTransform ? pieChart.attr('id', 'legend').attr('transform', `${legendTransform}`) :
         pieChart.attr('id', 'legend')
 
     legend.append('text')
-        .attr('y', 350)
-        .attr('x', 250)
+        .attr('y', label_y)
+        .attr('x', label_x)
         .text(formatArray(names))
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
 
     legend.append('text')
-        .attr('y', 380)
-        .attr('x', 290)
+        .attr('y', label_y + 30)
+        .attr('x', label_x + 40)
         .text('Categories: ' + data.length)
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
@@ -1634,8 +1641,13 @@ function linkToTree() {
             document.getElementById('save').style.display = 'block'
         }
 
+        // call the filter to add the bar charts
+        filterTables.colors = categories_colors
+        filterTables.transform = dendrogram.buildBarChart
+        dendrogram.applyFilter(filterTables)
+
         hideButton()
-        addPieChart(isolateHTML)
+        addPieChartHTML(isolateHTML)
 
         // go to tree tab
         document.getElementById('home-tab').click()
@@ -1666,7 +1678,7 @@ function linkToTree() {
         radial.applyFilter(filterTables)
 
         hideButton()
-        addPieChart(isolateHTML)
+        addPieChartHTML(isolateHTML)
 
         document.getElementById('home-tab').click()
     })
@@ -1726,6 +1738,9 @@ function formatArray(names) {
  * Sends newick data according to loaded file.
  */
 function sendNewickData() {
+    document.getElementById('container').innerHTML = ''
+    if (view) view.isDraw = false
+
     filterTables = {
         name: 'Bar chart',
         line: [],
@@ -1767,6 +1782,8 @@ function sendNewickData() {
  * Sends profile data according to loaded file. Columns must be tab separated. 
  */
 function sendProfileData() {
+    data = null
+    document.getElementById('svg_profile').innerHTML = ''
     names_profiles = []
     const err = document.getElementById('errorProfile')
     if (err != null) {
@@ -1778,11 +1795,6 @@ function sendProfileData() {
     //
 
     let profile = document.getElementById('formFilePro').files[0]
-    const ext = profile.name.split('.')
-    if (ext[1] !== 'tab') {
-        alertMsg('Extension for profile file must be tab.')
-        return
-    }
 
     profile.text().then(async prof => {
         try {
@@ -1800,6 +1812,8 @@ function sendProfileData() {
  * Sends isolate data according to loaded file. Columns must be tab separated.
  */
 function sendIsolateData() {
+    data = null
+    document.getElementById('svg_isolate').innerHTML = ''
     names_isolates = []
     const err = document.getElementById('errorIsolate')
     if (err != null) {
@@ -1811,12 +1825,6 @@ function sendIsolateData() {
     //
 
     let isolate = document.getElementById('formFileIso').files[0]
-
-    const ext = isolate.name.split('.')
-    if (ext[1] !== 'tab') {
-        alertMsg('Extension for isolate file must be tab.')
-        return
-    }
 
     isolate.text().then(async iso => {
         try {

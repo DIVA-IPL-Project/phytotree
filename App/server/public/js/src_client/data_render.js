@@ -149,6 +149,7 @@ const render = function () {
     function get_determined_profile(id) {
         if (profiles_data !== undefined) {
             let curr
+            console.log("HERE" + profiles_data)
 
             for (let i = 0; i < profiles_data.length; i++) {
                 curr = profiles_data[i]
@@ -347,7 +348,12 @@ const render = function () {
      * @param {*} data 
      */
     function split_tabular_data(data) {
-        return data.split('\r\n').map(str => {
+        if(data.indexOf('\r') !== -1){
+            return data.split('\r\n').map(str => {
+                return str.split('\t')
+            })
+        }
+        return data.split('\n').map(str => {
             return str.split('\t')
         })
     }

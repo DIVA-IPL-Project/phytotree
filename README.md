@@ -6,7 +6,7 @@ The tree visualization is done using Data Driven Documents ([D3.js](https://d3js
 It was created an Electron App, that uses the visualization modules.
 
 + ### [Radial and Dendrogram Visualization Info](https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/Info.md)
-+ ### [Example videos for the Electron App](https://www.youtube.com/playlist?list=PLSZMwhUOJwPXGFFd7k0HWOL-mA2X_6gxp)
++ ### [Example videos for the Electron App](https://www.youtube.com/playlist?list=PLpJSLY0KODw329otPCvENcM4GEoEscxFX)
 
 ## Visualization Examples
 ### Dendrogram  

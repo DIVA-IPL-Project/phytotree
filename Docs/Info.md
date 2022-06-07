@@ -19,6 +19,8 @@ Open the setup file and follow the instructions to install the app in your compu
 
 ## Generate installation files
 
+First of all, it is necessary to run the command `npm install` in the app's folder.
+
 To generate new installation files, run the command `npm run build` in the app's folder.
 
 # Fundamentals

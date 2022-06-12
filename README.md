@@ -41,7 +41,7 @@ It was created an Electron App, that uses the visualization modules.
 + Save the current study (in a JSON file)
 + Download report
 
-## Contacts
+## Contributors
 + Adriano Baptista, a46072@alunos.isel.pt
 + Francisco Filipe, a46018@alunos.isel.pt
 + Inês Sousa, a45997@alunos.isel.pt

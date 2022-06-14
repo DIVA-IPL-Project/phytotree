@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require("electron")
 
 const server = require('./server/server')
-server.build_app('-server')
+server.build_app('-client')
 
 const loadMainWindow = () => {
     let mainWindow = new BrowserWindow({

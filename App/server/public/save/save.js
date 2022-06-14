@@ -30,12 +30,17 @@ function downloadReport(filename, title) {
         const x = imgPropsW + 50
         const y = imgPropsH + 70
 
-        doc.addImage(uri, 'PNG', x, y, pdfWidth, pdfHeight - 450)
+        doc.addImage(uri, 'PNG', 10, y, pdfWidth-10, pdfHeight - 450)
     })
 
     // Add pie chart and legend to the report
-    svgAsPngUri(document.getElementById('svg_isolate'), null).then(uri => {
-        doc.addImage(uri, 'PNG', 100, 650, 700, 200)
+    svgAsPngUri(document.getElementById('svg-extra'), null).then(uri => {
+        var element = document.getElementById('svg-extra')
+        var ratio = 1.8
+        var width = element.getBoundingClientRect().width / ratio
+        var height = element.getBoundingClientRect().height / ratio
+
+        doc.addImage(uri, 'PNG', 100, 600, width, height)
         doc.save(filename)
     })
     document.getElementById('downloadSVG').style.display = 'block'

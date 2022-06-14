@@ -337,8 +337,10 @@ async function getRenderData() {
     return Promise.resolve(data)
 }
 
-/* Aux function */
-
+/**
+ * Aux function
+ * @param {*} data 
+ */
 function split_tabular_data(data) {
 
     if(data.indexOf('\r') !== -1){

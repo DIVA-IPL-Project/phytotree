@@ -49,8 +49,8 @@ function radialView() {
         element: null,
         visible: false,
         width: canvas.width * 0.15,
-        x: canvas.height - 150,
-        y: 100,
+        x: 70,
+        y: 20,
         padding: 10,
     }
     const svg = {
@@ -89,6 +89,10 @@ function radialView() {
             fill: black;
         }`
 
+    /**
+     * Builds a radial graph with the JSON data received.
+     * @param input the JSON data
+     */
     function build(input) {
         if (!input) throw new Error('Please insert tree data first.')
         data.input = input
@@ -101,6 +105,11 @@ function radialView() {
         return data
     }
 
+    /**
+     * Draws the radial graph.
+     * @param container the element to place the dendrogram
+     * @param tree the tree to draw
+     */
     function draw(container, tree) {
         canvas.container = d3.select(container)
         svg.element = canvas.container.select('svg')
@@ -110,8 +119,6 @@ function radialView() {
             svg.element = canvas.container
                 .append('svg')
                 .attr('id', 'svg_graph')
-                .attr('width', canvas.width + canvas.margin.left + canvas.margin.right)
-                .attr('height', canvas.height + canvas.margin.top + canvas.margin.bottom)
         }
 
         // apply css
@@ -134,6 +141,10 @@ function radialView() {
         isDraw = true
     }
 
+    /**
+     * Redraws the radial graph after an update.
+     * @param tree the tree to draw
+     */
     function update(tree) {
         if (graph.nodes && !graph.nodes.empty()) graph.nodes.remove()
         if (graph.links && !graph.links.empty()) graph.links.remove()
@@ -158,6 +169,10 @@ function radialView() {
         updateInternalLabels(graph.style.parentLabels)
     }
 
+    /**
+     * Places this node at the center of canvas and returns that node id.
+     * @param {*} node to center around
+     */
     function centerGraph(node) {
         let el = node, curr = node
         while (curr.parent !== null) {
@@ -173,6 +188,10 @@ function radialView() {
         return el.data.id
     }
 
+    /**
+    * Searches the tree for node with this id and paints it with a different colour momentarily.
+    * @param {*} id 
+    */
     function search(id) {
         if (id === '') return
         let collapsedId = id
@@ -196,10 +215,20 @@ function radialView() {
     }
 
     /********************* Collapse functions *********************/
+    
+    /**
+     * Applies a logarithmic function with this base to number.
+     * @param {*} base of the logarithmic function
+     * @param {*} number 
+     */
     function log(base, number) {
         return Math.log(number) / Math.log(base)
     }
 
+    /**
+     * Gets the triangle that represents the collapsed nodes.
+     * @param {*} node 
+     */
     function getTriangle(node) {
         let length = node.leaves.length - 1 || 1
         let point = length / 2 * 15,
@@ -212,6 +241,11 @@ function radialView() {
         return {point, label}
     }
 
+    /**
+     * Collapses the children nodes into the parent node.
+     * @param {*} parent 
+     * @param {*} children 
+     */
     function collapse(parent, children) {
         parent.visibility = false
         if (!children) return
@@ -233,6 +267,10 @@ function radialView() {
             .attr('dy', '3')
     }
 
+    /**
+     * Collapses the children nodes.
+     * @param {*} children 
+     */
     function collapseChildren(children) {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
@@ -246,6 +284,11 @@ function radialView() {
         }
     }
 
+    /**
+     * Expands a collapsed node into its children and parent node.
+     * @param {*} parent 
+     * @param {*} children 
+     */
     function expand(parent, children) {
         parent.visibility = true
         if (!children) return
@@ -260,6 +303,10 @@ function radialView() {
         updateLinkLabels(graph.style.linkLabels)
     }
 
+    /**
+     * Expands the children nodes.
+     * @param {*} children 
+     */
     function expandChildren(children) {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
@@ -298,6 +345,11 @@ function radialView() {
         }
     }
 
+    /**
+     * Function to be added to all nodes to collapse or expand them.
+     * @param event the event
+     * @param d the node clicked
+     */
     function click(event, d) {
         if (d.visibility !== null) {
             if (d.visibility === false) {
@@ -318,7 +370,29 @@ function radialView() {
     /********************* Rescale Graph functions ************************/
 
     /**
-     * Applies the scale to the coordinates of the tree
+     * Rescale svg graph area to fit tree graph.
+     */
+    function scaleSVGtoDIV(){
+        if(document.getElementById('ruler-width')){
+            var element = canvas.container.select('g').node()
+            var height = element.getBoundingClientRect().height
+            var auxHeight = canvas.height + canvas.margin.top + canvas.margin.bottom
+            if(auxHeight > height)
+                height = auxHeight
+            var width = element.getBoundingClientRect().width
+            var auxWidth = canvas.width + canvas.margin.left + canvas.margin.right
+            if(auxWidth > width)
+                width = auxWidth 
+
+            document.getElementById('svg_graph').setAttribute('height', height+20)
+            document.getElementById('svg_graph').setAttribute('width', width+20)
+        }
+    }
+
+    /**
+     * Applies the scale to the coordinates of the tree.
+     * @param {*} tree 
+     * @param {*} last 
      */
     function applyScale(tree, last) {
         tree.eachBefore(d => {
@@ -442,6 +516,10 @@ function radialView() {
         updateInternalLabels(graph.style.parentLabels)
     }
 
+    /**
+     * Zooms in or out of the graph according to increment.
+     * @param increment - true to increment - false to decrement
+     */
     function rescale(increment) {
         if (increment) {
             if (graph.scale.value < graph.scale.limits[1]) {
@@ -460,6 +538,10 @@ function radialView() {
         }
     }
 
+    /**
+     * Sets graph new positions according to last value of scale
+     * @param {*} last value of scale
+     */
     function setNewPositions(last) {
         data.tree.eachBefore(d => {
             if (d.parent) {
@@ -495,6 +577,11 @@ function radialView() {
 
     /********************* Style functions *********************/
 
+    /**
+     * Nodes representations
+     * @param nodes
+     * @returns the d3 representation for the node container
+     */
     function nodesAttrs(nodes) {
         const container = nodes.append('g')
         container
@@ -510,6 +597,11 @@ function radialView() {
         return container
     }
 
+    /**
+     * Links representations
+     * @param links
+     * @returns the d3 representation for the link container
+     */
     function linksAttr(links) {
         const container = links.append('g')
         container
@@ -599,7 +691,6 @@ function radialView() {
             .style('font', `${graph.style.labels_size}px sans-serif`)
     }
 
-
     /**
      * Adds labels to the parent nodes.
      */
@@ -634,7 +725,6 @@ function radialView() {
             .on('mouseover', mouseOveredRadial(true))
             .on('mouseout', mouseOveredRadial(false))
     }
-
 
     /**
      * Adds labels to the leaf nodes.
@@ -700,10 +790,16 @@ function radialView() {
      * A line to measure the link value and the text with the value
      */
     function horizontalScale() {
-        if (svg.element.select('.horizontalScale')) svg.element.select('.horizontalScale').remove()
+        canvas.container.select('#container-extra').remove()
+        var element = canvas.container.append('div').attr('id', 'container-extra')
+                .append('svg').attr('id', 'svg-extra')
+                .attr('width', canvas.container.select('#svg_graph').style("width"))
+                .attr('height', 200)
+
+        if (element.select('.horizontalScale')) element.select('.horizontalScale').remove()
         if (ruler.container) ruler.container.remove()
 
-        ruler.container = svg.element
+        ruler.container = element
             .append('g')
             .attr('transform', 'translate(' + [ruler.y, ruler.x] + ')')
             .attr('class', 'horizontalScale')
@@ -715,6 +811,7 @@ function radialView() {
 
         ruler.element = ruler.container
             .append('text')
+            .attr('id','ruler-width')
             .attr('class', 'ruler-text')
             .attr('x', ruler.width / 2 + ruler.padding)
             .attr('y', 36)
@@ -751,6 +848,7 @@ function radialView() {
         } else {
             ruler.element.text(0)
         }
+        scaleSVGtoDIV()
     }
 
     /**
@@ -771,6 +869,10 @@ function radialView() {
 
     /********************* Private functions *********************/
 
+    /**
+     * Spreads the tree around root node.
+     * @param {*} root 
+     */
     function spread(root) {
         if (!root.children) {
             root.spread = root.data.data.value
@@ -785,6 +887,9 @@ function radialView() {
         }
     }
 
+    /**
+     * Applies radial visualization to tree.
+     */
     function radial() {
         const pi = Math.PI
 
@@ -854,6 +959,11 @@ function radialView() {
         return radial
     }
 
+    /**
+     * Makes a node active
+     * @param active
+     * @returns {(function(*, *): void)|*}
+     */
     function mouseOveredRadial(active) {
         return function (event, d) {
             d3.select(this).classed('label--active', active)
@@ -863,6 +973,9 @@ function radialView() {
         }
     }
 
+    /**
+     * Adds zoom behaviour to radial visualization.
+     */
     function addRadialZoom() {
         const zoom = d3.zoom()
         const transform = d3.zoomIdentity.translate(canvas.zoom.x, canvas.zoom.y).scale(canvas.zoom.scale)
@@ -882,7 +995,6 @@ function radialView() {
                     applyScaleText()
                 }))
     }
-
 
     /**
      * Returns the nodes names.
@@ -1225,6 +1337,9 @@ function radialView() {
         }
     }
 
+    /**
+     * Saves the current study in a JSON object.
+     */
     function save() {
         const tree = []
         data.tree.eachBefore(d => {
@@ -1257,6 +1372,11 @@ function radialView() {
         }
     }
 
+    /**
+     * Loads the saved study from a json object to container.
+     * @param {*} container 
+     * @param {*} save 
+     */
     function load(container, save) {
         if (!save.graph || !save.data || !save.canvas)
             throw new Error('Save does not contain all needed properties {data, graph, canvas}.')

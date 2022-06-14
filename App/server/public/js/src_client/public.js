@@ -5,9 +5,13 @@ let data
 let is_table_profile_create = false
 let is_table_isolate_create = false
 let view
+let lastHValue = 50, lastVValue = 50, lastRValue = 50
 
 /********************* Load Page *********************/
 
+/**
+ * Loads page.
+ */
 function load() {
     dendrogram = dendrogramView()
     radial = radialView()
@@ -18,6 +22,9 @@ function load() {
 
 /********************* Setup UI *********************/
 
+/**
+ * Displays test app or normal app.
+ */
 function test_input_handler() {
     const checkBox = document.getElementById('flexCheckDefault')
     if (checkBox.checked === true) {
@@ -27,13 +34,20 @@ function test_input_handler() {
     }
 }
 
+/**
+ * Hides the configuration of graph.
+ */
 function hideGraphConfig() {
     document.getElementById('graphConfig').style.display = 'none'
 }
 
+/**
+ * Defines app display.
+ */
 function display_app() {
 
     document.getElementById('container').innerHTML = ''
+
     document.getElementById('nwk').style.display = 'block'
     document.getElementById('nwkBtn').style.display = 'block'
     document.getElementById('formFileNw').style.display = 'block'
@@ -57,6 +71,9 @@ function display_app() {
     reset_data()
 }
 
+/**
+ * Defines test app display.
+ */
 function display_test_app() {
     reset_data()
 
@@ -76,7 +93,6 @@ function display_test_app() {
     document.getElementById('reportName').style.display = 'none'
     document.getElementById('labelReport').style.display = 'none'
     document.getElementById('reportName').value = ''
-
 
     document.getElementById('svg_profile').innerHTML = ''
     document.getElementById('svg_isolate').innerHTML = ''
@@ -102,15 +118,22 @@ function display_test_app() {
     set_up_test_data()
 }
 
+/**
+ * Sets up test data.
+ */
 async function set_up_test_data() {
     is_table_profile_create = false
     is_table_isolate_create = false
     let headers = {'Content-Type': 'application/json'}
     let response = await fetch('/api/default_data', {headers: headers})
     data = await response.json()
-
+    setupProfileTab()
+    setupIsolateTab()
 }
 
+/**
+ * Resets all app variables.
+ */
 function reset_data() {
     data = undefined
     is_table_profile_create = false
@@ -127,53 +150,79 @@ function reset_data() {
         column: [],
     }
     categories_colors = []
+    document.getElementById('formFileIso').style.display = 'none'
+    document.getElementById('formFilePro').style.display = 'none'
+    document.getElementById('idIsoBt').style.display = 'none'
+    document.getElementById('idPrfBt').style.display = 'none'
+    document.getElementById('table_profile').innerHTML = ''
+    document.getElementById('table_isolate').innerHTML = ''
 }
 
+/**
+ * Sets up profile tab display.
+ */
+function setupProfileTab() {
+    if (!is_table_profile_create) {
+        try {
+            create_table_profile(data)
+            document.getElementById('profileDiv').style.display = 'block'
+            document.getElementById('svg_profile').style.display = 'block'
+            is_table_profile_create = true
+        } catch (err) {
+            document.getElementById('profileDiv').style.display = 'none'
+            document.getElementById('svg_profile').style.display = 'none'
+            setUpError(err.message, 'errorProfile', 'profileContent')
+        }
+    } else {
+        addListenersToTables()
+    }
+}
+
+/**
+ * Sets up isoalte tab display.
+ */
+function setupIsolateTab() {
+    if (!is_table_isolate_create) {
+        try {
+            document.getElementById('linktreebuttonD').style.display = 'none'
+            document.getElementById('linktreebuttonR').style.display = 'none'
+
+            create_table_isolate(data)
+            document.getElementById('isolateDiv').style.display = 'block'
+            document.getElementById('svg_isolate').style.display = 'block'
+            is_table_isolate_create = true
+        } catch (err) {
+            document.getElementById('isolateDiv').style.display = 'none'
+            document.getElementById('linktreebuttonD').style.display = 'none'
+            document.getElementById('linktreebuttonR').style.display = 'none'
+            document.getElementById('svg_isolate').style.display = 'none'
+            setUpError(err.message, 'errorIsolate', 'isolateContent')
+        }
+    } else {
+        addListenersToTables()
+    }
+}
+
+/**
+ * Sets up tabs.
+ */
 function setupTabs() {
     document.getElementById('home-tab').addEventListener('click', () => {
         addListenersToTables()
     })
 
     document.getElementById('profile-tab').addEventListener('click', () => {
-        if (!is_table_profile_create) {
-            try {
-                create_table_profile(data)
-                document.getElementById('profileDiv').style.display = 'block'
-                document.getElementById('svg_profile').style.display = 'block'
-                is_table_profile_create = true
-            } catch (err) {
-                document.getElementById('profileDiv').style.display = 'none'
-                document.getElementById('svg_profile').style.display = 'none'
-                setUpError(err.message, 'errorProfile', 'profileContent')
-            }
-        } else {
-            addListenersToTables()
-        }
+        setupProfileTab()
     })
 
     document.getElementById('isolate-tab').addEventListener('click', () => {
-        if (!is_table_isolate_create) {
-            try {
-                document.getElementById('linktreebuttonD').style.display = 'none'
-                document.getElementById('linktreebuttonR').style.display = 'none'
-
-                create_table_isolate(data)
-                document.getElementById('isolateDiv').style.display = 'block'
-                document.getElementById('svg_isolate').style.display = 'block'
-                is_table_isolate_create = true
-            } catch (err) {
-                document.getElementById('isolateDiv').style.display = 'none'
-                document.getElementById('linktreebuttonD').style.display = 'none'
-                document.getElementById('linktreebuttonR').style.display = 'none'
-                document.getElementById('svg_isolate').style.display = 'none'
-                setUpError(err.message, 'errorIsolate', 'isolateContent')
-            }
-        } else {
-            addListenersToTables()
-        }
+        setupIsolateTab()
     })
 }
 
+/**
+ * Sets up representation and action of buttons.
+ */
 function setupRepresentationButtons() {
     const radialButton = document.querySelector('.radialTree-btn')
     radialButton.addEventListener('click', () => {
@@ -183,6 +232,7 @@ function setupRepresentationButtons() {
             view = radial
             radial.draw('#container', graph.tree)
 
+            addRadialZoom()
             changeNodeColor(radial.changeNodeColor, radial.getNodes())
             changeNodeSize(radial.changeNodeSize)
             changeLinkSize(radial.changeLinkSize)
@@ -205,6 +255,7 @@ function setupRepresentationButtons() {
             dendrogram.addNodeStyle()
             dendrogram.addLinkStyle()
 
+            addDendrogramZoom()
             changeNodeColor(dendrogram.changeNodeColor, dendrogram.getNodes())
             changeNodeSize(dendrogram.changeNodeSize)
             changeLinkSize(dendrogram.changeLinkSize)
@@ -218,7 +269,7 @@ function setupRepresentationButtons() {
 }
 
 /**
- *
+ * Sets up error message display.
  * @param message {string}
  * @param id {string}
  * @param contentId {string}
@@ -235,6 +286,9 @@ function setUpError(message, id, contentId) {
     document.getElementById(contentId).appendChild(div)
 }
 
+/**
+ * Sets up data buttons display and actions.
+ */
 function setupData() {
     document.getElementById('flexCheckDefault').addEventListener('click', test_input_handler)
     document.getElementById('nwkBtn')
@@ -257,6 +311,7 @@ function setupData() {
     document.getElementById('save')
         .addEventListener('click', () => {
             let save = view.save()
+            save.isolatePieChart = d3.select('#svg-extra').html()
             downloadFile('save.json', JSON.stringify(save))
         })
     document.getElementById('load')
@@ -301,10 +356,32 @@ function setupData() {
                     default:
                         alertMsg('Invalid save file. No tree type specified.')
                 }
+                if (!is_table_profile_create) {
+                    setupProfileTab()
+                }
+
+                if (!is_table_isolate_create) {
+                    setupIsolateTab()
+                }
+
+                if(save.isolatePieChart){
+                    addPieChartHTML(save.isolatePieChart)
+                    document.getElementById('svg-extra').setAttribute('width', 700)
+                    let isolate_value = document.getElementById('isolateFilter').innerHTML
+                    isolate_value.split(', ').forEach(iso => {
+                        let elem = document.getElementById(iso.concat('_isolate'))
+                        clickHeaderIsolates(elem, '#svg_isolate', categories.categoriesIsolate)
+                    })
+                }
             })
         })
 }
 
+/**
+ * Loads a visualization
+ * @param {*} vis 
+ * @param {*} save 
+ */
 function loadView(vis, save) {
     view = vis
     data = vis.load('#container', save)
@@ -323,6 +400,11 @@ function showGraphConfig() {
     document.getElementById('graphConfig').style.display = 'grid'
 }
 
+/**
+ * Applies func to search for elem.
+ * @param {*} elem 
+ * @param {*} func 
+ */
 function search(elem, func) {
     let event = events()
     elem.addEventListener('keyup', () => event())
@@ -339,6 +421,9 @@ function search(elem, func) {
     }
 }
 
+/**
+ * Sets up dendrogram graph configuration.
+ */
 function setupDendrogramGraphConfiguration() {
     showGraphConfig()
     const input = document.getElementById('search')
@@ -367,23 +452,11 @@ function setupDendrogramGraphConfiguration() {
 
     linearScale.addEventListener('click', dendrogram.applyLinearScale)
     logScale.addEventListener('click', dendrogram.applyLogScale)
-
-    let up = document.getElementById('upButton')
-    let down = document.getElementById('downButton')
-    let left = document.getElementById('leftButton')
-    let right = document.getElementById('rightButton')
-
-    up.style.display = ''
-    down.style.display = ''
-    right.style.display = ''
-    left.style.display = ''
-
-    setupScaleBtn(up, () => dendrogram.verticalRescale(true))
-    setupScaleBtn(down, () => dendrogram.verticalRescale(false))
-    setupScaleBtn(left, () => dendrogram.horizontalRescale(false))
-    setupScaleBtn(right, () => dendrogram.horizontalRescale(true))
 }
 
+/**
+ * Sets up radial graph configuration.
+ */
 function setupRadialGraphConfiguration() {
     showGraphConfig()
 
@@ -412,23 +485,126 @@ function setupRadialGraphConfiguration() {
     linearScale.style.display = 'block'
     logScale.style.display = 'block'
     spread.style.display = 'block'
-
-    document.getElementById('upButton').style.display = 'none'
-    document.getElementById('downButton').style.display = 'none'
-    let left = document.getElementById('leftButton')
-    let right = document.getElementById('rightButton')
-
-    right.style.display = ''
-    left.style.display = ''
-
-    setupScaleBtn(left, () => radial.rescale(false))
-    setupScaleBtn(right, () => radial.rescale(true))
-
 }
 
 
 /********************* Graph Style Aux *********************/
 
+/**
+ * Adds zoom buttons and behaviour to dendrogram graph configuration.
+ */
+function addDendrogramZoom() {
+    if (document.querySelector('.nodeZoom') != null) {
+        document.querySelector('.nodeZoom').remove()
+    }
+
+    const nodeZoomDiv = document.createElement('div')
+    nodeZoomDiv.setAttribute('class', 'nodeZoom justify-content-center mt-4')
+    let viewId = view.type
+
+    const verticalTitle = document.createElement('p')
+    verticalTitle.setAttribute('class', 'text-center')
+    verticalTitle.setAttribute('id', viewId.concat(' Vertical Zoom'))
+    let text = document.createTextNode('Vertical Zoom')
+    verticalTitle.appendChild(text)
+
+    const rangeVerticalInput = document.createElement('input')
+    rangeVerticalInput.setAttribute('id', 'rangeVerticalInputId')
+    rangeVerticalInput.setAttribute('type', 'range')
+    rangeVerticalInput.setAttribute('class', 'form-range')
+    rangeVerticalInput.setAttribute('min', '0')
+    rangeVerticalInput.setAttribute('max', '100')
+    rangeVerticalInput.setAttribute('step', '10')
+    rangeVerticalInput.setAttribute('value', '50')
+
+    rangeVerticalInput.addEventListener('change', (event) => {
+        let rate = Math.abs(event.target.value - lastVValue)
+        if(lastVValue <= event.target.value)
+            dendrogram.verticalRescale(true, rate)
+        else
+            dendrogram.verticalRescale(false, rate)
+        lastVValue = event.target.value
+    })
+
+    const horizontalTitle = document.createElement('p')
+    horizontalTitle.setAttribute('class', 'text-center')
+    horizontalTitle.setAttribute('id', viewId.concat(' Horizontal Zoom'))
+    text = document.createTextNode('Horizontal Zoom')
+    horizontalTitle.appendChild(text)
+
+    const rangeHorizontalInput = document.createElement('input')
+    rangeHorizontalInput.setAttribute('id', 'rangeHorizontalInputId')
+    rangeHorizontalInput.setAttribute('type', 'range')
+    rangeHorizontalInput.setAttribute('class', 'form-range')
+    rangeHorizontalInput.setAttribute('min', '0')
+    rangeHorizontalInput.setAttribute('max', '100')
+    rangeHorizontalInput.setAttribute('step', '10')
+    rangeHorizontalInput.setAttribute('value', '50')
+
+    rangeHorizontalInput.addEventListener('change', (event) => {
+        let rate = Math.abs(event.target.value - lastHValue)
+        if(lastHValue <= event.target.value)
+            dendrogram.horizontalRescale(true, rate)
+        else
+            dendrogram.horizontalRescale(false, rate)
+        lastHValue = event.target.value
+    })
+
+    nodeZoomDiv.appendChild(verticalTitle)
+    nodeZoomDiv.appendChild(rangeVerticalInput)
+    nodeZoomDiv.appendChild(horizontalTitle)
+    nodeZoomDiv.appendChild(rangeHorizontalInput)
+
+    document.getElementById('graphConfig').appendChild(nodeZoomDiv)
+}
+
+/**
+ * Adds zoom buttons and behaviour to radial graph configuration.
+ */
+function addRadialZoom() {
+    if (document.querySelector('.nodeZoom') != null) {
+        document.querySelector('.nodeZoom').remove()
+    }
+
+    const nodeZoomDiv = document.createElement('div')
+    nodeZoomDiv.setAttribute('class', 'nodeZoom justify-content-center mt-4')
+    let viewId = view.type
+
+    const title = document.createElement('p')
+    title.setAttribute('class', 'text-center')
+    title.setAttribute('id', viewId.concat('Zoom'))
+    const text = document.createTextNode('Radial Zoom')
+    title.appendChild(text)
+
+    const rangeInput = document.createElement('input')
+    rangeInput.setAttribute('id', 'rangeInputId')
+    rangeInput.setAttribute('type', 'range')
+    rangeInput.setAttribute('class', 'form-range')
+    rangeInput.setAttribute('min', '0')
+    rangeInput.setAttribute('max', '100')
+    rangeInput.setAttribute('step', '10')
+    rangeInput.setAttribute('value', '50')
+
+    rangeInput.addEventListener('change', (event) => {
+        let rate = Math.abs(event.target.value - lastRValue)
+        if(lastRValue <= event.target.value)
+            radial.rescale(true, rate)
+        else
+            radial.rescale(false, rate)
+        lastRValue = event.target.value
+    })
+
+    nodeZoomDiv.appendChild(title)
+    nodeZoomDiv.appendChild(rangeInput)
+
+    document.getElementById('graphConfig').appendChild(nodeZoomDiv)
+}
+
+/**
+ * Changes the colour of a specific node to a colour of choice.
+ * @param {*} func 
+ * @param {*} nodes 
+ */
 function changeNodeColor(func, nodes) {
     if (document.querySelector('.color') != null) {
         document.querySelector('.color').remove()
@@ -497,6 +673,10 @@ function changeNodeColor(func, nodes) {
     })
 }
 
+/**
+ * Changes nodes size according to visualization function.
+ * @param {*} func 
+ */
 function changeNodeSize(func) {
     if (document.querySelector('.nodeSize') != null) {
         document.querySelector('.nodeSize').remove()
@@ -508,7 +688,7 @@ function changeNodeSize(func) {
     const title = document.createElement('p')
     title.setAttribute('class', 'text-center')
     title.setAttribute('id', 'nodeSizeId')
-    const text = document.createTextNode('Node size')
+    const text = document.createTextNode('Node Size')
     title.appendChild(text)
 
     const rangeInput = document.createElement('input')
@@ -528,6 +708,10 @@ function changeNodeSize(func) {
 
 }
 
+/**
+ * Changes links size according to visualization function.
+ * @param {*} func 
+ */
 function changeLinkSize(func) {
     if (document.querySelector('.linkSize') != null) {
         document.querySelector('.linkSize').remove()
@@ -558,6 +742,10 @@ function changeLinkSize(func) {
 
 }
 
+/**
+ * Changes labels size according to visualization function.
+ * @param {*} func 
+ */
 function changeLabelsSize(func) {
     if (document.querySelector('.labelsSize') != null) {
         document.querySelector('.labelsSize').remove()
@@ -588,6 +776,9 @@ function changeLabelsSize(func) {
 
 }
 
+/**
+ * Changes pie colours.
+ */
 function changePieColor() {
     if (document.querySelector('.pieColor') != null) {
         document.querySelector('.pieColor').remove()
@@ -658,9 +849,11 @@ function changePieColor() {
             const legendTransform = 'translate(510, 400) scale(0.7)'
             changePieChartColor(sections, names_isolates, pieChartTransform, '#tree_pieChart', legendTransform)
 
-            const pieChartIsolatesTransform = 'translate(340, 170) scale(0.7)'
+            const pieChartIsolatesTransform = 'translate(340, 140) scale(0.7)'
             const legendTransformIsolates = 'translate(100, 50) scale(0.7)'
             changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, '#svg_isolate', legendTransformIsolates)
+
+            changePieChartColor(sections, names_isolates, pieChartIsolatesTransform, '#g_isolate', legendTransformIsolates)
 
             filterTables.colors = categories_colors
 
@@ -678,33 +871,6 @@ function changePieColor() {
     })
 }
 
-/********************* Navbar UI Aux *********************/
-
-function setupScaleBtn(elem, func) {
-    const new_element = elem.cloneNode(true)
-    elem.parentNode.replaceChild(new_element, elem)
-
-    let event = events()
-    new_element.addEventListener('mousedown', event.mDown)
-    new_element.addEventListener('mouseup', event.mUp)
-    new_element.addEventListener('mouseleave', event.mUp)
-
-    function events() {
-        let id
-
-        function mDown() {
-            func()
-            id = setInterval(func, 100)
-        }
-
-        function mUp() {
-            clearInterval(id)
-        }
-
-        return {mDown, mUp}
-    }
-}
-
 /********************* Tables *********************/
 
 let filterTables = {
@@ -713,12 +879,16 @@ let filterTables = {
     column: [],
 }
 
+/**
+ * Creates profile data table.
+ * @param {*} data 
+ */
 function create_table_profile(data) {
     document.getElementById('table_profile').innerHTML = ''
 
 
     //check if is possible build table
-    if (!data || data.schemeGenes.length <= 0) {
+    if (!data || !data.schemeGenes || data.schemeGenes.length <= 0) {
         throw new Error('Please insert the profiles file first.')
     }
 
@@ -759,11 +929,15 @@ function create_table_profile(data) {
     addListenersToTables()
 }
 
+/**
+ * Creates isolate data table.
+ * @param {*} data 
+ */
 function create_table_isolate(data) {
     document.getElementById('table_isolate').innerHTML = ''
 
     //check if is possible build table
-    if (!data || data.metadata.length <= 0) {
+    if (!data || !data.metadata || data.metadata.length <= 0) {
         throw new Error('Please insert the isolates file first.')
     }
 
@@ -815,6 +989,9 @@ function create_table_isolate(data) {
     linkToTree()
 }
 
+/**
+ * Adds listeners to profile and isolate tables
+ */
 function addListenersToTables() {
     if (document.querySelector('.prof') !== null) {
         document.querySelectorAll('.prof').forEach(elem => {
@@ -831,7 +1008,6 @@ function addListenersToTables() {
         })
     }
 }
-
 
 let categories = {
     categoriesProfile: new Map(),
@@ -854,7 +1030,7 @@ function contains(id, map) {
 }
 
 /**
- *
+ * Highlights a column in profile table and builds pieChart with that column values.
  * @param header {}
  * @param id {string}
  * @param categories {Map}
@@ -890,7 +1066,7 @@ function clickHeaderProfiles(header, id, categories) {
     }
 
     if (length > 0) {
-        for (let i = 0; i < length;i++) {
+        for (let i = 0; i < length; i++) {
             let str = ''
             categories.forEach((value, key) => {
                 if (str === '') {
@@ -923,7 +1099,7 @@ function clickHeaderProfiles(header, id, categories) {
 }
 
 /**
- *
+ * Highlights a column in isolate table and builds pieChart with that column values.
  * @param header {}
  * @param id {string}
  * @param categories {Map}
@@ -1002,8 +1178,16 @@ function clickHeaderIsolates(header, id, categories) {
 
     sections = counts
     constructPieChart(counts_ordered, names_isolates, id)
+    isolateHTML = d3.select('#svg_isolate').html()
 }
 
+/**
+ * Auxiliar method to add a column.
+ * @param {*} tdElements 
+ * @param {*} HeaderId 
+ * @param {*} array 
+ * @param {*} categories 
+ */
 function addColumn(tdElements, HeaderId, array, categories) {
     for (let i = 0; i < tdElements.length; i++) {
         if (tdElements[i].cellIndex === HeaderId || contains(tdElements[i].cellIndex.toString(), categories)) {
@@ -1021,6 +1205,12 @@ function addColumn(tdElements, HeaderId, array, categories) {
     return array.length
 }
 
+/**
+ * Auxiliar method to remove a column.
+ * @param {*} tdElements 
+ * @param {*} HeaderId 
+ * @param {*} categories 
+ */
 function removeColumn(tdElements, HeaderId, categories) {
     for (let i = 0; i < tdElements.length; i++) {
         if (tdElements[i].cellIndex === HeaderId || !contains(tdElements[i].cellIndex.toString(), categories)) {
@@ -1031,10 +1221,18 @@ function removeColumn(tdElements, HeaderId, categories) {
     }
 }
 
+/**
+ * Auxiliar method to add column name to highlighted profile list.
+ * @param {*} name 
+ */
 function addColumnNameProfiles(name) {
     names_profiles.push(name)
 }
 
+/**
+ * Auxiliar method to remove column name from highlighted profile list.
+ * @param {*} name 
+ */
 function removeColumnNameProfiles(name) {
     for (let i = 0; i < names_profiles.length; i++) {
         if (names_profiles[i] === name) {
@@ -1043,10 +1241,18 @@ function removeColumnNameProfiles(name) {
     }
 }
 
+/**
+ * Auxiliar method to add column name to highlighted isolate list.
+ * @param {*} name 
+ */
 function addColumnNameIsolates(name) {
     names_isolates.push(name)
 }
 
+/**
+ * Auxiliar method to remove column name from highlighted isolate list.
+ * @param {*} name 
+ */
 function removeColumnNameIsolates(name) {
     for (let i = 0; i < names_isolates.length; i++) {
         if (names_isolates[i] === name) {
@@ -1054,7 +1260,6 @@ function removeColumnNameIsolates(name) {
         }
     }
 }
-
 
 const colorsRange = [
     '#1b70fc', '#33f0ff', '#718a90', '#b21bff', '#fe6616',
@@ -1074,6 +1279,14 @@ const colorsRange = [
 
 let categories_colors = []
 
+/**
+ * Method to change the colour of pieChart and its legend.
+ * @param {*} data 
+ * @param {*} names 
+ * @param {*} transform 
+ * @param {*} id 
+ * @param {*} legendTransform 
+ */
 function changePieChartColor(data, names, transform, id, legendTransform) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
@@ -1083,13 +1296,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
     const g = d3.select(id).append('g').attr('transform', `${transform}`).attr('id', 'pieChart' + pieName)
     const pie = d3.pie().value(d => d.value)
-    const path = d3.arc().outerRadius(150).innerRadius(30)
-
-    function color(name) {
-        for (let i = 0; i < categories_colors.length; i++) {
-            if (categories_colors[i].name === name) return categories_colors[i].color
-        }
-    }
+    const path = d3.arc().outerRadius(130).innerRadius(30)
 
     if (data.length > 20) {
         const piesInvisible = g.selectAll('.arc')
@@ -1102,7 +1309,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
         piesInvisible.append('path')
             .attr('d', d => path(d))
-            .attr('fill', d => color(d.data.name))
+            .attr('fill', d => getColor(d.data.name))
             .attr('id', d => d.data.name)
             .style('display', 'none')
     }
@@ -1115,25 +1322,32 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
     pies.append('path')
         .attr('d', d => path(d))
-        .attr('fill', d => color(d.data.name))
+        .attr('fill', d => getColor(d.data.name))
         .attr('id', d => d.data.name)
 
+    function getColor(name) {
+        for (let i = 0; i < categories_colors.length; i++) {
+            if (categories_colors[i].name === name) return categories_colors[i].color
+        }
+    }
+        
     const pieChart = d3.select(id).append('g')
 
-    let position = 30, othersPosition = 30, xOthersPosition = 750
+    let position = 40, yOthersPosition = 40, xOthersPosition = 750
+    let x_coordinate_legend = 500
     const total = counts_ordered[0].total
 
     data.forEach((item, i) => {
         if (i < 20) {
             pieChart.append('circle')
                 .attr('cy', position)
-                .attr('cx', 550)
+                .attr('cx', x_coordinate_legend)
                 .attr('r', 6)
-                .style('fill', () => color(item.name))
+                .style('fill', () => getColor(item.name))
 
             pieChart.append('text')
                 .attr('y', position + 5)
-                .attr('x', 560)
+                .attr('x', x_coordinate_legend + 10)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
                 .style('font-size', '15px')
                 .attr('alignment-baseline', 'middle')
@@ -1141,9 +1355,9 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
         } else if (i === 20) {
             pieChart.append('circle')
                 .attr('cy', position)
-                .attr('cx', 550)
+                .attr('cx', x_coordinate_legend)
                 .attr('r', 6)
-                .style('fill', () => color(item.name))
+                .style('fill', () => getColor(item.name))
                 .attr('class', 'showOthers')
 
             if (document.querySelector('.showOthers')) {
@@ -1155,7 +1369,7 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
             pieChart.append('text')
                 .attr('y', position + 5)
-                .attr('x', 560)
+                .attr('x', x_coordinate_legend + 10)
                 .text('Others')
                 .style('font-size', '15px')
                 .attr('alignment-baseline', 'middle')
@@ -1163,11 +1377,11 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
 
         } else {
             pieChart.append('circle')
-                .attr('cy', othersPosition)
+                .attr('cy', yOthersPosition)
                 .attr('cx', xOthersPosition)
                 .attr('r', 6)
                 .attr('class', 'others')
-                .style('fill', () => color(item.name))
+                .style('fill', () => getColor(item.name))
                 .style('display', 'none')
 
             pieChart.append('text')
@@ -1180,31 +1394,41 @@ function changePieChartColor(data, names, transform, id, legendTransform) {
                 .style('display', 'none')
 
             if (i % 20 === 0) {
-                othersPosition = 30
+                yOthersPosition = 30
                 xOthersPosition += 200
-            } else othersPosition += 20
+            } else yOthersPosition += 20
         }
         position += 20
     })
 
+    //labels
+    let label_x = 250, label_y = 300
     const legend = legendTransform ? pieChart.attr('id', 'legend').attr('transform', `${legendTransform}`) :
         pieChart.attr('id', 'legend')
 
     legend.append('text')
-        .attr('y', 350)
-        .attr('x', 250)
+        .attr('y', label_y)
+        .attr('x', label_x)
         .text(formatArray(names))
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
 
     legend.append('text')
-        .attr('y', 380)
-        .attr('x', 290)
+        .attr('y', label_y + 30)
+        .attr('x', label_x + 40)
         .text('Categories: ' + data.length)
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
 }
 
+let isolateHTML
+
+/**
+ * Builds the pieChart.
+ * @param {*} data 
+ * @param {*} names 
+ * @param {*} id 
+ */
 function constructPieChart(data, names, id) {
     if (!d3.select(id).selectAll('g').empty()) {
         d3.select(id).selectAll('g').remove()
@@ -1236,12 +1460,12 @@ function constructPieChart(data, names, id) {
     const g = d3
         .select(id)
         .append('g')
-        .attr('transform', `translate(340, 170) scale(0.7)`)
+        .attr('transform', `translate(340, 140) scale(0.7)`)
         .attr('id', 'pieChart' + pieName)
 
     const pie = d3.pie().value(d => d.value)
 
-    const path = d3.arc().outerRadius(150).innerRadius(30)
+    const path = d3.arc().outerRadius(130).innerRadius(30)
 
     const color = d3.scaleOrdinal()
         .domain(d3.range(0, length))
@@ -1296,7 +1520,8 @@ function constructPieChart(data, names, id) {
 
     const pieChart = d3.select(id).append('g')
 
-    let position = 30, othersPosition = 30, xOthersPosition = 750
+    let position = 40, yOthersPosition = 40, xOthersPosition = 750
+    let x_coordinate_legend = 500
     const total = data[data.length - 1].total
     data = data.splice(0, data.length - 1)
 
@@ -1304,13 +1529,13 @@ function constructPieChart(data, names, id) {
         if (i < 20) {
             pieChart.append('circle')
                 .attr('cy', position)
-                .attr('cx', 550)
+                .attr('cx', x_coordinate_legend)
                 .attr('r', 6)
                 .style('fill', getColor(item.name))
 
             pieChart.append('text')
                 .attr('y', position + 5)
-                .attr('x', 560)
+                .attr('x', x_coordinate_legend + 10)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
                 .style('font-size', '15px')
                 .attr('alignment-baseline', 'middle')
@@ -1318,7 +1543,7 @@ function constructPieChart(data, names, id) {
         } else if (i === 20) {
             pieChart.append('circle')
                 .attr('cy', position)
-                .attr('cx', 550)
+                .attr('cx', x_coordinate_legend)
                 .attr('r', 6)
                 .style('fill', getColor(item.name))
                 .attr('class', 'showOthers')
@@ -1332,7 +1557,7 @@ function constructPieChart(data, names, id) {
 
             pieChart.append('text')
                 .attr('y', position + 5)
-                .attr('x', 560)
+                .attr('x', x_coordinate_legend + 10)
                 .text('Others')
                 .style('font-size', '15px')
                 .attr('alignment-baseline', 'middle')
@@ -1340,7 +1565,7 @@ function constructPieChart(data, names, id) {
 
         } else {
             pieChart.append('circle')
-                .attr('cy', othersPosition)
+                .attr('cy', yOthersPosition)
                 .attr('cx', xOthersPosition)
                 .attr('r', 6)
                 .attr('class', 'others')
@@ -1348,7 +1573,7 @@ function constructPieChart(data, names, id) {
                 .style('display', 'none')
 
             pieChart.append('text')
-                .attr('y', othersPosition + 5)
+                .attr('y', yOthersPosition + 5)
                 .attr('x', xOthersPosition + 10)
                 .text(`${item.name} ${((item.value / total) * 100).toFixed(2)}%`)
                 .style('font-size', '15px')
@@ -1357,9 +1582,9 @@ function constructPieChart(data, names, id) {
                 .style('display', 'none')
 
             if (i % 20 === 0) {
-                othersPosition = 30
+                yOthersPosition = 30
                 xOthersPosition += 200
-            } else othersPosition += 20
+            } else yOthersPosition += 20
         }
 
         if (id === '#svg_isolate') {
@@ -1372,22 +1597,28 @@ function constructPieChart(data, names, id) {
         position += 20
     })
 
+    //labels
+    let label_x = 250, label_y = 300
     const legend = pieChart.attr('id', 'legend').attr('transform', `translate(100, 50) scale(0.7)`)
     legend.append('text')
-        .attr('y', 350)
-        .attr('x', 250)
+        .attr('y', label_y)
+        .attr('x', label_x)
+        .attr('id', 'isolateFilter')
         .text(formatArray(names))
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
 
-    legend.append('text')
-        .attr('y', 380)
-        .attr('x', 290)
+        legend.append('text')
+        .attr('y', label_y + 30)
+        .attr('x', label_x + 40)
         .text('Categories: ' + data.length)
         .style('font-size', '15px')
         .attr('alignment-baseline', 'middle')
 }
 
+/**
+ * Defines buttons behaviour in isolate tab when a pie chart is seen.
+ */
 function linkToTree() {
 
     document.getElementById('linktreebuttonD').addEventListener('click', () => {
@@ -1415,32 +1646,8 @@ function linkToTree() {
         filterTables.transform = dendrogram.buildBarChart
         dendrogram.applyFilter(filterTables)
 
-        if (document.getElementById('tree_pieChart')) {
-            document.getElementById('tree_pieChart').remove()
-        }
-        const isolates_pieChart = document.getElementById('svg_isolate')
-        const pieChart = isolates_pieChart.cloneNode(true)
-        pieChart.setAttribute('id', 'tree_pieChart')
-        pieChart.setAttribute('width', '1536')
-        pieChart.setAttribute('height', '2000')
-        pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
-            'translate(700, 500) scale(0.7)')
-        pieChart.getElementById('legend').setAttribute('transform',
-            'translate(510, 400) scale(0.7)')
-
-        const hide = document.getElementById('btnHide')
-        hide.style.display = 'block'
-        hide.onclick = () => {
-            if (document.getElementById('pieChart-svg_isolate').style.display === 'none') {
-                document.getElementById('pieChart-svg_isolate').style.display = 'block'
-                document.getElementById('legend').style.display = 'block'
-            } else {
-                document.getElementById('pieChart-svg_isolate').style.display = 'none'
-                document.getElementById('legend').style.display = 'none'
-            }
-        }
-
-        document.getElementById('svg_graph').appendChild(pieChart)
+        hideButton()
+        addPieChartHTML(isolateHTML)
 
         // go to tree tab
         document.getElementById('home-tab').click()
@@ -1470,35 +1677,51 @@ function linkToTree() {
         filterTables.transform = radial.buildBarChart
         radial.applyFilter(filterTables)
 
-        if (document.getElementById('tree_pieChart')) {
-            document.getElementById('tree_pieChart').remove()
-        }
-        const isolates_pieChart = document.getElementById('svg_isolate')
-        const pieChart = isolates_pieChart.cloneNode(true)
-        pieChart.setAttribute('id', 'tree_pieChart')
-        pieChart.setAttribute('width', '1536')
-        pieChart.setAttribute('height', '2000')
-        pieChart.getElementById('pieChart-svg_isolate').setAttribute('transform',
-            'translate(700, 500) scale(0.7)')
-        pieChart.getElementById('legend').setAttribute('transform',
-            'translate(510, 400) scale(0.7)')
-
-        const hide = document.getElementById('btnHide')
-        hide.style.display = 'block'
-        hide.onclick = () => {
-            if (document.getElementById('pieChart-svg_isolate').style.display === 'none') {
-                document.getElementById('pieChart-svg_isolate').style.display = 'block'
-                document.getElementById('legend').style.display = 'block'
-            } else {
-                document.getElementById('pieChart-svg_isolate').style.display = 'none'
-                document.getElementById('legend').style.display = 'none'
-            }
-        }
-
-        document.getElementById('svg_graph').appendChild(pieChart)
+        hideButton()
+        addPieChartHTML(isolateHTML)
 
         document.getElementById('home-tab').click()
     })
+}
+
+/**
+ * Auxiliar method to place the pieChart on the tree tab.
+ * @param {*} html 
+ */
+function addPieChartHTML(html){
+    d3.select('#container').select('#svg-extra').select('#g_isolate').remove()
+
+    let split = html.split('Categories: ')[1].split('<')[0]
+    let height
+    if(split < 16)
+        height = 40 + 18 * 15
+    else
+        height = 40 + 23 * 15
+    
+    d3.select('#container').select('#container-extra')
+        .select('#svg-extra')
+        .append('g')
+        .attr('id','g_isolate')
+        .html(html)
+
+    document.getElementById('svg-extra').setAttribute('height', height)
+}
+
+/**
+ * Auxiliar method to hide buttons.
+ */
+function hideButton(){
+    const hide = document.getElementById('btnHide')
+    hide.style.display = 'block'
+    hide.onclick = () => {
+        if (document.getElementById('pieChart-svg_isolate').style.display === 'none') {
+            document.getElementById('pieChart-svg_isolate').style.display = 'block'
+            document.getElementById('legend').style.display = 'block'
+        } else {
+            document.getElementById('pieChart-svg_isolate').style.display = 'none'
+            document.getElementById('legend').style.display = 'none'
+        }
+    }
 }
 
 function formatArray(names) {
@@ -1511,8 +1734,13 @@ function formatArray(names) {
 
 /********************* API data functions *********************/
 
-
+/**
+ * Sends newick data according to loaded file.
+ */
 function sendNewickData() {
+    document.getElementById('container').innerHTML = ''
+    if (view) view.isDraw = false
+
     filterTables = {
         name: 'Bar chart',
         line: [],
@@ -1550,7 +1778,12 @@ function sendNewickData() {
     })
 }
 
+/**
+ * Sends profile data according to loaded file. Columns must be tab separated. 
+ */
 function sendProfileData() {
+    data = null
+    document.getElementById('svg_profile').innerHTML = ''
     names_profiles = []
     const err = document.getElementById('errorProfile')
     if (err != null) {
@@ -1562,11 +1795,6 @@ function sendProfileData() {
     //
 
     let profile = document.getElementById('formFilePro').files[0]
-    const ext = profile.name.split('.')
-    if (ext[1] !== 'tab') {
-        alertMsg('Extension for profile file must be tab.')
-        return
-    }
 
     profile.text().then(async prof => {
         try {
@@ -1580,7 +1808,12 @@ function sendProfileData() {
     })
 }
 
+/**
+ * Sends isolate data according to loaded file. Columns must be tab separated.
+ */
 function sendIsolateData() {
+    data = null
+    document.getElementById('svg_isolate').innerHTML = ''
     names_isolates = []
     const err = document.getElementById('errorIsolate')
     if (err != null) {
@@ -1593,12 +1826,6 @@ function sendIsolateData() {
 
     let isolate = document.getElementById('formFileIso').files[0]
 
-    const ext = isolate.name.split('.')
-    if (ext[1] !== 'tab') {
-        alertMsg('Extension for isolate file must be tab.')
-        return
-    }
-
     isolate.text().then(async iso => {
         try {
             render.set_isolates_data(iso)
@@ -1609,6 +1836,9 @@ function sendIsolateData() {
     })
 }
 
+/**
+ * Sends newick data according to inserted text data.
+ */
 async function sendNwkData() {
     let nwk = document.getElementById('nwk').value
     try {
@@ -1622,13 +1852,23 @@ async function sendNwkData() {
     }
 }
 
+/**
+ * Resets views and all data.
+ * @param {*} func 
+ */
 function resetViewsOnDataRequest(func) {
     func()
     clearVisualizations()
+    reset_data()
 }
 
 /********************* Aux function *********************/
 
+/**
+ * Shows an alert message.
+ * @param {*} message 
+ * @param {*} kind 
+ */
 function alertMsg(message, kind) {
     if (!kind) kind = 'danger'
     document
@@ -1644,6 +1884,9 @@ function alertMsg(message, kind) {
     })
 }
 
+/**
+ * Clears the container.
+ */
 function clearVisualizations() {
     document.getElementById('container').innerHTML = ''
     dendrogram = dendrogramView()

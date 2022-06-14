@@ -7,6 +7,11 @@ router.get('/data', (req, res, next) =>{
     render.getRenderData().then(data => {
         res.json(data)
     }).catch(err => {
+        if(!err.status){
+            err.status = 500;
+            if(!err.message)
+                err.message = 'Server error.'
+        }
         res.status(err.status)
         res.json({
             message: err.message,

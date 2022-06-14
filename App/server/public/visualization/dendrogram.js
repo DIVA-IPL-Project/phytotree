@@ -50,8 +50,8 @@ function dendrogramView() {
         element: null,
         visible: false,
         width: canvas.width * 0.15,
-        x: canvas.height - 150,
-        y: 100,
+        x: 70,
+        y: 20,
         padding: 10,
     }
     const svg = {
@@ -127,8 +127,6 @@ function dendrogramView() {
             svg.element = canvas.container
                 .append('svg')
                 .attr('id', 'svg_graph')
-                .attr('width', canvas.width + canvas.margin.left + canvas.margin.right)
-                .attr('height', canvas.height + canvas.margin.top + canvas.margin.bottom)
         }
 
         // apply css
@@ -182,6 +180,10 @@ function dendrogramView() {
         updateInternalLabels(graph.style.parentLabels)
     }
 
+    /**
+     * Places this node at the center of canvas and returns that node id.
+     * @param {*} node to center around
+     */
     function centerGraph(node) {
         let el = node, curr = node
         while (curr.parent !== null) {
@@ -197,6 +199,10 @@ function dendrogramView() {
         return el.data.id
     }
 
+    /**
+    * Searches the tree for node with this id and paints it with a different colour momentarily.
+    * @param {*} id 
+    */
     function search(id) {
         if (id === '') return
         let collapsedId = id
@@ -221,10 +227,19 @@ function dendrogramView() {
 
     /********************* Collapse functions *********************/
 
+    /**
+     * Applies a logarithmic function with this base to number.
+     * @param {*} base of the logarithmic function
+     * @param {*} number 
+     */
     function log(base, number) {
         return Math.log(number) / Math.log(base)
     }
 
+    /**
+     * Gets the triangle that represents the collapsed nodes.
+     * @param {*} node 
+     */
     function getTriangle(node) {
         let length = node.leaves.length - 1
         let point = length / 2 * graph.nodeSize[0],
@@ -235,6 +250,11 @@ function dendrogramView() {
         return {point, label}
     }
 
+    /**
+     * Collapses the children nodes into the parent node.
+     * @param {*} parent 
+     * @param {*} children 
+     */
     function collapse(parent, children) {
         parent.visibility = false
         if (!children) return
@@ -254,6 +274,10 @@ function dendrogramView() {
             .attr('dy', '3')
     }
 
+    /**
+     * Collapses the children nodes.
+     * @param {*} children 
+     */
     function collapseChildren(children) {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
@@ -267,6 +291,11 @@ function dendrogramView() {
         }
     }
 
+    /**
+     * Expands a collapsed node into its children and parent node.
+     * @param {*} parent 
+     * @param {*} children 
+     */
     function expand(parent, children) {
         parent.visibility = true
         if (!children) return
@@ -282,6 +311,10 @@ function dendrogramView() {
         updateLinkLabels(graph.style.linkLabels)
     }
 
+    /**
+     * Expands the children nodes.
+     * @param {*} children 
+     */
     function expandChildren(children) {
         for (let i = 0; i < children.length; i++) {
             let child = children[i]
@@ -315,7 +348,7 @@ function dendrogramView() {
     }
 
     /**
-     * Function to be added to all nodes to collapse them.
+     * Function to be added to all nodes to collapse or expand them.
      * @param event the event
      * @param d the node clicked
      */
@@ -437,7 +470,6 @@ function dendrogramView() {
             .style('font', `${value}px sans-serif`)
     }
 
-
     /**
      * Adds labels to the parent nodes.
      */
@@ -471,7 +503,6 @@ function dendrogramView() {
             .on('mouseover', mouseOveredDendrogram(true))
             .on('mouseout', mouseOveredDendrogram(false))
     }
-
 
     /**
      * Adds labels to the leaf nodes.
@@ -528,7 +559,6 @@ function dendrogramView() {
         }
     }
 
-
     /**
      * Aligns nodes by depth or by link weight
      */
@@ -578,7 +608,9 @@ function dendrogramView() {
     /********************* Graph Scaling functions ************************/
 
     /**
-     * Applies the scale to the coordinates of the tree
+     * Applies the scale to the coordinates of the tree.
+     * @param {*} tree 
+     * @param {*} last 
      */
     function applyScale(tree, last) {
         let horizontal = graph.scale.horizontal
@@ -751,21 +783,43 @@ function dendrogramView() {
     /********************* Rescale Graph functions ************************/
 
     /**
+     * Rescale svg graph area to fit tree graph.
+     */
+    function scaleSVGtoDIV(){
+        if(document.getElementById('ruler-width')){
+            var element = canvas.container.select('g').node()
+            var height = element.getBoundingClientRect().height
+            var auxHeight = canvas.height + canvas.margin.top + canvas.margin.bottom
+            if(auxHeight > height)
+                height = auxHeight
+            var width = element.getBoundingClientRect().width
+            var auxWidth = canvas.width + canvas.margin.left + canvas.margin.right
+            if(auxWidth > width)
+                width = auxWidth 
+
+            document.getElementById('svg_graph').setAttribute('height', height)
+            document.getElementById('svg_graph').setAttribute('width', width)
+        }
+    }
+
+    /**
      * Rescales the graph vertically according to the applied scale
      * @param increment - true to increment - false to decrement
      */
-    function verticalRescale(increment) {
-        if (increment) {
-            if (graph.scale.vertical.value > graph.scale.vertical.limits[0]) {
-                let last = graph.scale.vertical.value
-                graph.scale.vertical.decrement()
-                setNewXPositions(last)
-            }
-        } else {
-            if (graph.scale.vertical.value < graph.scale.vertical.limits[1]) {
-                let last = graph.scale.vertical.value
-                graph.scale.vertical.increment()
-                setNewXPositions(last)
+    function verticalRescale(increment, rate) {
+        for (var i = 0; i < rate; i++) {
+            if (increment) {
+                if (graph.scale.vertical.value > graph.scale.vertical.limits[0]) {
+                    let last = graph.scale.vertical.value
+                    graph.scale.vertical.increment()
+                    setNewXPositions(last)
+                }
+            } else {
+                if (graph.scale.vertical.value < graph.scale.vertical.limits[1]) {
+                    let last = graph.scale.vertical.value
+                    graph.scale.vertical.decrement()
+                    setNewXPositions(last)
+                }
             }
         }
     }
@@ -774,18 +828,20 @@ function dendrogramView() {
      * Rescales the graph horizontally according to the applied scale
      * @param increment - true to increment - false to decrement
      */
-    function horizontalRescale(increment) {
-        if (increment) {
-            if (graph.scale.horizontal.value < graph.scale.horizontal.limits[1]) {
-                graph.scale.horizontal.increment()
-                setNewYPositions()
-                applyScaleText()
-            }
-        } else {
-            if (graph.scale.horizontal.value > graph.scale.horizontal.limits[0]) {
-                graph.scale.horizontal.decrement()
-                setNewYPositions()
-                applyScaleText()
+    function horizontalRescale(increment, rate) {
+        for (var i = 0; i < rate; i++) {
+            if (increment) {
+                if (graph.scale.horizontal.value < graph.scale.horizontal.limits[1]) {
+                    graph.scale.horizontal.increment()
+                    setNewYPositions()
+                    applyScaleText()
+                }
+            } else {
+                if (graph.scale.horizontal.value > graph.scale.horizontal.limits[0]) {
+                    graph.scale.horizontal.decrement()
+                    setNewYPositions()
+                    applyScaleText()
+                }
             }
         }
     }
@@ -859,9 +915,16 @@ function dendrogramView() {
      * A line to measure the link value and the text with the value
      */
     function horizontalScale() {
-        if (svg.element.select('.horizontalScale')) svg.element.select('.horizontalScale').remove()
+        canvas.container.select('#container-extra').remove()
+        var element = canvas.container.append('div').attr('id', 'container-extra')
+                .append('svg').attr('id', 'svg-extra')
+                .attr('width', canvas.container.select('#svg_graph').style("width"))
+                .attr('height', 200)
+
+        if (element.select('.horizontalScale')) element.select('.horizontalScale').remove()
         if (ruler.container) ruler.container.remove()
-        ruler.container = svg.element
+
+        ruler.container = element
             .append('g')
             .attr('transform', 'translate(' + [ruler.y, ruler.x] + ')')
             .attr('class', 'horizontalScale')
@@ -873,6 +936,7 @@ function dendrogramView() {
 
         ruler.element = ruler.container
             .append('text')
+            .attr('id','ruler-width')
             .attr('class', 'ruler-text')
             .attr('x', ruler.width / 2 + ruler.padding)
             .attr('y', 36)
@@ -898,6 +962,8 @@ function dendrogramView() {
         } else {
             ruler.element.text(0)
         }
+
+        scaleSVGtoDIV()
     }
 
 
@@ -1048,6 +1114,7 @@ function dendrogramView() {
                     const scaleValue = scaleAttr.substring(scaleAttr.indexOf('(') + 1, scaleAttr.length - 1)
 
                     if (applyScale) applyScaleText(scaleValue)
+                    scaleSVGtoDIV()
                 }))
     }
 
@@ -1366,7 +1433,9 @@ function dendrogramView() {
         }
     }
 
-
+    /**
+     * Saves the current study in a JSON object.
+     */
     function save() {
         const tree = []
         data.tree.eachBefore(d => {
@@ -1399,6 +1468,11 @@ function dendrogramView() {
         }
     }
 
+    /**
+     * Loads the saved study from a json object to container.
+     * @param {*} container 
+     * @param {*} save 
+     */
     function load(container, save) {
         if (!save.graph || !save.data || !save.canvas)
             throw new Error('Save does not contain all needed properties {data, graph, canvas}.')

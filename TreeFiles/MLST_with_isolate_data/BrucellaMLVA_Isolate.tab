@@ -1,0 +1,526 @@
+Key	strain	species-biovar	host	publication	year	panel1	country	ST	bruce06-BRU1322	bruce08-BRU1134	bruce11-BRU211	bruce12-BRU73	bruce42-BRU424	bruce43-BRU379	bruce45-BRU233	bruce55-BRU2066	bruce18-BRU339	bruce19-BRU324	bruce21-BRU329	bruce04-BRU1543	bruce07-BRU1250	bruce09-BRU588	bruce16-BRU548	bruce30-BRU1505
+bmar004	M2533/93/1	B. pinnipedialis	harbour seal	Maquart2009	1993	71	Scotland	1	2	5	6	12	3	2	5	3	7	21	9	6	4	6	5	3
+bmar005	M292/94/1	B. pinnipedialis	harbour seal	Maquart2009	1994	71	Scotland	2	2	5	6	12	3	2	5	3	7	21	9	5	4	6	6	3
+bmar007	M972/94/1	B. pinnipedialis	harbour seal	Maquart2009	1994	25	Scotland	3	3	5	6	13	3	2	5	4	7	21	9	7	5	5	3	3
+bmar008	M1771/94/1	B. pinnipedialis	otter	Maquart2009	1994	25	Scotland	4	3	5	6	13	3	2	5	4	7	21	9	5	5	6	3	3
+bmar010	M514/96/4	B. pinnipedialis	harbour seal	Maquart2009	1996	25	Scotland	5	3	5	6	13	3	2	5	4	7	21	9	6	5	5	3	3
+bmar013	M1661/94/2	B. ceti	porpoise	Maquart2009	1994	23	Scotland	6	2	5	8	7	3	2	5	1	4	22	9	5	5	3	7	5
+bmar015	M181/97/1	B. ceti	AWSD	Maquart2009	1997	23	Scotland	7	2	5	8	7	3	2	5	1	4	22	9	7	5	3	5	5
+bmar016	M870/97/1	B. ceti	white-beaked dolphin	Maquart2009	1997	23	Scotland	8	2	5	8	7	3	2	5	1	4	22	9	7	5	3	7	5
+bmar021	8105	B. pinnipedialis	harbour seal	Maquart2009	1998	25	Germany	9	3	5	6	13	3	2	5	4	7	21	9	5	5	7	3	3
+bmar027	8150	B. pinnipedialis	harbour seal	Maquart2009	1998	25	Germany	10	3	5	6	13	3	2	5	4	7	21	9	5	5	4	3	3
+bmar028	8169	B. pinnipedialis	harbour seal	Maquart2009	1998	73	Germany	11	3	5	3	13	3	2	5	4	7	21	9	5	4	3	3	3
+bmar029	8151	B. pinnipedialis	gray seal	Maquart2009	1998	71	Germany	12	2	5	6	12	3	2	5	3	7	21	9	6	4	5	5	3
+bmar033	8155	B. pinnipedialis	harbour seal	Maquart2009	1999	25	Germany	13	3	5	6	13	3	2	5	4	7	21	9	5	4	5	3	3
+bmar035	8170	B. pinnipedialis	harbour seal	Maquart2009	2000	25	Germany	14	3	5	6	13	3	2	5	4	7	21	9	5	4	5	4	3
+bmar037	8172	B. pinnipedialis	harbour seal	Maquart2009	2000	25	Germany	15	3	5	6	13	3	2	5	4	7	21	9	5	4	6	3	3
+bmar048	8241	B. pinnipedialis	harbour seal	Maquart2009	2000	25	Germany	16	3	5	6	13	3	2	5	4	7	21	9	5	4	7	3	3
+bmar051	8244	B. pinnipedialis	harbour seal	Maquart2009	2000	25	Germany	17	3	5	6	13	3	2	5	4	7	21	9	5	5	7	4	3
+bmar064	11232	B. pinnipedialis	harbour seal	Maquart2009	2002	25	Germany	18	3	5	6	13	3	2	5	4	7	21	9	5	6	6	3	3
+bmar066	11234	B. pinnipedialis	harbour seal	Maquart2009	2002	25	Germany	19	3	5	6	13	3	2	5	4	7	21	9	5	6	7	3	3
+bmar067	11235	B. pinnipedialis	harbour seal	Maquart2009	2002	25	Germany	20	3	5	6	13	3	2	5	4	7	21	9	5	5	9	3	3
+bmar087	11255	B. pinnipedialis	harbour seal	Maquart2009	2002	25	Germany	21	3	5	6	13	3	2	5	4	7	21	9	5	6	4	3	3
+bmar088	11256	B. pinnipedialis	harbour seal	Maquart2009	2002	25	Germany	22	3	5	6	13	3	2	5	4	7	21	9	5	6	8	3	3
+bmar097	11265	B. pinnipedialis	harbour seal	Maquart2009	2003	25	Germany	23	3	5	6	13	3	2	5	4	7	21	9	5	5	8	3	3
+bmar098	11266	B. pinnipedialis	harbour seal	Maquart2009	2003	25	Germany	24	3	5	6	13	3	2	5	4	7	21	9	6	5	6	3	3
+bmar099	11267	B. pinnipedialis	harbour seal	Maquart2009	2004	25	Germany	25	3	5	6	13	3	2	5	4	7	21	9	2	5	5	3	3
+bmar101	B202R	B. ceti	minke whale	Maquart2009	1995	23	Norway	26	2	5	8	7	3	2	5	1	4	22	9	5	6	3	7	5
+bmar105	M2466/93/4	B. pinnipedialis	harbour seal	Maquart2009	1993	72	Scotland	27	3	5	6	13	3	2	5	2	7	21	9	4	5	6	3	3
+bmar106	M39/94/1	B. ceti	porpoise	Maquart2009	1994	23	Scotland	28	2	5	8	7	3	2	5	1	4	22	9	5	6	3	7	4
+bmar107	M339/94/1	B. pinnipedialis	harbour seal	Maquart2009	1994	25	Scotland	29	3	5	6	13	3	2	5	4	7	21	9	6	6	5	3	3
+bmar108	M997/94/2	B. ceti	AWSD	Maquart2009	1994	69	Scotland	30	2	5	8	7	2	2	5	1	4	22	9	7	4	3	7	6
+bmar109	M2006/94/6	B. pinnipedialis	hooded seal	Maquart2009	1994	76	Scotland	31	3	5	15	12	3	2	5	7	7	22	9	4	4	6	6	6
+bmar111	M490/95/1	B. ceti	harbour seal	Maquart2009	1995	23	Scotland	32	2	5	8	7	3	2	5	1	4	22	9	7	8	3	5	6
+bmar112	M2438/95/1	B. ceti	AWSD	Maquart2009	1995	23	Scotland	33	2	5	8	7	3	2	5	1	4	22	9	4	6	3	6	5
+bmar113	M18/96/1	B. ceti	AWSD	Maquart2009	1996	24	Scotland	34	2	5	8	13	2	2	4	2	6	6	9	8	6	8	8	3
+bmar114	M515/96/2	B. ceti	porpoise	Maquart2009	1996	23	Scotland	35	2	5	8	7	3	2	5	1	4	22	9	4	6	5	5	4
+bmar115	M452/97/2	B. ceti	common dolphin	Maquart2009	1997	23	Scotland	36	2	5	8	7	3	2	5	1	4	22	9	6	5	3	5	5
+bmar116	M2788/97/1	B. ceti	AWSD	Maquart2009	1997	23	Scotland	37	2	5	8	7	3	2	5	1	4	22	9	5	6	3	8	6
+bmar117	M854/98/8	B. ceti	porpoise	Maquart2009	1998	23	Scotland	38	2	5	8	7	3	2	5	1	4	22	9	4	8	3	5	4
+bmar118	M1747/98/3	B. ceti	porpoise	Maquart2009	1998	23	Scotland	39	2	5	8	7	3	2	5	1	4	22	9	4	4	3	5	5
+bmar132	M2194/94/1	B. ceti	striped dolphin	Maquart2009	1994	24	Scotland	40	2	5	8	13	2	2	4	2	6	6	9	9	5	8	15	3
+bmar147	M493/99/1	B. ceti	porpoise	Maquart2009	1999	23	Scotland	41	2	5	8	7	3	2	5	1	4	22	9	8	6	3	4	5
+bmar150	M610/99/1	B. ceti	porpoise	Maquart2009	1999	23	Scotland	42	2	5	8	7	3	2	5	1	4	22	9	6	5	3	7	4
+bmar152	M563/99/2	B. ceti	porpoise	Maquart2009	1999	23	Scotland	43	2	5	8	7	3	2	5	1	4	22	9	4	6	3	7	4
+bmar153	M654/99/1	B. ceti	striped dolphin	Maquart2009	1999	77	Scotland	44	2	5	8	13	1	2	4	2	6	6	9	12	8	7	12	3
+bmar155	M621/99/2	B. pinnipedialis	gray seal	Maquart2009	1999	25	Scotland	45	3	5	6	13	3	2	5	4	7	22	9	6	6	4	3	3
+bmar157	M575/99/4	B. ceti	porpoise	Maquart2009	1999	23	Scotland	47	2	5	8	7	3	2	5	1	4	22	9	6	7	3	7	4
+bmar158	M2/00/1	B. ceti	AWSD	Maquart2009	2000	23	Scotland	48	2	5	8	7	3	2	5	1	4	22	9	6	6	3	6	4
+bmar159	M499/99/5	B. ceti	porpoise	Maquart2009	1999	23	Scotland	49	2	5	8	7	3	2	5	1	4	22	9	5	5	3	7	6
+bmar160	M192/00/1	B. pinnipedialis	minke whale	Maquart2009	2000	71	Scotland	50	2	5	6	12	3	2	5	3	7	21	9	5	5	7	5	3
+bmar161	M194/00/1	B. pinnipedialis	gray seal	Maquart2009	2000	25	Scotland	51	3	5	6	13	3	2	5	4	6	21	9	5	5	5	3	3
+bmar162	M187/00/1	B. ceti	AWSD	Maquart2009	2000	23	Scotland	52	2	5	8	7	3	2	5	1	4	22	9	6	5	3	9	5
+bmar166	M9/02/01	B. ceti	striped dolphin	Maquart2009	2002	24	Scotland	53	2	5	8	13	2	2	4	2	6	6	9	8	7	8	14	3
+bmar169	M305/02/1	B. pinnipedialis	harbour seal	Maquart2009	2002	71	Scotland	54	2	5	6	12	3	2	5	3	7	21	9	6	4	7	5	3
+bmar174	M23/03/4	B. ceti	porpoise	Maquart2009	2003	23	Scotland	55	2	5	8	7	3	2	5	1	4	22	9	7	5	3	4	5
+bmar175	M89/03/5	B. ceti	porpoise	Maquart2009	2003	23	Scotland	56	2	5	8	7	3	2	5	1	4	22	9	5	5	3	7	4
+bmar177	M74/05/2	B. ceti	porpoise	Maquart2009	2005	23	Scotland	57	2	5	8	7	3	2	5	1	4	22	9	7	6	3	7	5
+bmar178	M78/05/2	B. ceti	porpoise	Maquart2009	2005	23	Scotland	58	2	5	8	7	3	2	5	1	4	22	9	6	5	3	8	6
+bmar180	M61/05/1	B. ceti	AWSD	Maquart2009	2005	23	Scotland	59	2	5	8	7	3	2	5	1	4	22	9	5	6	3	7	6
+bmar181	M199/04/2	B. ceti	porpoise	Maquart2009	2004	23	Scotland	60	2	5	8	7	3	2	5	1	4	22	9	3	6	3	7	6
+bmar184	M38/04/3	B. ceti	porpoise	Maquart2009	2004	23	Scotland	61	2	5	8	7	3	2	5	1	4	22	9	5	6	3	5	5
+bmar185	M51/04/2	B. ceti	porpoise	Maquart2009	2004	23	Scotland	62	2	5	8	7	3	2	5	1	4	22	9	4	5	3	8	5
+bmar186	M93/04/3	B. ceti	porpoise	Maquart2009	2004	23	Scotland	63	2	5	8	7	3	2	5	1	4	22	9	6	6	3	12	5
+bmar187	M89/05/1	B. ceti	porpoise	Maquart2009	2005	69	Scotland	64	2	5	8	7	2	2	5	1	4	22	9	7	5	3	7	6
+bmar188	M234/05/	B. ceti	porpoise	Maquart2009	2005	23	Scotland	65	2	5	8	7	3	2	5	1	4	22	9	7	7	3	4	5
+bmar189	22f-1	B. pinnipedialis	hooded seal	Maquart2009	2002	76	Norway	66	3	5	15	12	3	2	5	7	7	22	9	4	4	6	4	6
+bmar192	37f-1	B. pinnipedialis	hooded seal	Maquart2009	2002	76	Norway	67	3	5	15	12	3	2	5	7	7	22	9	4	4	6	7	4
+bmar194	39e-2	B. pinnipedialis	hooded seal	Maquart2009	2002	76	Norway	68	3	5	15	12	3	2	5	7	7	22	9	4	4	5	5	4
+bmar213	M2788/97/2	B. ceti	AWSD	Maquart2009	1997	23	Scotland	69	2	5	8	7	3	2	5	1	4	22	9	6	6	3	8	6
+bmar215	M103/99/2	B. ceti	porpoise	Maquart2009	1999	23	Scotland	70	2	5	8	7	3	2	5	1	4	22	9	5	5	3	6	5
+bmar216	M163/99/10	B. pinnipedialis	hooded seal	Maquart2009	1999	76	Scotland	71	3	5	15	12	3	2	5	7	7	22	9	5	4	6	5	4
+bmar217	M656/99/2	B. ceti	striped dolphin	Maquart2009	1999	24	Scotland	72	2	5	8	13	2	2	4	2	6	6	9	8	8	8	15	3
+bmar218	M499/99/10	B. ceti	porpoise	Maquart2009	1999	23	Scotland	73	2	5	8	7	3	2	5	1	4	22	9	5	5	3	7	6
+bmar220	M12/00/3	B. ceti	porpoise	Maquart2009	2000	23	Scotland	74	2	5	8	7	3	2	5	1	4	22	9	8	6	3	3	4
+bmar221	M13/01/1	B. pinnipedialis	harbour seal	Maquart2009	2001	25	Scotland	75	3	5	6	13	3	2	5	4	7	21	9	7	5	6	3	3
+bmar222	M117/01/1	B. ceti	porpoise	Maquart2009	2001	23	Scotland	76	2	5	8	7	3	2	5	1	4	22	9	4	5	4	4	4
+bmar223	M130/02/2	B. ceti	porpoise	Maquart2009	2002	23	Scotland	77	2	5	8	7	3	2	5	1	4	22	9	4	5	3	5	4
+bmar225	22a-2	B. pinnipedialis	hooded seal	Maquart2009	2002	76	Norway	79	3	5	15	12	3	2	5	7	7	22	9	4	4	6	4	6
+bmar226	23a-1	B. pinnipedialis	hooded seal	Maquart2009	2002	75	Norway	80	3	5	14	12	3	2	5	7	7	22	9	6	4	6	5	4
+bmar228	25a-1	B. pinnipedialis	hooded seal	Maquart2009	2002	76	Norway	81	3	5	15	12	3	2	5	7	7	22	9	3	4	5	6	4
+bmar229	30a-1	B. pinnipedialis	hooded seal	Maquart2009	2002	74	Norway	82	3	5	12	12	3	2	5	7	7	22	9	5	4	5	6	4
+bmar231	M116/03/2	B. ceti	porpoise	Maquart2009	2003	23	Scotland	83	2	5	8	7	3	2	5	1	4	22	9	6	5	3	12	6
+bmar232	M130/03/2	B. ceti	porpoise	Maquart2009	2003	23	Scotland	84	2	5	8	7	3	2	5	1	4	22	9	5	6	3	6	4
+bmar233	M150/03/3	B. ceti	porpoise	Maquart2009	2003	23	Scotland	85	2	5	8	7	3	2	5	1	4	22	9	9	5	3	5	8
+bmar253	53c-1	B. pinnipedialis	hooded seal	Maquart2009	2002	76	Norway	86	3	5	15	12	3	2	5	7	7	22	9	4	4	7	6	6
+bmar254	M195/03/10	B. ceti	porpoise	Maquart2009	2003	70	Scotland	87	1	5	8	7	3	2	5	1	4	22	9	7	4	3	6	4
+bmar255	M13/05/1	B. ceti	striped dolphin	Maquart2009	2005	24	Scotland	88	2	5	8	13	2	2	4	2	6	6	9	8	7	9	14	3
+bmar256	M100/04/6	B. ceti	porpoise	Maquart2009	2004	23	Scotland	89	2	5	8	7	3	2	5	1	4	22	9	6	5	3	7	5
+bmar257	M120/05/1	B. ceti	porpoise	Maquart2009	2005	23	Scotland	90	2	5	8	7	3	2	5	1	4	22	9	7	5	3	5	5
+bmar261	M603/99/7	B. pinnipedialis	hooded seal	Maquart2009	1999	76	Scotland	91	3	5	15	12	3	2	5	7	7	22	9	4	4	6	7	4
+bmar262	M656/99/1	B. ceti	striped dolphin	Maquart2009	1999	24	Scotland	92	2	5	8	13	2	2	4	2	6	6	9	8	8	8	15	3
+bmar265	02/611	B. ceti	human	Maquart2009	2002	78	New Zealand	93	3	5	8	8	2	2	5	3	4	5	9	5	4	8	6	3
+bmar269	M90/06/4	B. ceti	porpoise	Maquart2009	2006	23	Scotland	94	2	5	8	7	3	2	5	1	4	22	9	7	6	3	4	5
+bmar270	M55/07/1	B. ceti	porpoise	Maquart2009	2007	23	Netherlands	95	2	5	8	7	3	2	5	1	4	22	9	4	6	3	8	4
+bmar280	M83/01/4	B. ceti	porpoise	Maquart2009	2001	23	Scotland	96	2	5	8	7	3	2	5	1	4	22	9	5	5	3	7	8
+bmar283	M42/07/1	B. ceti	AWSD	Maquart2009	2007	24	Scotland	97	2	5	8	13	2	2	4	2	6	6	9	8	6	11	14	3
+bmar284	M83/07/1	B. ceti	AWSD	Maquart2009	2007	77	Scotland	98	2	5	8	13	1	2	4	2	6	6	9	11	10	7	9	3
+bmar286	M39/06/6	B. ceti	porpoise	Maquart2009	2006	23	Scotland	99	2	5	8	7	3	2	5	1	4	22	9	5	5	3	6	5
+bmar290	M158/06/1	B. ceti	AWSD	Maquart2009	2006	24	Scotland	100	2	5	8	13	2	2	4	2	6	6	9	9	8	7	15	3
+bmar291	M52/01/2	B. ceti	AWSD	Maquart2009	2001	23	Scotland	101	2	5	8	7	3	2	5	1	4	22	9	8	7	3	7	5
+bmar292	M222/07/1	B. ceti	AWSD	Maquart2009	2007	24	Scotland	102	2	5	8	13	2	2	4	2	6	6	9	8	11	10	18	3
+bmar294	M181/07/7	B. ceti	porpoise	Maquart2009	2007	23	Scotland	103	2	5	8	7	3	2	5	1	4	22	9	5	5	3	6	7
+bmar298	M231/07/3	B. ceti	bottlenose dolphin	Maquart2009	2007	77	Scotland	104	2	5	8	13	1	2	4	2	6	6	9	13	8	7	13	3
+bmar299	M267/05/4	B. ceti	AWSD	Maquart2009	2005	77	Scotland	105	2	5	8	13	1	2	4	2	6	6	9	11	11	7	5	3
+bmar300	M52/07/9	B. ceti	AWSD	Maquart2009	2007	24	Scotland	106	2	5	8	13	2	2	4	2	6	6	9	9	5	9	16	3
+bmar301	M217/03/4	B. ceti	porpoise	Maquart2009	2003	23	Scotland	107	2	5	8	7	3	2	5	1	4	22	9	5	6	3	6	5
+bmar306	M99/07/1	B. ceti	porpoise	Maquart2009	2007	23	Scotland	108	2	5	8	7	3	2	5	1	4	22	9	4	5	3	6	5
+bmar311	M49/01/2	B. ceti	porpoise	Maquart2009	2001	23	Scotland	109	2	5	8	7	3	2	5	1	4	22	9	4	5	3	4	6
+bmar312	M57/07/1	B. ceti	AWSD	Maquart2009	2007	24	Scotland	110	2	5	8	13	2	2	4	2	6	6	9	8	6	6	8	3
+bmar319	M245/05/8	B. ceti	porpoise	Maquart2009	2005	23	Scotland	111	2	5	8	7	3	2	5	1	4	22	9	5	5	3	8	5
+bmar322	M52/07/1	B. ceti	AWSD	Maquart2009	2007	24	Scotland	112	2	5	8	13	2	2	4	2	6	6	9	9	5	9	16	3
+bmar337	M83/07/3	B. ceti	AWSD	Maquart2009	2007	77	Scotland	113	2	5	8	13	1	2	4	2	6	6	9	11	10	7	9	3
+bmar338	M67/07/3	B. ceti	porpoise	Maquart2009	2007	23	Scotland	114	2	5	8	7	3	2	5	1	4	22	9	4	6	3	8	4
+bmar339	M99/07/3	B. ceti	porpoise	Maquart2009	2007	23	Scotland	115	2	5	8	7	3	2	5	1	4	22	9	5	5	3	6	5
+bmar340	M2/00/4	B. ceti	AWSD	Maquart2009	2000	23	Scotland	116	2	5	8	7	3	2	5	1	4	22	9	6	6	3	6	4
+bmar343	M100/04/7	B. ceti	porpoise	Maquart2009	2004	23	Scotland	117	2	5	8	7	3	2	5	1	4	22	9	6	5	3	7	5
+bmar346	M186/07/12	B. ceti	porpoise	Maquart2009	2007	23	Scotland	118	2	5	8	7	3	2	5	1	4	22	9	4	5	3	5	5
+bmar356	M52/07/7	B. ceti	AWSD	Maquart2009	2007	24	Scotland	119	2	5	8	13	2	2	4	2	6	6	9	9	5	9	16	3
+bmar359	M311/03/5	B. ceti	porpoise	Maquart2009	2003	23	Scotland	120	2	5	8	7	3	2	5	1	4	22	9	7	7	3	8	4
+bmar360	M54/07/11	B. ceti	porpoise	Maquart2009	2007	23	Scotland	121	2	5	8	7	3	2	5	1	4	22	9	6	6	3	4	5
+bmar363	M267/05/1	B. ceti	AWSD	Maquart2009	2005	77	Scotland	122	2	5	8	13	1	2	4	2	6	6	9	11	11	7	5	3
+bmar365	M234/05/2	B. ceti	porpoise	Maquart2009	2005	23	Scotland	123	2	5	8	7	3	2	5	1	4	22	9	7	7	3	4	5
+bmar366	M374/02/2	B. pinnipedialis	harbour seal	Maquart2009	2002	72	Scotland	124	3	5	6	13	3	2	5	2	7	21	9	4	5	9	3	3
+bmar367	M35/08/2	UNK	minke whale	Maquart2009	2008	24	Scotland	125	2	5	8	13	2	2	4	2	6	6	9	9	8	9	16	3
+bmar368	M231/07/2	B. ceti	bottlenose dolphin	Maquart2009	2007	77	Scotland	126	2	5	8	13	1	2	4	2	6	6	9	13	8	7	12	3
+bmar371	M85/06/3	B. ceti	porpoise	Maquart2009	2006	23	Scotland	127	2	5	8	7	3	2	5	1	4	22	9	6	5	3	6	4
+bmar374	M199/04/3	B. ceti	porpoise	Maquart2009	2004	23	Scotland	129	2	5	8	7	3	2	5	1	4	22	9	5	6	3	7	6
+bmar377	M4/06/4	B. pinnipedialis	gray seal	Maquart2009	2006	79	Scotland	130	2	5	6	13	3	2	5	3	7	21	9	6	4	7	5	3
+bmar379	M245/05/4	B. ceti	porpoise	Maquart2009	2005	23	Scotland	131	2	5	8	7	3	2	5	1	4	22	9	5	5	3	8	5
+bmar381	M99/07/2	B. ceti	porpoise	Maquart2009	2007	23	Scotland	133	2	5	8	7	3	2	5	1	4	22	9	5	5	3	6	5
+bmar382	M260/03/1	B. ceti	AWSD	Maquart2009	2003	24	Scotland	134	2	5	8	13	2	2	4	2	6	6	9	8	6	7	8	3
+bru0001	REF 16M	B.melitensis biovar 1	goat	Le Flèche2006	UNK	47	United States	135	3	4	2	13	4	2	3	3	5	18	6	2	5	8	3	6
+bru0002	REF 544	B.abortus biovar 1	cattle	Le Flèche2006	UNK	28	England	136	4	5	4	12	2	2	3	3	5	21	8	3	5	3	4	5
+bru0003	REF 86/8/59	B.abortus biovar 2	cattle	Le Flèche2006	UNK	29	England	137	4	5	4	12	2	1	3	3	6	21	8	3	4	3	3	5
+bru0004	REF Tulya	B.abortus biovar 3	human	Le Flèche2006	UNK	34	Uganda	138	3	5	4	11	2	2	3	3	8	20	8	6	5	3	11	5
+bru0005	REF 292	B.abortus biovar 4	cattle	Le Flèche2006	UNK	30	England	139	4	5	4	12	2	2	3	2	6	21	8	3	4	3	3	5
+bru0006	REF B3196	B.abortus biovar 5	cattle	Le Flèche2006	UNK	39	England	140	3	5	3	12	2	2	2	3	7	21	8	6	7	3	3	3
+bru0008	REF C68	B.abortus biovar 9	cattle	Le Flèche2006	UNK	39	England	141	3	5	3	12	2	2	2	3	7	21	8	6	6	3	3	3
+bru0010	REF 870	B.abortus biovar 6	cattle	Le Flèche2006	UNK	40	Africa	143	3	5	3	12	2	2	3	3	7	21	8	3	6	3	3	3
+bru0011	REF 63/9	B.melitensis biovar 2	goat	Le Flèche2006	UNK	45	Turkey	144	1	5	3	12	2	2	3	2	4	20	8	7	4	3	5	4
+bru0012	REF BOW 63/290	B.ovis	sheep	Le Flèche2006	UNK	1	Australia	145	3	5	2	10	1	1	5	2	3	4	9	6	7	7	6	2
+bru0014	REF 1330	B.suis biovar 1	swine	Le Flèche2006	UNK	6	United States	146	2	3	6	10	4	1	5	2	4	19	9	6	6	5	5	3
+bru0015	REF Thomsen	B.suis biovar 2	swine	Le Flèche2006	UNK	9	Denmark	147	2	4	8	15	6	1	5	2	6	22	9	9	9	18	2	4
+bru0016	REF 686	B.suis biovar 3	swine	Le Flèche2006	UNK	4	United States	148	2	3	4	11	3	1	5	2	4	19	9	7	5	10	4	5
+bru0017	REF 40	B.suis biovar 4	reindeer	Le Flèche2006	UNK	3	Former USSR	149	2	3	9	11	3	1	5	2	5	18	9	4	5	9	6	3
+bru0018	REF 513	B.suis biovar 5	wild rodent	Le Flèche2006	UNK	21	Former USSR	150	1	2	9	17	1	2	5	5	7	22	9	9	5	3	9	5
+bru0020	REF Porpoise	B.ceti	porpoise	Le Flèche2006	1994	23	Scotland	151	2	5	8	7	3	2	5	1	4	22	9	6	4	3	5	6
+bru0021	REF RM 6/66	B.canis	dog	Le Flèche2006	UNK	3	United States	152	2	3	9	11	3	1	5	2	5	20	9	8	6	7	5	3
+bru0022	REF Seal	B.pinnipedialis	common seal	Le Flèche2006	1994	25	Scotland	153	3	5	6	13	3	2	5	4	7	21	9	5	5	5	3	3
+bru0024	REF 5K33	B.neotomae	desert rat	Le Flèche2006	UNK	26	United States	154	4	5	4	13	4	3	5	1	6	21	9	3	6	3	6	3
+bru0038	BCCN 87-67a	B.suis biovar 1	unknown	Le Flèche2006	1987	6	China	155	2	3	6	10	4	1	5	2	4	19	9	5	5	8	6	3
+bru0039	BCCN 87-68	B.suis biovar 1	unknown	Le Flèche2006	1987	6	Portugal	156	2	3	6	10	4	1	5	2	4	19	9	4	6	7	5	3
+bru0042	BCCN 87-71	B.suis biovar 1	unknown	Le Flèche2006	1987	6	United States	157	2	3	6	10	4	1	5	2	4	19	9	6	5	7	4	3
+bru0044	BCCN 87-72	B.suis biovar 1	unknown	Le Flèche2006	1987	6	Denmark	158	2	3	6	10	4	1	5	2	5	19	9	5	6	8	5	3
+bru0045	BCCN 87-85	B.suis biovar 1	unknown	Le Flèche2006	1987	6	Denmark	159	2	3	6	10	4	1	5	2	4	19	9	9	5	7	5	3
+bru0047	BCCN 87-87	B.suis biovar 1	unknown	Le Flèche2006	1987	6	Poland	160	2	3	6	10	4	1	5	2	4	19	9	7	7	8	5	3
+bru0048	BCCN 87-88	B.suis biovar 1	unknown	Le Flèche2006	1987	6	Poland	161	2	3	6	10	4	1	5	2	4	19	9	6	6	6	5	3
+bru0050	BCCN 87-89	B.suis biovar 1	swine	Le Flèche2006	1987	6	United States	162	2	3	6	10	4	1	5	2	4	19	9	6	5	7	3	3
+bru0056	BCCN 98-26	B.suis biovar 1	swine	Le Flèche2006	1998	6	Argentina	163	2	3	6	10	4	1	5	2	4	19	9	4	6	6	4	3
+bru0057	BCCN 98-31	B.suis biovar 1	swine	Le Flèche2006	1998	6	Argentina	164	2	3	6	10	4	1	5	2	4	19	9	5	5	6	4	3
+bru0059	BCCN 98-43	B.suis biovar 1	swine	Le Flèche2006	1998	6	Argentina	165	2	3	6	10	4	1	5	2	4	19	9	4	4	8	5	3
+bru0062	BCCN 78-6	B.suis biovar 2	hare	Le Flèche2006	1978	9	France (57)	166	2	4	8	15	6	1	5	2	6	21	9	12	5	13	2	11
+bru0063	BCCN 81-89	B.suis biovar 2	hare	Le Flèche2006	1981	8	Poland	167	2	4	8	15	6	1	5	7	6	21	9	14	4	10	2	7
+bru0064	BCCN 81-287	B.suis biovar 2	swine	Le Flèche2006	1981	9	France (67)	168	2	4	8	15	6	1	5	2	6	21	9	13	9	17	2	5
+bru0065	BCCN 81-288	B.suis biovar 2	hare	Le Flèche2006	1981	9	France (57)	169	2	4	8	15	6	1	5	2	7	21	9	14	7	13	2	8
+bru0066	BCCN 82-4	B.suis biovar 2	hare	Le Flèche2006	1982	15	France (88)	170	2	4	9	15	6	1	5	7	8	21	9	5	12	13	2	9
+bru0068	BCCN 82-19	B.suis biovar 2	hare	Le Flèche2006	1982	10	Poland	171	2	4	8	15	5	1	5	2	6	21	9	10	9	8	2	5
+bru0069	BCCN 84-22	B.suis biovar 2	hare	Le Flèche2006	1984	17	France (05)	172	2	4	8	15	5	1	5	7	7	21	9	18	7	3	2	7
+bru0070	BCCN 87-11	B.suis biovar 2	hare	Le Flèche2006	1987	9	France (57)	173	2	4	8	15	6	1	5	2	7	21	9	6	6	23	2	12
+bru0071	BCCN 87-17	B.suis biovar 2	hare	Le Flèche2006	1987	9	France (84)	174	2	4	8	15	6	1	5	2	5	21	9	15	12	5	2	5
+bru0072	BCCN 88-57	B.suis biovar 2	hare	Le Flèche2006	1988	13	France (57)	175	2	4	8	9	6	1	5	7	7	20	9	19	8	7	2	6
+bru0074	BCCN 89-155	B.suis biovar 2	hare	Le Flèche2006	1989	9	France (57)	176	2	4	8	15	6	1	5	2	6	21	9	16	7	11	2	6
+bru0075	BCCN 93-20	B.suis biovar 2	hare	Le Flèche2006	1993	9	France (68)	177	2	4	8	15	6	1	5	2	6	19	9	14	8	10	2	5
+bru0076	BCCN 93-24	B.suis biovar 2	hare	Le Flèche2006	1993	9	France (03)	178	2	4	8	15	6	1	5	2	5	21	9	16	11	11	2	8
+bru0078	BCCN 93-63	B.suis biovar 2	swine	Le Flèche2006	1993	7	France (76)	179	2	4	8	15	6	1	5	6	6	21	9	15	9	13	2	7
+bru0081	BCCN 96-140	B.suis biovar 2	swine	Le Flèche2006	1996	16	France (16)	181	2	5	8	15	5	1	5	7	6	20	9	20	7	15	2	5
+bru0083	BCCN 97-108	B.suis biovar 2	swine	Le Flèche2006	1997	16	France (24)	182	2	5	8	15	5	1	5	7	6	20	9	22	7	13	2	5
+bru0084	BCCN 98-9	B.suis biovar 2	boar	Le Flèche2006	1998	16	France (87)	183	2	5	8	15	5	1	5	7	6	20	9	8	7	9	2	5
+bru0086	BCCN 98-95	B.suis biovar 2	swine	Le Flèche2006	1998	7	France (87)	184	2	4	8	15	6	1	5	6	6	21	9	6	9	16	2	10
+bru0087	BCCN 00-8	B.suis biovar 2	cattle	Le Flèche2006	2000	8	France (63)	185	2	4	8	15	6	1	5	7	6	21	9	4	7	3	2	7
+bru0088	BCCN 00-23	B.suis biovar 2	swine	Le Flèche2006	2000	7	France (87)	186	2	4	8	15	6	1	5	6	6	21	9	4	6	24	2	6
+bru0089	BCCN 00-24	B.suis biovar 2	boar	Le Flèche2006	2000	7	France (87)	187	2	4	8	15	6	1	5	6	4	21	9	8	4	8	2	8
+bru0090	BCCN 01-25	B.suis biovar 2	boar	Le Flèche2006	2001	16	Germany	188	2	5	8	15	5	1	5	7	5	20	9	4	12	18	2	5
+bru0092	BCCN 01-30	B.suis biovar 2	swine	Le Flèche2006	2001	19	Portugal	189	2	5	8	9	5	1	5	5	6	19	9	8	5	15	2	6
+bru0095	BCCN 01-34	B.suis biovar 2	swine	Le Flèche2006	2001	18	Spain (Badajoz)	190	2	5	8	9	5	1	5	4	6	19	9	7	7	11	2	7
+bru0096	BCCN 01-36	B.suis biovar 2	swine	Le Flèche2006	2001	18	Spain (Huelva)	191	2	5	8	9	5	1	5	4	6	19	9	20	9	13	2	5
+bru0099	BCCN 01-41	B.suis biovar 2	swine	Le Flèche2006	2001	19	Spain (Badajoz)	193	2	5	8	9	5	1	5	5	6	19	9	13	5	19	2	6
+bru0100	BCCN 01-43	B.suis biovar 2	swine	Le Flèche2006	2001	19	Spain (Badajoz-Caceres)	194	2	5	8	9	5	1	5	5	6	19	9	14	5	18	2	8
+bru0101	BCCN 01-45	B.suis biovar 2	swine	Le Flèche2006	2001	19	Spain (Salamanca)	195	2	5	8	9	5	1	5	5	6	19	9	14	5	7	2	6
+bru0102	BCCN 01-47	B.suis biovar 2	swine	Le Flèche2006	2001	19	Spain (Toledo)	196	2	5	8	9	5	1	5	5	5	19	9	12	9	7	2	7
+bru0104	BCCN 01-51	B.suis biovar 2	swine	Le Flèche2006	2001	19	Spain (Badajoz)	197	2	5	8	9	5	1	5	5	6	19	9	9	5	14	2	7
+bru0105	BCCN 02-18	B.suis biovar 2	hare	Le Flèche2006	2002	9	France (49)	198	2	4	8	15	6	1	5	2	6	21	9	7	5	16	2	6
+bru0106	BCCN 02-20	B.suis biovar 2	swine	Le Flèche2006	2002	7	France (79)	199	2	4	8	15	6	1	5	6	6	21	9	13	13	6	2	11
+bru0107	BCCN 02-21	B.suis biovar 2	swine	Le Flèche2006	2002	11	France (23)	200	2	4	8	15	4	1	5	6	4	21	9	15	4	7	2	7
+bru0108	BCCN 02-23	B.suis biovar 2	boar	Le Flèche2006	2002	7	France (73)	201	2	4	8	15	6	1	5	6	6	21	9	12	6	8	2	8
+bru0110	BCCN 02-36	B.suis biovar 2	swine	Le Flèche2006	2002	7	France (72)	202	2	4	8	15	6	1	5	6	6	21	9	11	12	7	2	10
+bru0112	BCCN 02-47	B.suis biovar 2	hare	Le Flèche2006	2002	10	France (42)	203	2	4	8	15	5	1	5	2	5	21	9	11	11	14	2	5
+bru0113	BCCN 02-48	B.suis biovar 2	hare	Le Flèche2006	2002	9	France (49)	204	2	4	8	15	6	1	5	2	6	21	9	9	5	8	2	6
+bru0114	BCCN 02-50	B.suis biovar 2	swine	Le Flèche2006	2002	7	France (72)	205	2	4	8	15	6	1	5	6	6	21	9	9	10	11	2	9
+bru0116	BCCN 03-2	B.suis biovar 2	hare	Le Flèche2006	2003	10	France (38)	206	2	4	8	15	5	1	5	2	6	21	9	15	4	17	2	5
+bru0117	BCCN 03-3	B.suis biovar 2	boar	Le Flèche2006	2003	16	France (37)	207	2	5	8	15	5	1	5	7	6	20	9	15	8	17	2	5
+bru0118	BCCN 03-5	B.suis biovar 2	swine	Le Flèche2006	2003	12	France (03)	208	2	4	8	15	7	1	5	6	6	21	9	6	4	18	2	5
+bru0119	BCCN 03-6	B.suis biovar 2	boar	Le Flèche2006	2003	7	France (73)	209	2	4	8	15	6	1	5	6	6	21	9	12	4	14	2	9
+bru0120	BCCN 03-11	B.suis biovar 2	boar	Le Flèche2006	2003	7	France (35)	210	2	4	8	15	6	1	5	6	6	21	9	9	8	7	2	10
+bru0122	BCCN 02-42	B.suis biovar 2	swine	Le Flèche2006	2002	16	Croatia	211	2	5	8	15	5	1	5	7	4	21	9	10	5	3	2	8
+bru0125	BCCN 96-36	B.suis	swine	Le Flèche2006	1996	6	Argentina	212	2	3	6	10	4	1	5	2	4	19	9	4	5	5	5	3
+bru0128	BCCN V3	B.melitensis biovar 1	human	Al Dahouk2007	UNK	47	Mexico	213	3	4	2	13	4	2	3	3	7	18	6	2	5	6	8	4
+bru0129	BCCN 87-92	B.melitensis biovar 1	human	Al Dahouk2007	1997	56	United States	214	2	4	2	12	4	2	3	3	9	18	7	2	4	3	3	5
+bru0131	BCCN 96-22	B.melitensis biovar 1	sheep	Le Flèche2006	1996	47	Israel	215	3	4	2	13	4	2	3	3	8	18	6	2	4	6	3	6
+bru0139	BCCN 03-14	B.melitensis biovar 1	human	Al Dahouk2007	2003	52	France (91) presumably Portugal	216	3	4	3	14	5	2	3	3	6	18	5	2	4	6	5	4
+bru0140	BCCN 75-478	B.melitensis biovar 1	sheep	Le Flèche2006	1975	43	Israel	217	1	5	3	13	3	2	3	2	4	20	8	5	5	3	5	4
+bru0141	BCCN 90-61	B.melitensis biovar 1	unknown	Le Flèche2006	1990	47	South Africa	218	3	4	2	13	4	2	3	3	8	18	6	2	4	7	4	6
+bru0142	BCCN 92-70	B.melitensis biovar 1	human	Al Dahouk2007	1992	63	France (75) presumably Iran	219	1	5	3	13	2	3	3	2	4	20	8	4	4	3	4	6
+bru0143	BCCN 93-2	B.melitensis biovar 1	human	Al Dahouk2007	1993	60	France (86)	220	1	5	3	13	3	2	2	2	6	5	8	7	4	3	5	6
+bru0145	BCCN 94-37	B.melitensis biovar 1	human	Al Dahouk2007	1994	43	France (75) presumably Algeria	221	1	5	3	13	3	2	3	2	4	20	8	5	4	8	6	9
+bru0146	BCCN 96-137b	B.melitensis biovar 1	human	Al Dahouk2007	1996	54	Argentina	222	3	4	2	13	5	2	3	3	9	18	6	2	3	8	9	6
+bru0147	BCCN 74-235	B.melitensis biovar 2	human	Al Dahouk2007	1974	51	France (69)	223	3	5	3	13	1	1	3	3	7	21	8	9	5	6	6	3
+bru0148	BCCN 77-6	B.melitensis biovar 2	goat	Le Flèche2006	1977	51	France (06)	224	3	5	3	13	1	1	3	3	7	21	8	5	5	12	4	3
+bru0149	BCCN 80-39	B.melitensis biovar 2	sheep	Le Flèche2006	1980	51	France (04)	225	3	5	3	13	1	1	3	3	7	23	8	7	5	14	7	3
+bru0151	BCCN 82-59	B.melitensis biovar 2	human	Al Dahouk2007	1982	55	Spain (Madrid)	226	3	4	3	13	4	2	3	3	6	18	5	2	5	4	4	6
+bru0152	BCCN 84-3	B.melitensis biovar 2	dog	Le Flèche2006	1984	46	Costa Rica	227	2	5	3	12	3	1	3	2	5	18	9	9	6	7	10	4
+bru0153	BCCN 92-87	B.melitensis biovar 2	sheep	Le Flèche2006	1992	43	Spain (Aragon)	228	1	5	3	13	3	2	3	2	5	5	8	4	4	3	4	5
+bru0154	BCCN 95-33	B.melitensis biovar 2	sheep	Le Flèche2006	1995	51	Italia (Sicilia)	229	3	5	3	13	1	1	3	3	7	21	8	5	5	7	7	3
+bru0155	BCCN 96-3	B.melitensis biovar 2	human	Al Dahouk2007	1996	60	France (65) presumably Middle-East	230	1	5	3	13	3	2	2	2	6	5	8	4	4	3	6	6
+bru0157	BCCN 96-30	B.melitensis biovar 2	human	Al Dahouk2007	1996	43	Israel	231	1	5	3	13	3	2	3	2	4	20	8	4	5	3	6	5
+bru0159	BCCN 83-198	B.melitensis biovar 3	human	Al Dahouk2007	1983	42	Spain	232	1	5	3	13	2	2	3	2	4	20	8	5	7	3	6	5
+bru0160	BCCN 91-243	B.melitensis biovar 3	sheep	Le Flèche2006	1991	51	Tunisia	233	3	5	3	13	1	1	3	3	7	22	8	6	2	9	4	3
+bru0161	BCCN 92-42	B.melitensis biovar 3	human	Al Dahouk2007	1992	51	Tunisia	234	3	5	3	13	1	1	3	3	5	21	8	6	4	7	3	3
+bru0163	BCCN 95-30	B.melitensis biovar 3	sheep	Le Flèche2006	1995	49	Italia (Sicilia)	235	3	6	3	14	1	1	3	3	7	22	8	7	4	6	6	3
+bru0164	BCCN 95-36	B.melitensis biovar 3	goat	Le Flèche2006	1995	49	Italia (Sicilia)	236	3	6	3	14	1	1	3	3	8	22	8	5	4	8	7	3
+bru0165	BCCN 96-31	B.melitensis biovar 3	sheep	Le Flèche2006	1996	44	Israel	237	1	4	3	13	3	2	3	2	4	20	8	5	4	3	4	5
+bru0166	BCCN 96-32	B.melitensis biovar 3	sheep	Le Flèche2006	1996	44	Israel	238	1	4	3	13	3	2	3	2	4	20	8	6	4	3	4	5
+bru0167	BCCN 96-56	B.melitensis biovar 3	sheep	Le Flèche2006	1996	49	Italia (Sicilia)	239	3	6	3	14	1	1	3	3	7	21	8	7	6	8	4	3
+bru0169	BCCN 96-97	B.melitensis biovar 3	cattle	Le Flèche2006	1996	50	Italia (Sicilia)	240	3	5	3	14	1	1	3	3	7	21	8	7	4	9	8	3
+bru0170	BCCN 96-142	B.melitensis biovar 3	human	Al Dahouk2007	1996	42	France (69) presumably Portugal	241	1	5	3	13	2	2	3	2	4	20	8	5	7	3	4	5
+bru0172	BCCN 02-3	B.melitensis biovar 3	human	Al Dahouk2007	2002	51	Tunisia	243	3	5	3	13	1	1	3	3	9	21	8	7	4	3	10	3
+bru0173	BCCN 02-4	B.melitensis biovar 3	human	Al Dahouk2007	2002	51	Tunisia	244	3	5	3	13	1	1	3	3	7	21	8	9	4	9	6	3
+bru0175	BCCN 02-5	B.melitensis biovar 3	human	Al Dahouk2007	2002	51	Tunisia	245	3	5	3	13	1	1	3	3	9	21	8	5	5	3	9	3
+bru0176	BCCN 02-6	B.melitensis biovar 3	human	Al Dahouk2007	2002	51	Tunisia	246	3	5	3	13	1	1	3	3	9	21	8	5	5	3	10	3
+bru0177	BCCN 03-1	B.melitensis biovar 3	human	Al Dahouk2007	2003	42	France (75)	247	1	5	3	13	2	2	3	2	4	20	8	5	7	3	5	5
+bru0178	BCCN 03-13	B.melitensis biovar 3	human	Al Dahouk2007	2003	51	France (06)	248	3	5	3	13	1	1	3	3	7	22	8	7	2	13	4	3
+bru0179	BCCN 90-112	B.melitensis biovar 3	cattle	Le Flèche2006	1990	43	Greece	249	1	5	3	13	3	2	3	2	4	20	8	6	4	6	4	3
+bru0181	BCCN 92-80	B.melitensis biovar 3	sheep	Le Flèche2006	1992	42	Spain (Basque Country)	250	1	5	3	13	2	2	3	2	4	20	8	4	7	3	4	6
+bru0182	BCCN 92-106a	B.melitensis biovar 3	unknown	Le Flèche2006	1992	51	Algeria	251	3	5	3	13	1	1	3	3	7	22	8	6	2	7	4	3
+bru0183	BCCN 94-16	B.melitensis biovar 3	cattle	Le Flèche2006	1994	51	France (12)	252	3	5	3	13	1	1	3	3	7	21	8	5	3	7	4	3
+bru0184	BCCN 96-148	B.melitensis biovar 3	human	Al Dahouk2007	1996	51	Algeria	253	3	5	3	13	1	1	3	3	7	22	8	8	2	9	4	3
+bru0185	BCCN R19	B.melitensis rough	goat	Le Flèche2006	UNK	48	Malta	254	3	4	3	13	5	2	3	3	6	18	5	2	4	8	6	5
+bru0187	BCCN 92-117	B.melitensis rough	sheep	Le Flèche2006	1992	51	France (12)	255	3	5	3	13	1	1	3	3	7	21	8	6	4	9	5	3
+bru0188	BCCN 94-62	B.melitensis rough	human	Al Dahouk2007	1994	43	France (47)	256	1	5	3	13	3	2	3	2	5	5	8	3	4	3	5	5
+bru0189	BCCN 96-144	B.melitensis rough	human	Al Dahouk2007	1996	51	Algeria	257	3	5	3	13	1	1	3	3	8	22	8	7	2	7	4	3
+bru0190	BCCN 96-147	B.melitensis rough	human	Al Dahouk2007	1996	51	Algeria	258	3	5	3	13	1	1	3	3	9	21	8	6	6	3	5	3
+bru0191	BCCN 94-49	B.melitensis rough	sheep	Le Flèche2006	1994	42	India	259	1	5	3	13	2	2	3	2	4	20	8	5	4	3	6	4
+bru0193	BCCN 92-73	B.abortus biovar 1	cattle	Le Flèche2006	1992	33	France (87)	260	3	5	4	12	2	2	3	3	6	21	8	5	6	3	4	4
+bru0195	BCCN 95-11	B.abortus biovar 1	cattle	Le Flèche2006	1995	33	France (63)	261	3	5	4	12	2	2	3	3	6	21	8	5	7	3	4	4
+bru0196	BCCN 95-19	B.abortus biovar 1	chamois	Le Flèche2006	1995	28	France (73)	262	4	5	4	12	2	2	3	3	6	21	8	4	4	3	3	4
+bru0197	BCCN 95-51	B.abortus biovar 1	cattle	Le Flèche2006	1995	28	Argentina	263	4	5	4	12	2	2	3	3	6	21	8	3	4	3	6	5
+bru0199	BCCN 95-55	B.abortus biovar 1	cattle	Le Flèche2006	1995	28	Costa Rica	264	4	5	4	12	2	2	3	3	6	21	8	3	4	3	3	5
+bru0200	BCCN 96-62	B.abortus biovar 1	cattle	Le Flèche2006	1996	28	Italia (Sicilia)	265	4	5	4	12	2	2	3	3	4	21	8	4	4	3	3	4
+bru0202	BCCN V1	B.abortus biovar 1	cattle	Le Flèche2006	UNK	28	United States	266	4	5	4	12	2	2	3	3	6	21	8	3	5	3	3	5
+bru0205	BCCN 91-90	B.abortus biovar 3	cattle	Le Flèche2006	1991	36	Greece	267	4	5	3	12	2	2	3	1	6	21	8	4	5	4	3	3
+bru0206	BCCN 92-25	B.abortus biovar 3	cattle	Le Flèche2006	1992	36	France (85)	268	4	5	3	12	2	2	3	1	6	21	8	4	5	5	4	3
+bru0207	BCCN 93-15	B.abortus biovar 3	cattle	Le Flèche2006	1993	36	Spain (Pamplona)	269	4	5	3	12	2	2	3	1	6	21	8	4	5	6	4	3
+bru0208	BCCN 93-26	B.abortus biovar 3	dromedary	Le Flèche2006	1993	34	Sudan	270	3	5	4	11	2	2	3	3	6	20	8	6	8	3	7	7
+bru0209	BCCN 94-18	B.abortus biovar 3	cattle	Le Flèche2006	1994	36	France (87)	271	4	5	3	12	2	2	3	1	6	21	8	4	5	7	3	3
+bru0211	BCCN 94-19	B.abortus biovar 3	cattle	Le Flèche2006	1994	36	France (87)	272	4	5	3	12	2	2	3	1	6	22	8	4	5	7	3	3
+bru0212	BCCN 95-7	B.abortus biovar 3	cattle	Le Flèche2006	1995	36	France (87)	273	4	5	3	12	2	2	3	1	6	22	8	4	5	5	3	3
+bru0213	BCCN 95-34	B.abortus biovar 3	cattle	Le Flèche2006	1995	36	Italia (Sicilia)	274	4	5	3	12	2	2	3	1	6	22	8	3	5	8	3	3
+bru0214	BCCN 95-31	B.abortus biovar 4	cattle	Le Flèche2006	1995	28	Italia (Sicilia)	275	4	5	4	12	2	2	3	3	6	22	8	4	7	3	4	5
+bru0215	BCCN 80-133	B.abortus biovar 9	dog	Le Flèche2006	1980	39	Belgium	276	3	5	3	12	2	2	2	3	7	22	8	4	5	3	4	3
+bru0217	BCCN 87-46	B.abortus biovar 9	cattle	Le Flèche2006	1987	39	France (65)	277	3	5	3	12	2	2	2	3	7	21	8	4	6	3	3	3
+bru0218	BCCN 99-98	B.abortus biovar 7	cattle	Le Flèche2006	1999	36	Mongolia	278	4	5	3	12	2	2	3	1	6	21	8	5	6	4	3	3
+bru0219	BCCN V5	B.abortus	cattle	Le Flèche2006	UNK	27	United States	279	4	5	4	12	2	3	3	3	6	21	8	3	7	3	3	5
+bru0220	BCCN R22	B.ovis	sheep	Le Flèche2006	UNK	1	United States	280	3	5	2	10	1	1	5	2	3	4	9	9	9	9	14	2
+bru0223	BCCN 98-46	B.ovis	sheep	Le Flèche2006	1998	1	Argentina	282	3	5	2	10	1	1	5	2	3	4	9	6	12	12	14	2
+bru0240	BfR 1	B.melitensis biovar 2	human	Al Dahouk2007	2002	43	Turkey	283	1	5	3	13	3	2	3	2	4	20	8	5	5	3	4	4
+bru0241	BfR 2	B.melitensis biovar 2	human	Al Dahouk2007	2002	42	Turkey	284	1	5	3	13	2	2	3	2	4	20	8	7	6	3	5	5
+bru0242	BfR 3	B.melitensis biovar 2	human	Al Dahouk2007	2002	43	Turkey	285	1	5	3	13	3	2	3	2	4	20	8	6	4	3	5	4
+bru0243	BfR 4	B.melitensis biovar 2	human	Al Dahouk2007	2002	42	Turkey	286	1	5	3	13	2	2	3	2	4	20	8	6	5	3	8	6
+bru0244	BfR 5	B.melitensis biovar 2	human	Al Dahouk2007	2002	42	Turkey	287	1	5	3	13	2	2	3	2	4	20	8	5	9	3	6	5
+bru0245	BfR 6	B.melitensis biovar 2	human	Al Dahouk2007	2002	43	Turkey	288	1	5	3	13	3	2	3	2	5	18	8	4	4	3	5	6
+bru0247	BfR 7	B.melitensis biovar 2	human	Al Dahouk2007	2002	42	Turkey	289	1	5	3	13	2	2	3	2	4	20	8	4	8	3	8	5
+bru0248	BfR 8	B.melitensis biovar 1	human	Al Dahouk2007	2002	43	Turkey	290	1	5	3	13	3	2	3	2	4	20	8	3	4	3	5	5
+bru0250	BfR 10	B.melitensis biovar 2	human	Al Dahouk2007	2002	43	Turkey	291	1	5	3	13	3	2	3	2	4	20	8	6	5	3	5	5
+bru0251	BfR 11	B.melitensis biovar 1	human	Al Dahouk2007	2002	43	Turkey	292	1	5	3	13	3	2	3	2	4	20	8	6	3	3	5	4
+bru0252	BfR 12	B.melitensis biovar 2	human	Al Dahouk2007	2002	43	Greece	293	1	5	3	13	3	2	3	2	5	20	8	5	4	3	4	4
+bru0254	BfR 13	B.melitensis biovar 2	human	Al Dahouk2007	2002	61	Turkey	294	1	5	3	14	3	2	3	2	5	18	8	6	4	3	5	6
+bru0256	BfR 15	B.melitensis biovar 1	human	Al Dahouk2007	2002	43	Turkey	295	1	5	3	13	3	2	3	2	4	20	8	5	4	3	4	5
+bru0259	BfR I	B.melitensis biovar 1	human	Al Dahouk2007	2003	58	Turkey	297	1	5	3	13	3	1	3	2	4	20	8	4	4	3	5	6
+bru0261	BfR II	B.melitensis biovar 1	human	Al Dahouk2007	2003	42	?	298	1	5	3	13	2	2	3	2	4	20	8	8	4	3	5	7
+bru0262	BfR III	B.melitensis biovar 2	human	Al Dahouk2007	2003	43	Turkey	299	1	5	3	13	3	2	3	2	4	20	8	5	5	3	7	5
+bru0263	BfR IV	B.melitensis biovar 2	human	Al Dahouk2007	2003	43	Lebanon	300	1	5	3	13	3	2	3	2	4	20	8	4	4	3	6	4
+bru0266	BfR VII	B.melitensis biovar 2	human	Al Dahouk2007	2003	43	Syria	301	1	5	3	13	3	2	3	2	4	20	8	4	4	3	4	4
+bru0269	BfR IX	B.melitensis biovar 2	human	Al Dahouk2007	2003	43	Turkey	302	1	5	3	13	3	2	3	2	4	20	8	4	4	3	5	5
+bru0270	BfR X	B.melitensis biovar 2	human	Al Dahouk2007	2003	43	Bosnia	303	1	5	3	13	3	2	3	2	4	20	8	7	4	3	7	8
+bru0272	BfR XII	B.melitensis biovar 2	human	Al Dahouk2007	2003	43	Turkey	304	1	5	3	13	3	2	3	2	4	20	8	5	4	3	5	4
+bru0274	BfR XIV	B.melitensis biovar 2	human	Al Dahouk2007	2003	43	?	305	1	5	3	13	3	2	3	2	4	20	8	5	4	7	6	3
+bru0301	BfR 1	B.melitensis biovar 2	human	Al Dahouk2007	1999	51	Switzerland (Bern)	306	3	5	3	13	1	1	3	3	8	21	8	5	7	8	5	3
+bru0302	BfR 2	B.melitensis biovar 2	human	Al Dahouk2007	2000	51	Switzerland (Bern)	307	3	5	3	13	1	1	3	3	7	21	8	4	5	7	6	3
+bru0304	BfR 4	B.melitensis biovar 2	human	Al Dahouk2007	2000	42	Switzerland (Bern)	308	1	5	3	13	2	2	3	2	4	20	8	5	7	3	6	6
+bru0305	BfR 5	B.melitensis biovar 2	human	Al Dahouk2007	2004	43	Germany (Düsseldorf)	309	1	5	3	13	3	2	3	2	4	20	8	6	4	6	5	3
+bru0308	BfR 7	B.abortus biovar 6	cattle 	Le Flèche2006	UNK	34	Tchad	310	3	5	4	11	2	2	3	3	6	20	8	6	4	3	8	4
+bru0309	BfR 8	B.abortus biovar 6	cattle 	Le Flèche2006	UNK	35	Tchad	311	3	5	4	11	2	1	3	3	6	20	8	5	4	3	6	5
+bru0310	BfR 9	B.suis biovar 2	wild boar	Le Flèche2006	2002	7	Germany (Halle)	312	2	4	8	15	6	1	5	6	7	21	9	13	7	20	2	10
+bru0314	BfR 12	B.melitensis biovar 1	human	Al Dahouk2007	1999	62	Turkey	313	1	3	3	13	2	2	3	2	4	20	8	7	5	3	6	7
+bru0315	BfR 13	B.melitensis biovar 1	human	Al Dahouk2007	1999	43	Turkey	314	1	5	3	13	3	2	3	2	4	20	8	4	4	3	5	6
+bru0316	BfR 14	B.melitensis biovar 1	human	Al Dahouk2007	2000	59	Germany (München, lab)	315	1	5	2	13	3	2	3	2	4	20	8	5	3	6	5	5
+bru0319	BfR 16	B.melitensis biovar 1	human	Al Dahouk2007	2001	43	Germany (Stuttgart, lab)	316	1	5	3	13	3	2	3	2	4	20	8	6	4	3	7	5
+bru0320	BfR 17	B.melitensis biovar 1	human	Al Dahouk2007	2000	53	Germany (Berlin)	317	3	4	3	13	5	3	3	3	4	18	5	2	5	3	4	5
+bru0321	BfR 18	B.melitensis biovar 1	human	Al Dahouk2007	2000	57	Turkey	318	1	5	3	13	3	3	3	2	4	20	8	5	4	3	7	8
+bru0322	BfR 19	B.melitensis biovar 1	human	Al Dahouk2007	1995	43	Germany (Mannheim)	319	1	5	3	13	3	2	3	2	4	20	8	6	4	3	6	4
+bru0323	BfR 20	B.melitensis biovar 1	human	Al Dahouk2007	1998	65	Pakistan	320	3	5	3	13	3	2	3	3	6	20	8	7	4	5	5	3
+bru0327	BfR 23	B.melitensis biovar 1	goat	Le Flèche2006	UNK	41	United Arab Emirates	321	3	5	3	12	4	2	3	5	7	18	8	5	4	7	6	5
+bru0329	BfR 25	B.melitensis biovar 1	goat	Le Flèche2006	UNK	41	United Arab Emirates	322	3	5	3	12	4	2	3	5	7	18	8	4	4	6	6	5
+bru0332	BfR 27	B.melitensis biovar 1	human	Al Dahouk2007	2002	66	?	323	2	5	3	13	4	2	3	4	7	18	8	5	4	8	7	4
+bru0333	BfR 28	B.melitensis biovar 1	human	Al Dahouk2007	2000	60	Switzerland (Bern)	324	1	5	3	13	3	2	2	2	6	5	8	4	4	3	6	5
+bru0334	BfR 29	B.melitensis biovar 2	human	Al Dahouk2007	1999	42	?	325	1	5	3	13	2	2	3	2	4	20	8	6	9	3	6	5
+bru0335	BfR 30	B.melitensis biovar 2	human	Al Dahouk2007	1999	42	Turkey	326	1	5	3	13	2	2	3	2	4	20	8	5	6	3	6	7
+bru0337	BfR 31	B.melitensis biovar 2	human	Al Dahouk2007	2001	51	Germany (München)	327	3	5	3	13	1	1	3	3	7	21	8	8	5	8	4	3
+bru0339	BfR 33	B.melitensis biovar 2	human	Al Dahouk2007	2001	43	Germany (Ulm)	328	1	5	3	13	3	2	3	2	4	20	8	3	5	3	5	5
+bru0340	BfR 34	B.melitensis biovar 2	human	Al Dahouk2007	2000	43	Turkey	329	1	5	3	13	3	2	3	2	4	20	8	5	4	3	6	4
+bru0341	BfR 35	B.melitensis biovar 2	human	Al Dahouk2007	2000	51	Germany (München)	330	3	5	3	13	1	1	3	3	7	21	8	5	5	9	7	3
+bru0343	BfR 36	B.melitensis biovar 2	human	Al Dahouk2007	2000	43	Germany (Berlin)	331	1	5	3	13	3	2	3	2	5	18	8	4	4	3	5	4
+bru0344	BfR 37	B.melitensis biovar 2	human	Al Dahouk2007	1997	42	Turkey	332	1	5	3	13	2	2	3	2	4	21	8	8	7	3	3	5
+bru0345	BfR 38	B.melitensis biovar 3	human	Al Dahouk2007	1996	42	Germany (Berlin)	333	1	5	3	13	2	2	3	2	4	21	8	7	6	3	4	5
+bru0346	BfR 39	B.melitensis biovar 2	human	Al Dahouk2007	2002	42	Portugal	334	1	5	3	13	2	2	3	2	4	21	8	7	7	3	4	5
+bru0347	BfR 40	B.melitensis biovar 2	human	Al Dahouk2007	2002	43	Germany (München)	335	1	5	3	13	3	2	3	2	4	21	8	5	4	3	4	5
+bru0350	BfR 42	B.melitensis biovar 2	human	Al Dahouk2007	2002	43	?	336	1	5	3	13	3	2	3	2	4	21	8	5	4	3	6	4
+bru0351	BfR 43	B.melitensis biovar 2	unknown	Le Flèche2006	1972	43	?	337	1	5	3	13	3	2	3	2	5	5	8	3	4	3	7	5
+bru0352	BfR 44	B.melitensis biovar 2	unknown	Le Flèche2006	1972	43	?	338	1	5	3	13	3	2	3	2	5	5	8	3	4	3	6	5
+bru0353	BfR 45	B.melitensis biovar 2	human	Al Dahouk2007	1999	43	?	339	1	5	3	13	3	2	3	2	4	21	8	2	4	3	4	4
+bru0355	BfR 46	B.melitensis biovar 2	unknown	Le Flèche2006	1999	43	Germany (Bonn)	340	1	5	3	13	3	2	3	2	4	20	8	6	4	4	7	3
+bru0356	BfR 47	B.melitensis biovar 2	human	Al Dahouk2007	1999	43	Turkey	341	1	5	3	13	3	2	3	2	4	21	8	6	4	4	7	3
+bru0359	BfR 50	B.melitensis biovar 2	sheep	Le Flèche2006	1990	43	Syria (Aleppo)	342	1	5	3	13	3	2	3	2	4	21	8	8	4	8	7	3
+bru0361	BfR 51	B.melitensis biovar 2	sheep	Le Flèche2006	1990	43	Syria (Meskane)	343	1	5	3	13	3	2	3	2	4	21	8	4	4	3	5	4
+bru0362	BfR 52	B.melitensis biovar 2	human	Al Dahouk2007	2000	43	Switzerland (Bern)	344	1	5	3	13	3	2	3	2	4	21	8	4	5	3	5	4
+bru0363	BfR 53	B.melitensis biovar 2	human	Al Dahouk2007	2001	51	Switzerland (Bern)	345	3	5	3	13	1	1	3	3	7	22	8	5	5	7	7	3
+bru0364	BfR 54	B.melitensis biovar 2	human	Al Dahouk2007	2001	43	Switzerland (Bern)	346	1	5	3	13	3	2	3	2	4	21	8	4	5	3	6	4
+bru0367	BfR 56	B.melitensis biovar 2	human	Al Dahouk2007	2002	49	Switzerland (Bern)	347	3	6	3	14	1	1	3	3	7	21	8	6	4	7	8	3
+bru0368	BfR 57	B.melitensis biovar 2	human	Al Dahouk2007	2002	49	Switzerland (Bern)	348	3	6	3	14	1	1	3	3	7	21	8	6	4	9	10	3
+bru0369	BfR 58	B.melitensis biovar 2	human	Al Dahouk2007	2004	49	Italy	349	3	6	3	14	1	1	3	3	7	21	8	8	7	10	5	3
+bru0370	BfR 59	B.melitensis biovar 2	human	Al Dahouk2007	2004	51	Italy	350	3	5	3	13	1	1	3	3	8	21	8	6	4	10	6	3
+bru0371	BfR 60	B.melitensis biovar 3	human	Al Dahouk2007	2001	43	Turkey	351	1	5	3	13	3	2	3	2	4	20	8	5	4	6	9	3
+bru0373	BfR 61	B.melitensis biovar 3	human	Al Dahouk2007	2001	57	Turkey	352	1	5	3	13	3	3	3	2	4	20	8	6	4	3	6	4
+bru0374	BfR 62	B.melitensis biovar 3	human	Al Dahouk2007	2001	43	Irak	353	1	5	3	13	3	2	3	2	4	20	8	4	4	3	4	5
+bru0375	BfR 63	B.melitensis biovar 3	human	Al Dahouk2007	2001	43	Greece	354	1	5	3	13	3	2	3	2	4	20	8	6	5	3	5	4
+bru0376	BfR 64	B.melitensis biovar 3	human	Al Dahouk2007	1996	43	Turkey	355	1	5	3	13	3	2	3	2	4	20	8	5	4	3	4	4
+bru0377	BfR 65	B.melitensis biovar 3	human	Al Dahouk2007	1997	43	?	356	1	5	3	13	3	2	3	2	4	20	8	4	4	6	7	3
+bru0379	BfR 66	B.melitensis biovar 3	human	Al Dahouk2007	1997	43	Germany (Bonn)	357	1	5	3	13	3	2	3	2	4	21	8	7	4	3	5	4
+bru0380	BfR 67	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	Turkey	358	1	5	3	13	3	2	3	2	4	21	8	5	5	3	5	4
+bru0381	BfR 68	B.melitensis biovar 3	human	Al Dahouk2007	1999	42	Germany (Urlaub, Tyrol)	359	1	5	3	13	2	2	3	2	3	21	8	4	4	3	7	6
+bru0383	BfR 70	B.melitensis biovar 3	human	Al Dahouk2007	1999	49	Italy	360	3	6	3	14	1	1	3	3	7	21	8	6	6	7	5	3
+bru0385	BfR 71	B.melitensis biovar 3	human	Al Dahouk2007	2000	43	Greece	361	1	5	3	13	3	2	3	2	4	21	8	9	4	3	7	6
+bru0386	BfR 72	B.melitensis biovar 3	human	Al Dahouk2007	1999	43	Turkey	362	1	5	3	13	3	2	3	2	4	21	8	5	4	5	7	3
+bru0387	BfR 73	B.melitensis biovar 3	human	Al Dahouk2007	2000	42	Turkey	363	1	5	3	13	2	2	3	2	4	21	8	5	6	3	7	6
+bru0388	BfR 74	B.melitensis biovar 3	human	Al Dahouk2007	2000	49	Italy	364	3	6	3	14	1	1	3	3	7	22	8	4	6	5	6	3
+bru0389	BfR 75	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	Turkey	365	1	5	3	13	3	2	3	2	4	21	8	6	4	3	6	4
+bru0392	BfR 77	B.melitensis biovar 3	human	Al Dahouk2007	1998	42	Spain	366	1	5	3	13	2	2	3	2	4	21	8	5	7	3	6	5
+bru0394	BfR 79	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	Germany (Heidelberg)	367	1	5	3	13	3	2	3	2	4	21	8	4	4	3	6	4
+bru0395	BfR 80	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	Turkey	368	1	5	3	13	3	2	3	2	4	21	8	5	4	3	4	4
+bru0397	BfR 81	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	?	369	1	5	3	13	3	2	3	2	5	18	8	4	4	3	6	6
+bru0398	BfR 82	B.melitensis biovar 3	human	Al Dahouk2007	1999	42	Kazakhstan	370	1	5	3	13	2	2	3	2	4	20	8	4	4	3	6	5
+bru0399	BfR 83	B.melitensis biovar 3	human	Al Dahouk2007	1996	51	Italy	371	3	5	3	13	1	1	3	3	7	21	8	5	6	7	8	3
+bru0400	BfR 84	B.melitensis biovar 3	human	Al Dahouk2007	1998	64	Germany (Würzburg)	372	1	5	3	12	3	2	3	2	5	20	8	7	4	3	7	5
+bru0401	BfR 85	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	Turkey	373	1	5	3	13	3	2	3	2	4	20	8	5	4	6	6	3
+bru0403	BfR 86	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	Germany (Gelsenkirchen)	374	1	5	3	13	3	2	3	2	4	20	8	4	7	3	5	4
+bru0404	BfR 87	B.melitensis biovar 3	human	Al Dahouk2007	1998	43	Germany (Ulm)	375	1	5	3	13	3	2	3	2	4	20	8	6	4	8	6	3
+bru0405	BfR 88	B.melitensis biovar 3	human	Al Dahouk2007	1998	42	Germany (Leipzig)	376	1	5	3	13	2	2	3	2	4	20	8	8	7	3	4	5
+bru0407	BfR 91	B.abortus biovar 1	cattle	Le Flèche2006	1996	27	Switzerland (Bern)	377	4	5	4	12	2	3	3	3	6	21	8	3	4	3	3	5
+bru0412	BfR 95	B.abortus biovar 1	mouse	Le Flèche2006	UNK	28	?	378	4	5	4	12	2	2	3	3	6	21	8	3	6	3	3	5
+bru0413	BfR 96	B.abortus biovar 1	cattle	Le Flèche2006	UNK	31	Zimbabwe	379	4	5	4	12	1	3	3	3	6	21	8	3	4	3	3	5
+bru0415	BfR 97	B.abortus biovar 1	cattle	Le Flèche2006	UNK	37	Zimbabwe	380	4	5	4	12	2	2	3	1	6	21	8	3	4	3	3	6
+bru0417	BfR 98	B.abortus biovar 1	unknown	Le Flèche2006	1972	28	Germany (Lagesbüttel)	381	4	5	4	12	2	2	3	3	6	21	8	5	4	3	6	4
+bru0418	BfR 99	B.abortus biovar 1	unknown	Le Flèche2006	1972	28	Switzerland (Bern)	382	4	5	4	12	2	2	3	3	6	21	8	3	5	3	4	6
+bru0419	BfR 100	B.abortus biovar 1	unknown	Le Flèche2006	1972	32	Germany (Müsterkappeln)	383	4	5	4	12	1	2	3	3	6	21	6	5	4	3	4	5
+bru0420	BfR 101	B.abortus biovar 3	cattle	Le Flèche2006	1998	36	Germany (Rostock)	384	4	5	3	12	2	2	3	1	7	21	8	4	5	6	4	3
+bru0426	BfR 106	B.abortus biovar 3	cattle	Le Flèche2006	1998	36	Germany (Frankfurt/O.)	385	4	5	3	12	2	2	3	1	7	21	8	4	6	6	4	3
+bru0427	BfR 107	B.abortus biovar 3	unknown	Le Flèche2006	1998	36	Germany (Frankfurt/O.)	386	4	5	3	12	2	2	3	1	7	21	8	4	5	7	4	3
+bru0445	BfR 123	B.abortus biovar 6	unknown	Le Flèche2006	1972	36	?	387	4	5	3	12	2	2	3	1	6	22	8	5	5	4	3	3
+bru0447	BfR 124	B.abortus biovar 6	cattle	Le Flèche2006	1993	38	Syria	388	2	5	3	12	2	2	3	1	6	22	8	4	9	6	3	3
+bru0454	BfR 130	B.canis	dog	Le Flèche2006	2001	3	Greece	389	2	3	9	11	3	1	5	2	5	20	9	6	7	8	5	3
+bru0456	BfR 132	B.canis	dog	Le Flèche2006	1976	3	?	390	2	3	9	11	3	1	5	2	6	20	9	7	5	9	7	3
+bru0459	BfR 138	B.suis biovar 2	hare	Le Flèche2006	1999	9	Germany (Nürnberg)	391	2	4	8	15	6	1	5	2	6	21	9	28	9	11	2	5
+bru0460	BfR 139	B.suis biovar 2	wild boar fetus	Le Flèche2006	2000	16	Germany (Frankfurt/O.)	392	2	5	8	15	5	1	5	7	6	20	9	17	14	11	2	6
+bru0461	BfR 140	B.suis biovar 2	wild boar	Le Flèche2006	2000	16	Germany (Halle)	393	2	5	8	15	5	1	5	7	5	21	9	6	14	20	2	6
+bru0463	BfR 142	B.suis biovar 2	hare	Le Flèche2006	1998	9	Switzerland (Bern)	394	2	4	8	15	6	1	5	2	6	21	9	20	13	9	2	5
+bru0465	BfR 143	B.suis biovar 2	boar	Le Flèche2006	2000	16	Germany (Halle)	395	2	5	8	15	5	1	5	7	4	21	9	15	14	13	2	6
+bru0466	BfR 144	B.suis biovar 2	boar	Le Flèche2006	2001	16	Germany (Halle)	396	2	5	8	15	5	1	5	7	4	21	9	14	13	13	2	6
+bru0469	BfR 147	B.suis biovar 2	swine	Le Flèche2006	2000	16	Germany (Potsdam)	397	2	5	8	15	5	1	5	7	6	20	9	16	11	22	2	6
+bru0471	BfR 148	B.suis biovar 2	hare	Le Flèche2006	UNK	14	Switzerland (Bern)	398	2	4	8	9	6	1	5	2	6	21	9	10	8	13	2	6
+bru0473	BfR 150	B.suis biovar 2	swine	Le Flèche2006	1998	9	Germany (Aulendorf)	399	2	4	8	15	6	1	5	2	6	21	9	23	12	13	2	4
+bru0474	BfR 151	B.suis biovar 2	wild boar	Le Flèche2006	2001	16	Germany (Halle)	400	2	5	8	15	5	1	5	7	4	21	9	6	14	11	2	6
+bru0475	BfR 152	B.suis biovar 2	wild boar	Le Flèche2006	2001	16	Germany (Halle)	401	2	5	8	15	5	1	5	7	4	21	9	14	14	13	2	6
+bru0477	BfR 153	B.suis biovar 2	boar	Le Flèche2006	2002	16	Germany (Bad Langensalza)	402	2	5	8	15	5	1	5	7	6	20	9	18	13	16	2	6
+bru0478	BfR 154	B.suis biovar 2	swine	Le Flèche2006	2002	20	Germany (Leipzig)	403	2	5	8	9	5	1	5	7	4	21	9	10	7	17	2	8
+bru0479	BfR 155	B.suis biovar 2	wild boar	Le Flèche2006	2002	16	Germany (Halle)	404	2	5	8	15	5	1	5	7	7	20	9	12	9	10	2	5
+bru0480	BfR 156	B.suis biovar 2	wild boar	Le Flèche2006	2002	16	Germany (Halle)	405	2	5	8	15	5	1	5	7	4	21	9	6	13	19	2	6
+bru0481	BfR 157	B.suis biovar 2	wild boar	Le Flèche2006	2001	7	Switzerland (Bern)	406	2	4	8	15	6	1	5	6	6	21	9	14	6	14	2	7
+bru0483	BfR 158	B.suis biovar 2	wild boar	Le Flèche2006	2003	16	Germany (Halle)	407	2	5	8	15	5	1	5	7	7	20	9	11	9	11	2	5
+bru0485	BfR 160	B.suis biovar 2	wild boar	Le Flèche2006	2003	16	Germany (Halle)	408	2	5	8	15	5	1	5	7	4	21	9	6	14	20	2	6
+bru0486	BfR 161	B.suis biovar 2	wild boar	Le Flèche2006	2003	16	Germany (Halle)	409	2	5	8	15	5	1	5	7	4	21	9	6	14	19	2	6
+bru0489	BfR 163	B.suis biovar 2	wild boar	Le Flèche2006	2003	16	Germany (Halle)	410	2	5	8	15	5	1	5	7	4	21	9	6	13	20	2	6
+bru0490	BfR 164	B.suis biovar 2	wild boar	Le Flèche2006	2003	16	Germany (Halle)	411	2	5	8	15	5	1	5	7	5	20	9	7	11	17	2	5
+bru0491	BfR 165	B.suis biovar 2	wild boar	Le Flèche2006	1999	16	Germany (Halle)	412	2	5	8	15	5	1	5	7	5	20	9	7	12	18	2	5
+bru0492	BfR 166	B.suis biovar 2	wild boar	Le Flèche2006	1999	16	Germany (Bad Langensalza)	413	2	5	8	15	5	1	5	7	6	20	9	9	7	8	2	8
+bru0493	BfR 167	B.suis biovar 2	wild boar	Le Flèche2006	2003	16	Germany (Halle)	414	2	5	8	15	5	1	5	7	4	21	9	6	13	21	2	6
+bru0495	BfR 168	B.suis biovar 2	wild boar	Le Flèche2006	2003	16	Germany (Halle)	415	2	5	8	15	5	1	5	7	4	21	9	15	13	14	2	6
+bru0496	BfR 169	B.suis biovar 2	wild boar	Le Flèche2006	2004	16	Germany (Halle)	416	2	5	8	15	5	1	5	7	4	21	9	6	16	20	2	6
+bru0497	BfR 170	B.suis biovar 2	wild boar	Le Flèche2006	2004	16	Germany (Halle)	417	2	5	8	15	5	1	5	7	4	21	9	5	13	20	2	6
+bru0498	BfR 171	B.suis biovar 2	wild boar	Le Flèche2006	2004	16	Germany (Halle)	418	2	5	8	15	5	1	5	7	4	21	9	15	12	13	2	6
+bru0501	BfR 173	B.ovis	sheep	Le Flèche2006	1998	1	?	419	3	5	2	10	1	1	5	2	3	4	9	10	5	12	9	2
+bru0503	BfR 175	B.ovis	sheep	Le Flèche2006	1998	1	?	420	3	5	2	10	1	1	5	2	3	4	9	6	5	16	10	2
+bru0504	BfR 176	B.ovis	sheep	Le Flèche2006	1998	1	?	421	3	5	2	10	1	1	5	2	3	4	9	9	5	6	8	2
+bru0508	BfR 179	B.ovis	sheep	Le Flèche2006	1998	1	?	422	3	5	2	10	1	1	5	2	3	4	9	9	6	12	9	2
+bru0509	BfR 180	B.ovis	sheep	Le Flèche2006	1998	1	?	423	3	5	2	10	1	1	5	2	3	4	9	6	5	17	10	2
+bru0510	BfR 181	B.ovis	sheep	Le Flèche2006	1998	1	?	424	3	5	2	10	1	1	5	2	3	4	9	9	5	5	8	2
+bru0514	BCCN 87-66	B.canis	dog	Le Flèche2006	1987	3	Canada	425	2	3	9	11	3	1	5	2	5	20	9	8	6	10	5	3
+bru0517	BCCN 96-105	B.canis	dog	Le Flèche2006	1996	3	Romania	426	2	3	9	11	3	1	5	2	5	20	9	7	6	7	7	3
+bru0520	BCCN 96-107	B.canis	dog	Le Flèche2006	1996	3	Romania	427	2	3	9	11	3	1	5	2	5	20	9	8	6	6	6	3
+bru0521	BCCN 96-121	B.canis	dog	Le Flèche2006	1996	3	?	428	2	3	9	11	3	1	5	2	5	20	9	6	5	14	8	3
+bru0522	BCCN 97-3	B.canis	dog	Le Flèche2006	1997	3	France	429	2	3	9	11	3	1	5	2	5	20	9	7	6	10	7	3
+bru0525	BCCN 3609 (BCCN R28)	B.suis biovar 4	caribou	Le Flèche2006	UNK	5	?	430	2	3	9	10	3	1	5	2	4	20	9	6	6	7	7	3
+bru0526	BCCN ELT80 (BCCN R29)	B.suis biovar 5	unknown	Le Flèche2006	UNK	22	?	431	1	2	9	17	1	2	5	6	8	21	9	7	5	9	5	6
+bru0527	BCCN 87-57	B.suis biovar 4	human	Le Flèche2006	1987	3	Canada	432	2	3	9	11	3	1	5	2	4	20	9	5	5	10	10	3
+bru0528	BCCN 87-58	B.suis biovar 4	human	Le Flèche2006	1987	3	Canada	433	2	3	9	11	3	1	5	2	4	20	9	6	9	6	10	3
+bru0529	BCCN 87-59	B.suis biovar 4	caribou	Le Flèche2006	1987	3	Canada	434	2	3	9	11	3	1	5	2	4	20	9	8	4	5	12	3
+bru0531	BCCN 87-60	B.suis biovar 4	musk ox	Le Flèche2006	1987	3	Canada	435	2	3	9	11	3	1	5	2	4	20	9	6	5	7	9	3
+bru0534	BCCN 03-27	B.suis biovar 3	horse	Le Flèche2006	2003	6	Croatia	436	2	3	6	10	4	1	5	2	4	19	9	5	6	5	5	3
+bru0537	BCCN 74-308	B.ovis	sheep	Le Flèche2006	1974	1	France (64)	437	3	5	2	10	1	1	5	2	3	4	9	11	10	10	8	2
+bru0539	BCCN 74-345	B.ovis	sheep	Le Flèche2006	1974	1	France (64)	438	3	5	2	10	1	1	5	2	3	4	9	11	10	12	8	2
+bru0540	BCCN 76-247	B.ovis	sheep	Le Flèche2006	1976	1	France (84)	439	3	5	2	10	1	1	5	2	3	4	9	8	7	14	8	2
+bru0541	BCCN 76-250	B.ovis	sheep	Le Flèche2006	1976	1	France (64)	440	3	5	2	10	1	1	5	2	3	4	9	9	4	7	15	2
+bru0543	BCCN 76-258	B.ovis	sheep	Le Flèche2006	1976	1	France (64)	441	3	5	2	10	1	1	5	2	3	4	9	9	9	8	7	2
+bru0544	BCCN 77-7	B.ovis	sheep	Le Flèche2006	1977	1	France (06)	442	3	5	2	10	1	1	5	2	3	4	9	8	6	13	9	2
+bru0545	BCCN 78-256	B.ovis	sheep	Le Flèche2006	1978	1	France (35)	443	3	5	2	10	1	1	5	2	3	4	7	7	6	10	8	2
+bru0546	BCCN 82-90	B.ovis	sheep	Le Flèche2006	1982	1	France (64)	444	3	5	2	10	1	1	5	2	3	4	9	10	7	15	9	2
+bru0547	BCCN 91-68	B.ovis	sheep	Le Flèche2006	1991	2	Spain	445	2	5	2	10	1	1	5	2	3	4	9	4	6	9	5	2
+bru0550	BCCN 04-1	B.abortus biovar 7	unknown	Le Flèche2006	2004	36	Turkey	446	4	5	3	12	2	2	3	1	6	21	8	6	7	6	3	3
+bru0651	R1	B.melitensis biovar 1	sheep	Garcia-Yoldi2007a	1986	47	Spain	447	3	4	2	13	4	2	3	3	8	18	6	2	5	6	3	6
+bru0655	R5	B.melitensis biovar 1	sheep	Garcia-Yoldi2007a	1990	47	South Africa	448	3	4	2	13	4	2	3	3	8	18	6	2	4	6	4	6
+bru0667	R15	B.melitensis biovar 1	sheep	Garcia-Yoldi2007a	1995	47	Spain	449	3	4	2	13	4	2	3	3	8	18	6	2	4	5	3	6
+bru0669	R16	B.melitensis biovar 1	sheep	Garcia-Yoldi2007a	2000	47	Spain	450	3	4	2	13	4	2	3	3	8	18	6	2	4	7	3	6
+bru0675	R22	B.melitensis biovar 1	human	Garcia-Yoldi2007a	2002	48	Spain	451	3	4	3	13	5	2	3	3	8	18	5	2	5	5	4	5
+bru0679	R26	B.melitensis biovar 1	(commercial)	Garcia-Yoldi2007a	1996	47	Spain	452	3	4	2	13	4	2	3	3	8	18	6	2	5	5	3	6
+bru0687	R32	B.melitensis biovar 1	(commercial)	Garcia-Yoldi2007a	1997	47	Spain	453	3	4	2	13	4	2	3	3	9	18	6	2	4	6	3	6
+bru0695	R1Sp	B.melitensis biovar 1	unknown	Garcia-Yoldi2007a	UNK	47	Spain	454	3	4	2	13	4	2	3	3	5	18	6	2	6	7	3	6
+bru0704	S-13	B.suis biovar 2	swine	Garcia-Yoldi2007b	1998	18	Spain-Extremadura8/98	458	2	5	8	9	5	1	5	4	6	19	9	7	7	12	2	7
+bru0705	S-21	B.suis biovar 2	swine	Garcia-Yoldi2007b	1999	18	Spain-Huelva 2/99	459	2	5	8	9	5	1	5	4	6	19	9	2	8	13	2	5
+bru0708	S-25	B.suis biovar 2	swine	Garcia-Yoldi2007b	2000	19	Spain-Badajoz	462	2	5	8	9	5	1	5	5	6	19	9	2	5	19	2	6
+bru0710	S-28	B.suis biovar 2	swine	Garcia-Yoldi2007b	2000	19	Spain-Badajoz/caceres	463	2	5	8	9	5	1	5	5	6	19	9	2	5	18	2	8
+bru0711	S-30	B.suis biovar 2	swine	Garcia-Yoldi2007b	2000	19	Spain-Salamanca 7/00	464	2	5	8	9	5	1	5	5	6	19	9	2	5	7	2	6
+bru0712	S-32	B.suis biovar 2	swine	Garcia-Yoldi2007b	2000	19	Spain-Toledo 7/00	465	2	5	8	9	5	1	5	5	5	19	9	2	5	7	2	7
+bru0716	S-45	B.suis biovar 2	swine	Garcia-Yoldi2007b	2002	19	Spain-Soria (Josete) 2/02	466	2	5	8	9	5	1	5	5	6	19	9	2	5	13	2	6
+bru0718	S-49	B.suis biovar 2	swine	Garcia-Yoldi2007b	2002	19	Spain-Rocio Martín 5/02	467	2	5	8	9	5	1	5	5	6	19	9	2	5	17	2	6
+bru0720	S-56	B.suis biovar 2	swine	Garcia-Yoldi2007b	2002	19	Spain-Soria 5/02	468	2	5	8	9	5	1	5	5	6	19	9	2	5	15	2	6
+bru0722	S-59	B.suis biovar 2	swine	Garcia-Yoldi2007b	2003	19	Spain-Soria (Josete) 2/02	469	2	5	8	9	5	1	5	5	6	19	9	2	5	9	2	6
+bru0723	S-62	B.suis biovar 2	swine	Garcia-Yoldi2007b	2003	19	Spain-Oropesa 7/03	470	2	5	8	9	5	1	5	5	5	19	9	4	10	13	2	8
+bru0724	S-64	B.suis biovar 2	swine	Garcia-Yoldi2007b	2003	19	Spain-Badajoz(la Jineta) 11/03	471	2	5	8	9	5	1	5	5	6	19	9	2	6	13	2	7
+bru0734	S-86	B.suis biovar 2	swine	Garcia-Yoldi2007b	2000	16	Croatia	472	2	5	8	15	5	1	5	7	4	21	9	2	5	3	2	8
+bru0736	S-88	B.suis biovar 1	horse	Garcia-Yoldi2007b	2003	6	Croatia	473	2	3	6	10	4	1	5	2	4	19	9	2	6	6	5	3
+bru0738	S-90	B.suis biovar 1	wild boar	Garcia-Yoldi2007b	1992	6	Croatia	474	2	3	6	10	4	1	5	2	4	19	9	2	8	8	5	3
+bru0743	S-94	B.suis biovar 1	wild boar	Garcia-Yoldi2007b	2003	6	Croatia	476	2	3	6	10	4	1	5	2	4	19	9	2	6	5	5	3
+bru0747	S-97	B.suis biovar 1	swine	Garcia-Yoldi2007b	1994	6	Croatia	477	2	3	6	10	4	1	5	2	4	19	9	2	7	8	5	3
+bru0749	S-99	B.suis biovar 1	hare	Garcia-Yoldi2007b	1980	6	Croatia	478	2	3	6	10	4	1	5	2	4	19	9	2	8	7	5	3
+bru0750	S-100	B.suis biovar 1	hare	Garcia-Yoldi2007b	1980	6	Croatia	479	2	3	6	10	4	1	5	2	4	19	9	2	7	7	5	3
+bru0753	S-102	B.suis biovar 1	hare	Garcia-Yoldi2007b	1980	6	Croatia	480	2	3	6	10	4	1	5	2	4	19	9	7	7	7	5	3
+bru0755	S-104	B.suis biovar 1	hare	Garcia-Yoldi2007b	1980	6	Croatia	481	2	3	6	10	4	1	5	2	4	19	9	5	7	6	5	3
+bru0756	S-105	B.suis biovar 1	hare	Garcia-Yoldi2007b	1980	6	Croatia	482	2	3	6	10	4	1	5	2	4	19	9	2	6	9	5	3
+bru0758	S-143	B.suis biovar 2	wild boar	Garcia-Yoldi2007b	2005	18	Spain	483	2	5	8	9	5	1	5	4	6	19	9	2	5	9	2	8
+bru0759	S-144	B.suis biovar 2	wild boar	Garcia-Yoldi2007b	2005	19	Spain	484	2	5	8	9	5	1	5	5	5	19	9	2	7	10	2	7
+bru0760	S-145	B.suis biovar 2	wild boar	Garcia-Yoldi2007b	2005	18	Spain	485	2	5	8	9	5	1	5	4	6	19	9	2	5	17	2	8
+bru0762	S-147	B.suis biovar 2	wild boar	Garcia-Yoldi2007b	2005	18	Spain	486	2	5	8	9	5	1	5	4	6	19	9	2	7	10	2	8
+bru0764	S-148	B.suis biovar 2	wild boar	Garcia-Yoldi2007b	2005	18	Spain	487	2	5	8	9	5	1	5	4	6	19	9	2	8	5	2	7
+bru0765	S-149	B.suis biovar 2	wild boar	Garcia-Yoldi2007b	2005	19	Spain	488	2	5	8	9	5	1	5	5	5	19	9	2	9	11	2	6
+bru0767	AUB BRUP-S1	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	489	1	5	3	13	3	2	3	2	4	20	8	4	5	3	4	5
+bru0776	AUB BRUP-S10	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	490	1	5	3	13	3	2	3	2	4	25	8	4	4	9	5	6
+bru0777	AUB BRUP-S11	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	491	1	5	3	13	3	2	3	2	4	20	8	3	4	3	7	6
+bru0778	AUB BRUP-S12	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	492	1	5	3	13	3	2	3	2	4	20	8	5	4	3	5	5
+bru0779	AUB BRUP-S13	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	493	1	5	3	13	3	2	3	2	4	20	8	4	4	3	7	4
+bru0780	AUB BRUP-S14	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	494	1	5	3	13	3	2	3	2	4	20	8	5	5	9	6	6
+bru0781	AUB BRUP-S15	B.melitensis biovar ?	human	Kattar2008	UNK	42	Lebanon	495	1	5	3	13	2	2	3	2	4	20	8	2	7	3	6	5
+bru0783	AUB BRUP-S17	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	496	1	5	3	13	3	2	3	2	4	20	8	7	4	3	5	4
+bru0786	AUB BRUP-S20	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	498	1	5	3	13	3	2	3	2	4	20	8	2	4	3	6	3
+bru0787	AUB BRUP-S21	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	499	1	5	3	13	3	2	3	2	4	22	8	10	4	10	4	6
+bru0788	AUB BRUP-S22	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	500	1	5	3	13	3	2	3	2	4	25	8	5	4	5	4	5
+bru0789	AUB BRUP-S23	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	501	1	5	3	13	3	2	3	2	4	20	8	4	4	3	8	5
+bru0790	AUB BRUP-S24	B.melitensis biovar ?	human	Kattar2008	UNK	60	Lebanon	502	1	5	3	13	3	2	2	2	4	20	8	4	4	3	5	4
+bru0792	AUB BRUP-S26	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	503	1	5	3	13	3	2	3	2	4	20	8	7	5	3	5	4
+bru0793	AUB BRUP-S27	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	504	1	5	3	13	3	2	3	2	4	20	8	3	4	3	8	6
+bru0794	AUB BRUP-S28	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	505	1	5	3	13	3	2	3	2	4	20	8	4	4	3	11	5
+bru0796	AUB BRUP-S30	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	507	1	5	3	13	3	2	3	2	4	20	8	6	4	3	6	5
+bru0797	AUB BRUP-S31	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	508	1	5	3	13	3	2	3	2	4	20	8	4	4	3	5	4
+bru0798	AUB BRUP-S32	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	509	1	5	3	13	3	2	3	2	4	20	8	6	4	3	7	3
+bru0799	AUB BRUP-S33	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	510	1	5	3	13	3	2	3	2	4	20	8	8	3	3	5	4
+bru0800	AUB BRUP-S34	B.melitensis biovar ?	human	Kattar2008	UNK	44	Lebanon	511	1	4	3	13	3	2	3	2	4	20	8	8	4	3	8	5
+bru0802	(IMB) 122 or CCM4915	B.microti	Microtus arvalis	Scholz2008a	UNK	67	Czech Republic	512	4	5	12	13	5	2	5	6	9	4	9	8	5	7	13	5
+bru0803	(IMB) 124 or CCM4916	B.microti	Microtus arvalis	Scholz2008a	UNK	67	Czech Republic	513	4	5	12	13	5	2	5	6	8	4	9	7	6	6	7	5
+bru0926	AUB BRUP-S36	B.melitensis biovar ?	human	Kattar2008	UNK	57	Lebanon	514	1	5	3	13	3	3	3	2	4	20	8	5	4	3	8	4
+bru0928	AUB BRUP-S38	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	515	1	5	3	13	3	2	3	2	5	20	8	5	5	7	5	6
+bru0930	AUB BRUP-S40	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	516	1	5	3	13	3	2	3	2	4	20	8	5	5	8	7	9
+bru0931	AUB BRUP-S41	B.melitensis biovar ?	human	Kattar2008	UNK	43	Lebanon	517	1	5	3	13	3	2	3	2	4	20	8	5	4	3	9	6
+bru1065	(IMB) 257	B.microti	red fox	Scholz2008c	UNK	67	Austria	518	4	5	12	13	5	2	5	6	8	4	9	7	7	10	7	6
+bru1066	(IMB) 284	B.microti	red fox	Scholz2008c	UNK	68	Austria	519	4	5	12	13	4	2	5	10	6	4	9	8	7	3	13	4
+Smits2009#01	1	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	522	3	4	2	13	5	2	3	3	7	18	6	2	5	7	4	4
+Smits2009#02	2	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	523	3	4	2	13	5	2	3	3	7	18	6	2	4	8	4	4
+Smits2009#03	3	B.melitensis biovar 1	human	Smits2009	2000	80	Peru	524	3	4	2	13	3	2	3	3	7	18	6	2	5	6	4	4
+Smits2009#04	4	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	525	3	4	2	13	5	2	3	3	7	18	6	2	4	8	4	4
+Smits2009#05	5	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	526	3	4	2	13	5	2	3	3	7	18	6	2	5	6	4	4
+Smits2009#06	6	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	527	3	4	2	13	5	2	3	3	7	18	6	2	5	8	4	4
+Smits2009#07	7	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	528	3	4	2	13	5	2	3	3	7	18	6	2	5	8	4	4
+Smits2009#08	8	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	529	3	4	2	13	5	2	3	3	7	18	6	2	5	8	4	4
+Smits2009#09	9	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	530	3	4	2	13	5	2	3	3	7	18	6	2	5	8	4	4
+Smits2009#10	10	B.melitensis biovar 1	human	Smits2009	2000	80	Peru	531	3	4	2	13	3	2	3	3	7	18	6	2	5	6	4	4
+Smits2009#11	11	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	532	3	4	2	13	5	2	3	3	7	18	6	2	5	7	4	4
+Smits2009#12	12	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	533	3	4	2	13	5	2	3	3	7	18	6	2	4	4	4	4
+Smits2009#13	13	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	534	3	4	2	13	5	2	3	3	7	18	6	2	4	8	3	4
+Smits2009#14	14	B.melitensis biovar 1	human	Smits2009	2001	54	Peru	535	3	4	2	13	5	2	3	3	7	18	6	2	5	6	3	4
+Smits2009#15	15	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	536	3	4	2	13	5	2	3	3	7	18	6	2	5	7	3	4
+Smits2009#16	16	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	537	3	4	2	13	5	2	3	3	7	18	6	2	4	8	2	4
+Smits2009#17	17	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	538	3	4	2	13	5	2	3	3	7	18	6	2	5	6	3	4
+Smits2009#18	18	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	539	3	4	2	13	5	2	3	3	7	18	6	2	4	8	3	4
+Smits2009#19	19	B.melitensis biovar 1	human	Smits2009	2000	80	Peru	540	3	4	2	13	3	2	3	3	7	18	6	2	5	6	2	4
+Smits2009#20	20	B.melitensis biovar 1	human	Smits2009	2000	80	Peru	541	3	4	2	13	3	2	3	3	7	18	6	2	4	8	3	4
+Smits2009#21	21	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	542	3	4	2	13	5	2	3	3	7	18	6	2	4	6	3	4
+Smits2009#22	22	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	543	3	4	2	13	5	2	3	3	7	18	6	2	5	6	3	4
+Smits2009#23	23	B.melitensis biovar 1	human	Smits2009	2000	54	Peru	544	3	4	2	13	5	2	3	3	7	18	6	2	5	6	2	4
+Smits2009#24	24	B.melitensis biovar 1	human	Smits2009	2001	54	Peru	545	3	4	2	13	5	2	3	3	7	18	6	2	5	6	4	4

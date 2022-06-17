@@ -2,7 +2,11 @@
 ```
 $ npm install --save-dev electron
 ```
-2. To start your app in development mode use the command:
+2. Install all dependencies:
+```
+$ npm install
+```
+3. To start your app in development mode use the command:
 ```
 npm start
 ```

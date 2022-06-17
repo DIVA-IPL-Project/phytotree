@@ -1,11 +1,11 @@
-# Radial and Dendrogram Visualization for Phylogenetic Trees
+# phytotree
 phytotree is a modular solution for phylogeneric tree visualization
 in **Dendrogram** and **Radial** layouts. Can be used in applications such as PHYLOViZ, GrapeTree, Phylo.io, etc.   
 The tree visualization is done using Data Driven Documents ([D3.js](https://d3js.org/)), Javascript, HTML and CSS.
 
 It was created an Electron App, for demonstration purposes and the resealses can be found [here](https://github.com/DIVA-IPL-Project/phytotree/releases/tag/1.1.1).
 
-+ ### [Radial and Dendrogram Visualization Info](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/Info.md)
++ ### [phytotree Docs](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/Info.md)
 + ### [Example videos for the Electron App](https://www.youtube.com/playlist?list=PLpJSLY0KODw329otPCvENcM4GEoEscxFX)
 
 ## Visualization Examples

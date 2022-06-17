@@ -11,22 +11,22 @@ It was created an Electron App, that uses the visualization modules.
 ## Visualization Examples
 ### Dendrogram  
 
-<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/master/Docs/dendrogram.png">
-<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/master/Docs/dendrogram_isolates.png">
+<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/Docs/dendrogram.png">
+<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/Docs/dendrogram_isolates.png">
 
 ### Radial  
 <p float="left">
- <img src="https://github.com/DIVA-IPL-Project/phytotree/blob/master/Docs/radial.png" width="400">
-<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/master/Docs/radial_isolates.png" width="400">
+ <img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/Docs/radial.png" width="400">
+<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/Docs/radial_isolates.png" width="400">
 </p>
 
 ### Profile Data
 
-<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/master/Docs/profile_data_with_filter.png">
+<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/Docs/profile_data_with_filter.png">
 
 ### Isolate Data
 
-<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/master/Docs/isolate_data_with_filter.png">
+<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/Docs/isolate_data_with_filter.png">
 
 ## Features
 + Tree visualization in Dendrogram and Radial formats

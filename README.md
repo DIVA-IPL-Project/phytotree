@@ -8,7 +8,7 @@ It was created an Electron App, for demonstration purposes and the resealses can
 + ### [phytotree library Docs](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/Info.md)
 + ### [How to create the phytotree Electron App](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronPhytotreeApp.md)
 + ### [How to run the phytotree Electron App](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/RunElectronApp.md)
-+ ### [Example videos for the Electron App](https://www.youtube.com/playlist?list=PLpJSLY0KODw329otPCvENcM4GEoEscxFX)
++ ### [Example videos for phytotree Electron App](https://www.youtube.com/playlist?list=PLpJSLY0KODw329otPCvENcM4GEoEscxFX)
 + ### [How to create a general Electron App](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronApp.md)
 
 ## Visualization Examples

@@ -105,8 +105,8 @@ F	United-Kingdom	2012
 
 To test the app with test files, download one of the following:
 
-- [small tree](https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/example1-small%20tree.zip)
-- [big tree](https://github.com/DIVA-IPL-Project/Visualization/blob/master/Docs/example2-big%20tree.zip)
+- [small tree](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/datasets/example1-small%20tree.zip)
+- [big tree](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/datasets/example2-big%20tree.zip)
 
 # Example Videos
 

@@ -6,22 +6,7 @@ For Windows download the .exe. All files can be found in the Releases tab [here]
 
 For Mac download the .dmg. All files can be found in the Releases tab [here](https://github.com/DIVA-IPL-Project/phytotree/releases/latest).
 
-To generate the executable for MacOS and Linux follow the build instructions found [here](#generate-installation-files).
-
-The data processing and parsing can be done in server or client side.
-
-- To run the app with the data processing executing in the server side download the file that ends with -client.
-- To run the app with the data processing executing in the client side download the file that ends with -server.
-
-### 2. Install the app in your computer.
-
-Open the setup file and follow the instructions to install the app in your computer.
-
-## Generate installation files
-
-First of all, it is necessary to run the command `npm install` in the app's folder.
-
-To generate new installation files, run the command `npm run build` in the app's folder.
+To generate the executable for MacOS and Linux follow the build instructions found [here]([#generate-installation-files](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronPhytotreeApp.md)).
 
 # Fundamentals
 

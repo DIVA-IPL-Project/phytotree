@@ -1,6 +1,6 @@
 {
   "name": "phytotree",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AdrVB/Radial-Dendrogram-Visualization.git"
+    "url": "git+https://github.com/DIVA-IPL-Project/phytotree/"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AdrVB/Radial-Dendrogram-Visualization/issues"
+    "url": "https://github.com/DIVA-IPL-Project/phytotree/#readme/issues"
   },
-  "homepage": "https://github.com/AdrVB/Radial-Dendrogram-Visualization#readme",
+  "homepage": "https://github.com/DIVA-IPL-Project/phytotree/#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "d3": "^6.7.0",

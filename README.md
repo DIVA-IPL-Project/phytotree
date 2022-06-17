@@ -12,7 +12,7 @@ It was created an Electron App, that uses the visualization modules.
 ### Dendrogram  
 
 <img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/docs/dendrogram.png">
-<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/Docs/dendrogram_isolates.png">
+<img src="https://github.com/DIVA-IPL-Project/phytotree/blob/main/docs/dendrogram_isolates.png">
 
 ### Radial  
 <p float="left">

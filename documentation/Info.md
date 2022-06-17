@@ -7,6 +7,8 @@ This modules draw radial and dendrogram visualizations from a JSON object, conta
 
 For Windows download the .exe. All files can be found in the Releases tab [here](https://github.com/DIVA-IPL-Project/phytotree/releases/latest).
 
+For Mac download the .dmg. All files can be found in the Releases tab [here](https://github.com/DIVA-IPL-Project/phytotree/releases/latest).
+
 To generate the executable for MacOS and Linux follow the build instructions found [here](#generate-installation-files).
 
 The data processing and parsing can be done in server or client side.

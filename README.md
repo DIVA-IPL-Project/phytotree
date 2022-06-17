@@ -5,7 +5,9 @@ The tree visualization is done using Data Driven Documents ([D3.js](https://d3js
 
 It was created an Electron App, for demonstration purposes and the resealses can be found [here](https://github.com/DIVA-IPL-Project/phytotree/releases/tag/1.1.1).
 
-+ ### [phytotree Docs](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/Info.md)
++ ### [phytotree library Docs](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/Info.md)
++ ### [How to create the Electron App with the library functionality](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronApp.md)
++ ### [How to run the app](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/RunElectronApp.md)
 + ### [Example videos for the Electron App](https://www.youtube.com/playlist?list=PLpJSLY0KODw329otPCvENcM4GEoEscxFX)
 
 ## Visualization Examples
@@ -42,7 +44,10 @@ It was created an Electron App, for demonstration purposes and the resealses can
 + Download report
 
 ## Contributors
-+ Adriano Baptista, a46072@alunos.isel.pt
-+ Francisco Filipe, a46018@alunos.isel.pt
-+ Inês Sousa, a45997@alunos.isel.pt
-+ Marta Ferreira, a43522@alunos.isel.ipl.pt
++ Adriano Baptista, a46072 _at_ alunos.isel.pt
++ Francisco Filipe, a46018 _at_ alunos.isel.pt
++ Inês Sousa, a45997 _at_ alunos.isel.pt
++ Marta Ferreira, a43522 _at_ alunos.isel.ipl.pt
++ Ana Correia, ana.duarte.correia _at_ tecnico.ulisboa.pt
++ Alexandre Francisco
++ Cátia Vaz, cvaz _at_ cc.isel.ipl.pt

@@ -1,11 +1,11 @@
-Each visualization is a module. For the **Radial visualization** see the file [**radial**](https://github.com/DIVA-IPL-Project/Visualization/blob/master/App/server/public/visualization/radial.js) and for the **Dendrogram Visualization** see the file [**dendrogram**](https://github.com/DIVA-IPL-Project/Visualization/blob/master/App/server/public/visualization/dendrogram.js). Each one of these modules have the same methods to build, draw and manipulate the tree. However, some methods are specific of one of the visualizations.  
+Each visualization is a module. For the **Radial visualization** see the file [**radial**](https://github.com/DIVA-IPL-Project/phytotree/blob/master/App/server/public/visualization/radial.js) and for the **Dendrogram Visualization** see the file [**dendrogram**](https://github.com/DIVA-IPL-Project/phytotree/blob/master/App/server/public/visualization/dendrogram.js). Each one of these modules have the same methods to build, draw and manipulate the tree. However, some methods are specific of one of the visualizations.  
 This modules draw radial and dendrogram visualizations from a JSON object, containing a phylogenetic tree.
 
 # How to run the app:
 
 ### 1. Download the executable according to the OS you are running.
 
-For Windows download the .exe. All files can be found in the Releases tab [here](https://github.com/DIVA-IPL-Project/Visualization/releases/latest).
+For Windows download the .exe. All files can be found in the Releases tab [here](https://github.com/DIVA-IPL-Project/phytotree/releases/latest).
 
 To generate the executable for MacOS and Linux follow the build instructions found [here](#generate-installation-files).
 

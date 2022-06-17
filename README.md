@@ -6,10 +6,10 @@ The tree visualization is done using Data Driven Documents ([D3.js](https://d3js
 It was created an Electron App, for demonstration purposes and the resealses can be found [here](https://github.com/DIVA-IPL-Project/phytotree/releases/tag/1.1.1).
 
 + ### [phytotree library Docs](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/Info.md)
-+ ### [How to create the Electron App](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronApp.md)
-+ ### [How to create the Electron App for this source code](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronPhytotreeApp.md)
-+ ### [How to run the app](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/RunElectronApp.md)
++ ### [How to create the phytotree Electron App](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronPhytotreeApp.md)
++ ### [How to run the phytotree Electron App](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/RunElectronApp.md)
 + ### [Example videos for the Electron App](https://www.youtube.com/playlist?list=PLpJSLY0KODw329otPCvENcM4GEoEscxFX)
++ ### [How to create a general Electron App](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/CreateElectronApp.md)
 
 ## Visualization Examples
 ### Dendrogram  

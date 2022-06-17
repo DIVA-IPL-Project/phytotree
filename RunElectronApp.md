@@ -107,4 +107,4 @@ To test the app with test files, download one of the following:
 
 # Example Videos
 
-[Playlist with tutorial of how to use the app](https://youtube.com/playlist?list=PLSZMwhUOJwPXGFFd7k0HWOL-mA2X_6gxp)
+[Playlist with tutorial of how to use the app](https://www.youtube.com/playlist?list=PLpJSLY0KODw329otPCvENcM4GEoEscxFX)

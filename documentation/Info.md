@@ -257,7 +257,7 @@ Ignores the link size and draws the dendrogram with the nodes aligned by dept.
 addSpread();
 ```
 
-Separates the nodes and links, by appling a spread function to the radial algorithm. Increases the algorithm time to O(v^2), where v is the number of nodes.
+Separates the nodes and links, by appling a spread function to the radial algorithm.
 
 ## **Save and load study**
 

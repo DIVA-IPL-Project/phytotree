@@ -3,6 +3,8 @@ phytotree is a modular solution for phylogeneric tree visualization
 in **Dendrogram** and **Radial** layouts. Can be used in applications such as PHYLOViZ, GrapeTree, Phylo.io, etc.   
 The tree visualization is done using Data Driven Documents ([D3.js](https://d3js.org/)), Javascript, HTML and CSS.
 
+Acknowledgements: IPL/2021/DIVA_ISEL
+
 It was created an Electron App, for demonstration purposes and the releases can be found [here](https://github.com/DIVA-IPL-Project/phytotree/releases/tag/1.1.1).
 
 + ### [phytotree library Docs](https://github.com/DIVA-IPL-Project/phytotree/blob/main/documentation/Info.md)
@@ -51,3 +53,5 @@ It was created an Electron App, for demonstration purposes and the releases can 
 + Ana Correia, ana.duarte.correia _at_ tecnico.ulisboa.pt
 + Alexandre Francisco
 + Cátia Vaz, cvaz _at_ cc.isel.ipl.pt
+
+
